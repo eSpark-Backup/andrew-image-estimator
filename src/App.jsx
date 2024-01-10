@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Canvas, Elementor } from './components'
+import { Canvas, Elementor, Grid } from './components'
 import './App.css'
 // import axios from 'axios';
 
@@ -44,6 +44,7 @@ function App() {
       image: null,
     })
     setCanvasImage(null)
+    setCroppedImage(null)
   }
 
   const handleSubmit = async () => {
@@ -95,7 +96,9 @@ function App() {
           setCanvasImage={setCanvasImage}
           setCroppedImage={setCroppedImage}
         />
-        {croppedImage && <img src={croppedImage} />}
+        {croppedImage && <Grid width={form.width / 5} height={form.length / 5}>
+          <img style={{ position: "absolute", left: 0, top: 0, zIndex: 999, width: `${form.width}px`, height: `${form.length}px` }} src={croppedImage} />
+        </Grid>}
       </div>
     </section>
   )

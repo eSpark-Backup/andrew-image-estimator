@@ -96,3 +96,10 @@ button:disabled {
     background-color: #0000009e !important;
     cursor: no-drop;
 }
+
+.grid-cell {
+    width: 5px;
+    height: 5px;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
