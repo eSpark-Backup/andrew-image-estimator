@@ -1,22 +1,23 @@
-const Grid = ({ width, height, children }) => {
-    const numXUnits = width;
-    const numYUnits = height;
 
-    const renderGrid = () => {
-        const gridElements = [];
+const Box = ({ width, height }) => (
+    <div style={{ width: `${width}px`, height: `${height}px`, border: '1px solid black' }}></div>
+);
 
-        for (let y = 0; y < numYUnits; y++) {
-            for (let x = 0; x < numXUnits; x++) {
-                gridElements.push(<div key={`${x}-${y}`} className="grid-cell" />);
-            }
-        }
+const Grid = ({ imageWidth, imageHeight, width, height, children }) => {
+    const totalWidth = imageWidth;
+    const totalHeight = imageHeight;
 
-        return gridElements;
-    };
+    const numHorizontalBoxes = width;
+    const numVerticalBoxes = height;
+
+    const widthOfEachBox = totalWidth / numHorizontalBoxes;
+    const heightOfEachBox = totalHeight / numVerticalBoxes;
 
     return (
-        <div style={{ margin: "20px 0px", position: "relative", display: "grid", gridTemplateColumns: `repeat(${width}, 1fr)`, gridTemplateRows: `repeat(${height}, 1fr)` }}>
-            {renderGrid()}
+        <div style={{ position: "relative", display: 'grid', gridTemplateColumns: `repeat(${numHorizontalBoxes}, 1fr)` }}>
+            {Array.from({ length: numHorizontalBoxes * numVerticalBoxes }, (_, index) => (
+                <Box key={index} width={widthOfEachBox} height={heightOfEachBox} />
+            ))}
             {children}
         </div>
     );

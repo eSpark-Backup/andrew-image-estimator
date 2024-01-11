@@ -6,12 +6,14 @@
 
 section.container {
     display: flex;
-    justify-content: center;
-    min-height: 100vh;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100vh;
 }
 
 .elementor-container {
     width: 250px;
+    height: 100%;
 }
 
 .canvas-container {
@@ -19,7 +21,9 @@ section.container {
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    height: 100vh;
+    overflow-y: scroll;
 }
 
 .card {
@@ -98,8 +102,8 @@ button:disabled {
 }
 
 .grid-cell {
-    width: 5px;
-    height: 5px;
+    width: 10px;
+    height: 10px;
     border: 1px solid #000;
     box-sizing: border-box;
 }
