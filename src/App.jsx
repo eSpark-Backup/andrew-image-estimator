@@ -1,22 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Canvas, Elementor, Grid } from './components'
 import './App.css'
 import axios from 'axios';
+import { areAllFieldsValid, calculateSelectedArea } from './algorithm';
 
 function App() {
-
-  function areAllFieldsValid(obj) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (Object.hasOwnProperty.call(obj, key)) {
-        if (value === null || (typeof value === 'string' && value.trim() === '')) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
   const [points, setPoints] = useState([]);
   const [canvasImage, setCanvasImage] = useState(null)
   const [croppedImage, setCroppedImage] = useState(null)
@@ -30,7 +18,27 @@ function App() {
     thickness: "",
     density: ""
   })
+  const [calculation, setCalculation] = useState({
+    weight: "",
+    size: ""
+  })
 
+  //save the original size of image to calculate
+  const [newSize, setNewSize] = useState({
+    width: "",
+    height: ""
+  })
+  const imageRef = useRef(null)
+  useEffect(() => {
+    setNewSize({
+      ...newSize,
+      width: imageRef?.current?.width,
+      height: imageRef?.current?.height
+    })
+    calculateSelectedArea(form, imageRef?.current?.width, imageRef?.current?.height, points, setCalculation)
+  }, [imageRef, croppedImage])
+
+  //handle inputs function
   const handleChange = (name, value) => {
     setForm({
       ...form,
@@ -38,6 +46,7 @@ function App() {
     })
   }
 
+  //removing image functionality
   const handleRemoveImage = () => {
     setForm({
       ...form,
@@ -45,8 +54,13 @@ function App() {
     })
     setCanvasImage(null)
     setCroppedImage(null)
+    setCalculation({
+      weight: "",
+      size: ""
+    })
   }
 
+  //Api fetching
   const handleSubmit = async () => {
     if (areAllFieldsValid(form) && points.length > 1 && (points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y)) {
       const formData = new FormData();
@@ -69,7 +83,6 @@ function App() {
         });
         const imageUrl = URL.createObjectURL(response?.data)
         setCroppedImage(imageUrl)
-        console.log('API Response:', response);
       } catch (error) {
         console.error('Error uploading file:', error);
       }
@@ -96,10 +109,14 @@ function App() {
           img={canvasImage}
           setCanvasImage={setCanvasImage}
           setCroppedImage={setCroppedImage}
+          setForm={setForm}
         />
         {croppedImage && <Grid imageWidth={form.imageWidth} imageHeight={form.imageHeight} width={form.width} height={form.length}>
-          <img style={{ position: "absolute", left: 0, top: 0, zIndex: 999 }} src={croppedImage} />
+          <img style={{ position: "absolute", left: 0, top: 0, zIndex: 999, width: `${form.imageWidth}px`, height: `${form.imageHeight}px` }} src={croppedImage} />
         </Grid>}
+        {croppedImage && <img style={{ display: "none" }} ref={imageRef} src={croppedImage} />}
+        {calculation.size !== "" && <p className='calculation'>Total Size : {Number(calculation.size).toFixed(2)} {form.unit === "cm" ? "Cm" : "In"}&#xb2;</p>}
+        {calculation.weight !== "" && <p className='calculation'>Total Weight : {Number(calculation.weight).toFixed(2)} Kg</p>}
       </div>
     </section>
   )

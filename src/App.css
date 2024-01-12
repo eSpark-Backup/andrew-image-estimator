@@ -107,3 +107,9 @@ button:disabled {
     border: 1px solid #000;
     box-sizing: border-box;
 }
+
+.calculation {
+    width: 400px;
+    font-size: 30px;
+    padding: 10px;
+}
