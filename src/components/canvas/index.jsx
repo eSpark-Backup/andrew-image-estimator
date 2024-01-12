@@ -1,6 +1,8 @@
 import { useRef, useEffect } from 'react';
 
-const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints, setCanvasImage, setCroppedImage }) => {
+const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints, setCanvasImage,
+    // setCroppedImage 
+}) => {
     const canvasRef = useRef(null);
 
 
@@ -25,6 +27,14 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
         const handleMouseDown = (event) => {
             const x = event.clientX - canvas.offsetLeft;
             const y = event.clientY - canvas.offsetTop;
+            if (points.length > 1) {
+                const firstPoint = points[0];
+                const distance = Math.sqrt((x - firstPoint.x) ** 2 + (y - firstPoint.y) ** 2);
+                if (distance < 5) {
+                    setPoints((prevDots) => [...prevDots, { x: firstPoint.x, y: firstPoint.y }]);
+                    return;
+                }
+            }
             if (points.length > 1 && (points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y)) {
                 setPoints((prevDots) => [...prevDots]);
             } else {
@@ -113,42 +123,48 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
     }, [points]);
 
 
-    const cropImage = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
+    // const cropImage = () => {
+    //     var tempCtx = document.createElement('canvas').getContext('2d');
 
-        if (points.length > 1) {
-            const path = new Path2D();
-            path.moveTo(points[0].x, points[0].y);
+    //     const minX = Math.min(...points.map(point => point.x));
+    //     const minY = Math.min(...points.map(point => point.y));
+    //     const maxX = Math.max(...points.map(point => point.x));
+    //     const maxY = Math.max(...points.map(point => point.y));
 
-            for (let i = 1; i < points.length; i++) {
-                path.lineTo(points[i].x, points[i].y);
-            }
+    //     const calculatedWidth = maxX - minX;
+    //     const calculatedHeight = maxY - minY;
 
-            const image = new Image();
-            image.src = img;
+    //     tempCtx.canvas.width = calculatedWidth;
+    //     tempCtx.canvas.height = calculatedHeight;
 
-            image.onload = () => {
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    //     if (points.length > 1) {
+    //         const mask = new Path2D();
+    //         mask.moveTo(points[0].x - minX, points[0].y - minY);
+    //         points.slice(1).forEach(point => mask.lineTo(point.x - minX, point.y - minY));
 
-                context.globalCompositeOperation = 'destination-in';
-                context.fill(path);
+    //         tempCtx.fillStyle = 'white';
+    //         tempCtx.fill(mask);
 
-                context.globalCompositeOperation = 'source-over'; // Reset the composite operation
+    //         const image = new Image();
+    //         image.src = img;
 
-                const croppedImageDataUrl = canvas.toDataURL("image/png");
-                setCroppedImage(croppedImageDataUrl);
-            };
-        }
-    };
+    //         image.onload = () => {
+    //             tempCtx.globalCompositeOperation = 'source-in';
+
+    //             tempCtx.drawImage(image, -minX, -minY, form.imageWidth, form.imageHeight);
+
+    //             const croppedImageDataUrl = tempCtx.canvas.toDataURL();
+    //             setCroppedImage(croppedImageDataUrl);
+    //         };
+    //     }
+    // };
 
     return (
         <>
             <div className="button-container">
                 <button onClick={handleRevert}>Revert</button>
                 <button onClick={handleReset}>Reset</button>
-                <button onClick={cropImage}>Crop image</button>
+                {/* <button onClick={cropImage}>Crop image</button> */}
                 <button disabled={!img} onClick={removeImage}>Remove Image</button>
             </div>
             <div className='card'>

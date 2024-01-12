@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Canvas, Elementor } from './components'
+import { Canvas, Elementor, Grid } from './components'
 import './App.css'
-// import axios from 'axios';
+import axios from 'axios';
 
 function App() {
 
@@ -44,33 +44,35 @@ function App() {
       image: null,
     })
     setCanvasImage(null)
+    setCroppedImage(null)
   }
 
   const handleSubmit = async () => {
     if (areAllFieldsValid(form) && points.length > 1 && (points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y)) {
-      // console.log(form, points)
-      // const formData = new FormData();
-      // formData.append('image', form.image);
+      const formData = new FormData();
+      formData.append('image', form.image);
+      const newArr = points.map(item => ({
+        'x1': item.x,
+        'y1': item.y
+      }));
+      const jsonString = JSON.stringify(newArr);
+      formData.append('contour_data', jsonString);
+      formData.append('image_height', form.imageHeight);
+      formData.append('image_width', form.imageWidth);
 
-      // const newArr = points.map(item => ({
-      //   'x1': item.x,
-      //   'y1': item.y
-      // }));
-      // const jsonString = JSON.stringify(newArr);
-      // formData.append('contour_data', jsonString);
-      // formData.append('image_height', 700);
-      // formData.append('image_width', 700);
-
-      // try {
-      //   const response = await axios.post('http://192.168.18.131:8000/api/img_upload/', formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //   });
-      //   console.log('API Response:', response);
-      // } catch (error) {
-      //   console.error('Error uploading file:', error);
-      // }
+      try {
+        const response = await axios.post('http://192.168.18.131:8000/api/img_upload/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          responseType: 'blob'
+        });
+        const imageUrl = URL.createObjectURL(response?.data)
+        setCroppedImage(imageUrl)
+        console.log('API Response:', response);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
     }
   }
 
@@ -95,7 +97,9 @@ function App() {
           setCanvasImage={setCanvasImage}
           setCroppedImage={setCroppedImage}
         />
-        {croppedImage && <img src={croppedImage} />}
+        {croppedImage && <Grid imageWidth={form.imageWidth} imageHeight={form.imageHeight} width={form.width} height={form.length}>
+          <img style={{ position: "absolute", left: 0, top: 0, zIndex: 999 }} src={croppedImage} />
+        </Grid>}
       </div>
     </section>
   )
