@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints, setCanvasImage, setCroppedImage 
-}) => {
+const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints, setCanvasImage, childCanvas, newSize }) => {
     const canvasRef = useRef(null);
 
 
@@ -122,68 +121,42 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
     }, [points]);
 
 
-    const cropImage = () => {
-        var tempCtx = document.createElement('canvas').getContext('2d');
 
-        const minX = Math.min(...points.map(point => point.x));
-        const minY = Math.min(...points.map(point => point.y));
-        const maxX = Math.max(...points.map(point => point.x));
-        const maxY = Math.max(...points.map(point => point.y));
-
-        const calculatedWidth = maxX - minX;
-        const calculatedHeight = maxY - minY;
-
-        tempCtx.canvas.width = calculatedWidth;
-        tempCtx.canvas.height = calculatedHeight;
-
-        if (points.length > 1) {
-            const mask = new Path2D();
-            mask.moveTo(points[0].x - minX, points[0].y - minY);
-            points.slice(1).forEach(point => mask.lineTo(point.x - minX, point.y - minY));
-
-            tempCtx.fillStyle = 'white';
-            tempCtx.fill(mask);
-
-            const image = new Image();
-            image.src = img;
-
-            image.onload = () => {
-                tempCtx.globalCompositeOperation = 'source-in';
-
-                tempCtx.drawImage(image, -minX, -minY, form.imageWidth, form.imageHeight);
-                 const croppedImageDataUrl = tempCtx.canvas.toDataURL();
-                setCroppedImage(croppedImageDataUrl);
-            };
-        }
-    };
 
     return (
         <>
             <div className="button-container">
                 <button onClick={handleRevert}>Revert</button>
                 <button onClick={handleReset}>Reset</button>
-                <button onClick={cropImage}>Crop image</button>
-                <button disabled={!img} onClick={removeImage}>Remove Image</button>
+                {!childCanvas && <button disabled={!img} onClick={removeImage}>Remove Image</button>}
             </div>
             <div className='card'>
-                {img ?
+                {childCanvas ?
                     <canvas
                         ref={canvasRef}
-                        width={form.imageWidth}
-                        height={form.imageHeight}
+                        width={newSize.width}
+                        height={newSize.height}
                         style={{ cursor: 'crosshair' }}
                     ></canvas>
                     :
-                    <label htmlFor="imageInput" className="button">
-                        Add Image
-                        <input
-                            id="imageInput"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleAddImage}
-                            className="hidden-input"
-                        />
-                    </label>}
+                    img ?
+                        <canvas
+                            ref={canvasRef}
+                            width={form.imageWidth}
+                            height={form.imageHeight}
+                            style={{ cursor: 'crosshair' }}
+                        ></canvas>
+                        :
+                        <label htmlFor="imageInput" className="button">
+                            Add Image
+                            <input
+                                id="imageInput"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAddImage}
+                                className="hidden-input"
+                            />
+                        </label>}
             </div>
         </>
     );

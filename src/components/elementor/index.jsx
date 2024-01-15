@@ -1,7 +1,7 @@
 import { SelectInput } from "../inputs/select-input"
 import TextInput from "../inputs/text-input"
 
-const Elementor = ({ form, handleChange, handleSubmit, disabled }) => {
+const Elementor = ({ form, handleChange, handleSubmit, disabled, cropImage, handleParentCalculate, handleChildCalculate, next, setNext }) => {
 
   const thicknessOptions = [
     { label: "5 mm", value: 5 },
@@ -19,47 +19,67 @@ const Elementor = ({ form, handleChange, handleSubmit, disabled }) => {
   return (
     <div className="sidebar">
       <div className="Logo">Image Estimator</div>
-      <SelectInput
-        name="unit"
-        value={form.unit}
-        label="Select Your Measuring Scale"
-        options={[{ label: "Inches (inch)", value: "inch" }, { label: "Centimeter (sm)", value: "cm" }]}
-        placeholder="Select Unit"
-        handleChange={handleChange}
-      />
-      <TextInput
-        name="length"
-        value={form.length}
-        label="Length"
-        type="number"
-        placeholder="Enter the length of your object"
-        handleChange={handleChange}
-      />
-      <TextInput
-        name="width"
-        value={form.width}
-        label="Width"
-        type="number"
-        placeholder="Enter the width of your object"
-        handleChange={handleChange}
-      />
-      <SelectInput
-        name="thickness"
-        value={form.thickness}
-        label="Thickness of Plates (mm)"
-        options={thicknessOptions}
-        placeholder="Select thickness"
-        handleChange={handleChange}
-      />
-      <TextInput
-        name="density"
-        value={form.density}
-        label="Steel density"
-        type="number"
-        placeholder="Enter the density of your object"
-        handleChange={handleChange}
-      />
-      <button disabled={disabled} className="button" onClick={handleSubmit}>Submit</button>
+      {next === 0 ?
+        <>
+          <SelectInput
+            name="unit"
+            value={form.unit}
+            label="Select Your Measuring Scale"
+            options={[{ label: "Inches (inch)", value: "inch" }, { label: "Centimeter (sm)", value: "cm" }]}
+            placeholder="Select Unit"
+            handleChange={handleChange}
+          />
+          <TextInput
+            name="length"
+            value={form.length}
+            label="Length"
+            type="number"
+            placeholder="Enter the length of your object"
+            handleChange={handleChange}
+          />
+          <TextInput
+            name="width"
+            value={form.width}
+            label="Width"
+            type="number"
+            placeholder="Enter the width of your object"
+            handleChange={handleChange}
+          />
+          <SelectInput
+            name="thickness"
+            value={form.thickness}
+            label="Thickness of Plates (mm)"
+            options={thicknessOptions}
+            placeholder="Select thickness"
+            handleChange={handleChange}
+          />
+          <TextInput
+            name="density"
+            value={form.density}
+            label="Steel density"
+            type="number"
+            placeholder="Enter the density of your object"
+            handleChange={handleChange}
+          />
+          <button disabled={disabled} className="button" onClick={() => {
+            cropImage()
+            setNext(1)
+          }}>Crop Object</button>
+        </>
+        : next === 1 ?
+          <>
+            <button className="button" onClick={handleParentCalculate}>Calculate Object</button>
+            <button className="button" onClick={() => setNext(2)}>Go for inside Object</button>
+          </>
+          : next === 2 ?
+            <>
+              <button disabled={disabled} className="button" onClick={handleSubmit}>Crop inside Object</button>
+            </>
+            :
+            <>
+              <button disabled={disabled} className="button" onClick={handleChildCalculate}>Calculate inside Object</button>
+            </>
+      }
     </div>
   )
 }

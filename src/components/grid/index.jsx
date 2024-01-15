@@ -1,6 +1,6 @@
 
-const Box = ({ width, height }) => (
-    <div style={{ width: `${width}px`, height: `${height}px`, border: '1px solid black' }}></div>
+const Box = () => (
+    <div style={{ border: '1px solid black' }}></div>
 );
 
 const Grid = ({ imageWidth, imageHeight, width, height, children }) => {
@@ -13,10 +13,30 @@ const Grid = ({ imageWidth, imageHeight, width, height, children }) => {
     const widthOfEachBox = totalWidth / numHorizontalBoxes;
     const heightOfEachBox = totalHeight / numVerticalBoxes;
 
+    const fractionalWidthPart = numHorizontalBoxes % 1;
+    const integerWidthPart = Math.floor(numHorizontalBoxes);
+
+    const widthColumnWidths = Array.from({ length: integerWidthPart }, () => widthOfEachBox);
+    if (fractionalWidthPart) {
+        widthColumnWidths.push(widthOfEachBox * fractionalWidthPart);
+    }
+
+    const gridTemplateColumns = widthColumnWidths.map(width => `${width}px`).join(' ');
+
+    const fractionalHeightPart = numVerticalBoxes % 1;
+    const integerHeightPart = Math.floor(numVerticalBoxes);
+
+    const heightRowHeights = Array.from({ length: integerHeightPart }, () => heightOfEachBox);
+    if (fractionalHeightPart) {
+        heightRowHeights.push(heightOfEachBox * fractionalHeightPart);
+    }
+
+    const gridTemplateRows = heightRowHeights.map(height => `${height}px`).join(' ');
+
     return (
-        <div style={{ position: "relative", display: 'grid', gridTemplateColumns: `repeat(${numHorizontalBoxes}, 1fr)` }}>
-            {Array.from({ length: numHorizontalBoxes * numVerticalBoxes }, (_, index) => (
-                <Box key={index} width={widthOfEachBox} height={heightOfEachBox} />
+        <div style={{ position: "relative", display: 'grid', gridTemplateColumns, gridTemplateRows }}>
+            {Array.from({ length: Math.ceil(numHorizontalBoxes) * Math.ceil(numVerticalBoxes) }, (_, index) => (
+                <Box key={index} />
             ))}
             {children}
         </div>
