@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react';
+import { handleBoxSize } from '../../algorithm';
 
-const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints, setCanvasImage,
-    // setCroppedImage 
-}) => {
+const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
     const canvasRef = useRef(null);
 
 
@@ -17,7 +16,33 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
 
         image.onload = () => {
             context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        };
+            drawGraph()
+        }
+
+        function drawGraph() {
+            const { boxWidth, boxHeight } = handleBoxSize(canvas.width, canvas.height, form.width, form.length)
+            context.globalAlpha = 1
+            // Draw horizontal lines
+            for (let y = 0; y <= canvas.height; y += boxHeight) {
+                context.strokeStyle = '#fff';
+                context.lineWidth = 1;
+                context.globalAlpha = 0.3
+                context.beginPath();
+                context.moveTo(0, y);
+                context.lineTo(canvas.width, y);
+                context.stroke();
+            }
+            
+            // Draw vertical lines
+            for (let x = 0; x <= canvas.width; x += boxWidth) {
+                context.globalAlpha = 0.3
+                context.beginPath();
+                context.moveTo(x, 0);
+                context.lineTo(x, canvas.height);
+                context.stroke();
+            }
+            context.globalAlpha = 1
+        }
 
         const animate = () => {
             redrawCanvas();
@@ -45,6 +70,7 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
         const redrawCanvas = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            drawGraph()
 
             if (points.length > 1) {
                 context.beginPath();
@@ -81,23 +107,6 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
         };
     }, [points, img]);
 
-    const handleAddImage = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleChange("image", file);
-            const imageUrl = URL.createObjectURL(file);
-            setCanvasImage(imageUrl);
-        }
-    }
-
-    const removeImage = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        handleRemoveImage()
-        setPoints([])
-    }
-
     const handleReset = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
@@ -123,69 +132,23 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
     }, [points]);
 
 
-    // const cropImage = () => {
-    //     var tempCtx = document.createElement('canvas').getContext('2d');
 
-    //     const minX = Math.min(...points.map(point => point.x));
-    //     const minY = Math.min(...points.map(point => point.y));
-    //     const maxX = Math.max(...points.map(point => point.x));
-    //     const maxY = Math.max(...points.map(point => point.y));
-
-    //     const calculatedWidth = maxX - minX;
-    //     const calculatedHeight = maxY - minY;
-
-    //     tempCtx.canvas.width = calculatedWidth;
-    //     tempCtx.canvas.height = calculatedHeight;
-
-    //     if (points.length > 1) {
-    //         const mask = new Path2D();
-    //         mask.moveTo(points[0].x - minX, points[0].y - minY);
-    //         points.slice(1).forEach(point => mask.lineTo(point.x - minX, point.y - minY));
-
-    //         tempCtx.fillStyle = 'white';
-    //         tempCtx.fill(mask);
-
-    //         const image = new Image();
-    //         image.src = img;
-
-    //         image.onload = () => {
-    //             tempCtx.globalCompositeOperation = 'source-in';
-
-    //             tempCtx.drawImage(image, -minX, -minY, form.imageWidth, form.imageHeight);
-
-    //             const croppedImageDataUrl = tempCtx.canvas.toDataURL();
-    //             setCroppedImage(croppedImageDataUrl);
-    //         };
-    //     }
-    // };
 
     return (
         <>
-            <div className="button-container">
+            {next < 3 && <div className="button-container">
                 <button onClick={handleRevert}>Revert</button>
                 <button onClick={handleReset}>Reset</button>
-                {/* <button onClick={cropImage}>Crop image</button> */}
-                <button disabled={!img} onClick={removeImage}>Remove Image</button>
-            </div>
+            </div>}
             <div className='card'>
-                {img ?
+                {loading ?
+                    <>loading</> :
                     <canvas
                         ref={canvasRef}
-                        width={form.imageWidth}
-                        height={form.imageHeight}
+                        width={cropImg.width}
+                        height={cropImg.height}
                         style={{ cursor: 'crosshair' }}
-                    ></canvas>
-                    :
-                    <label htmlFor="imageInput" className="button">
-                        Add Image
-                        <input
-                            id="imageInput"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleAddImage}
-                            className="hidden-input"
-                        />
-                    </label>}
+                    ></canvas>}
             </div>
         </>
     );
