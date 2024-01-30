@@ -1,7 +1,7 @@
 import { SelectInput } from "../inputs/select-input"
 import TextInput from "../inputs/text-input"
 
-const Elementor = ({ form, handleChange, handleSubmit, disabled, cropImage, handleParentCalculate, handleChildCalculate, next, setNext }) => {
+const Elementor = ({ setFocus, form, handleChange, handleCrop, disableCrop, disableCutout, handleCalculate, next, setNext, handleCutout }) => {
 
   const thicknessOptions = [
     { label: "5 mm", value: 5 },
@@ -25,22 +25,26 @@ const Elementor = ({ form, handleChange, handleSubmit, disabled, cropImage, hand
             name="unit"
             value={form.unit}
             label="Select Your Measuring Scale"
-            options={[{ label: "Inches (inch)", value: "inch" }, { label: "Centimeter (sm)", value: "cm" }]}
+            options={[{ label: "Inches (inch)", value: "inch" }]}
             placeholder="Select Unit"
             handleChange={handleChange}
           />
           <TextInput
+            onFocus={() => setFocus('length')}
+            onBlur={() => setFocus(null)}
             name="length"
             value={form.length}
-            label="Length"
+            label="Height"
             type="number"
             placeholder="Enter the length of your object"
             handleChange={handleChange}
           />
           <TextInput
+            onFocus={() => setFocus('height')}
+            onBlur={() => setFocus(null)}
             name="width"
             value={form.width}
-            label="Width"
+            label="Length"
             type="number"
             placeholder="Enter the width of your object"
             handleChange={handleChange}
@@ -61,24 +65,19 @@ const Elementor = ({ form, handleChange, handleSubmit, disabled, cropImage, hand
             placeholder="Enter the density of your object"
             handleChange={handleChange}
           />
-          <button disabled={disabled} className="button" onClick={() => {
-            cropImage()
+          <button disabled={disableCrop} className="button" onClick={() => {
+            handleCrop()
             setNext(1)
           }}>Crop Object</button>
         </>
         : next === 1 ?
           <>
-            <button className="button" onClick={handleParentCalculate}>Calculate Object</button>
-            <button className="button" onClick={() => setNext(2)}>Go for inside Object</button>
+            <button disabled={disableCutout} className="button" onClick={handleCutout}>Crop inside Object</button>
           </>
-          : next === 2 ?
-            <>
-              <button disabled={disabled} className="button" onClick={handleSubmit}>Crop inside Object</button>
-            </>
-            :
-            <>
-              <button disabled={disabled} className="button" onClick={handleChildCalculate}>Calculate inside Object</button>
-            </>
+          :
+          <>
+            <button className="button" onClick={handleCalculate}>Calculate inside Object</button>
+          </>
       }
     </div>
   )

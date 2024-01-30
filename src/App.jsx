@@ -1,25 +1,36 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Canvas, Elementor, Grid } from './components'
 import './App.css'
-// import axios from 'axios';
-import { areAllFieldsValid, calculateChildArea, calculateSelectedArea } from './algorithm';
+import axios from 'axios';
+import { areAllFieldsValid, calculateSelectedArea, getCanvasPoints, getDimention } from './algorithm';
+import { ImageCropper } from './components/cropper';
 
 function App() {
+  const [focus, setFocus] = useState(null)
+  const [cropLoading, setCropLoading] = useState(false)
+  const [cutoutoading, setCutoutLoading] = useState(false)
+  const [crop, setCrop] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [points, setPoints] = useState([]);
-  const [childPoints, setChildPoints] = useState([]);
   const [next, setNext] = useState(0)
   const [canvasImage, setCanvasImage] = useState(null)
+  const [imagetoShow, setImagetoShow] = useState(null)
   const [croppedImage, setCroppedImage] = useState(null)
   const [position, setPosition] = useState({
     x: 0,
     y: 0
   })
+  const [cutImg, setCutImg] = useState({
+    width: "",
+    height: ""
+  })
+  const [cropImg, setCropImg] = useState({
+    width: "",
+    height: ""
+  })
   const [childCroppedImage, setChildCroppedImage] = useState(null)
   const [form, setForm] = useState({
     imageWidth: 700,
     imageHeight: 700,
-    gridWidth: 700,
-    gridHeight: 700,
     image: null,
     unit: "",
     length: "",
@@ -32,86 +43,23 @@ function App() {
     size: ""
   })
 
-  //save the original size of image to calculate
-  const [newSize, setNewSize] = useState({
-    width: "",
-    height: ""
-  })
-  const [childNewSize, setChildNewSize] = useState({
-    width: "",
-    height: ""
-  })
-  const imageRef = useRef(null)
-  const childImageRef = useRef(null)
-  useEffect(() => {
-    setChildNewSize({
-      ...childNewSize,
-      width: childImageRef?.current?.width,
-      height: childImageRef?.current?.height
-    })
-    if (imageRef?.current?.height <= 300) {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridHeight: 300
-      }));
-    } else {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridHeight: 700
-      }));
-    }
-
-    if (imageRef?.current?.width <= 300) {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridWidth: 300
-      }));
-    } else {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridWidth: 700
-      }));
-    }
-
-  }, [childImageRef?.current, childCroppedImage])
-  useEffect(() => {
-    setNewSize({
-      ...newSize,
-      width: imageRef?.current?.width,
-      height: imageRef?.current?.height
-    })
-    if (imageRef?.current?.height <= 300) {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridHeight: 300
-      }));
-    } else {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridHeight: 700
-      }));
-    }
-
-    if (imageRef?.current?.width <= 300) {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridWidth: 300
-      }));
-    } else {
-      setForm(prevForm => ({
-        ...prevForm,
-        gridWidth: 700
-      }));
-    }
-
-  }, [imageRef?.current, croppedImage])
-
   //handle inputs function
   const handleChange = (name, value) => {
-    setForm({
-      ...form,
-      [name]: value
-    })
+    if (name === "width" || name === "length") {
+      if (Number(value) > 1000) {
+        return
+      } else {
+        setForm({
+          ...form,
+          [name]: value
+        })
+      }
+    } else {
+      setForm({
+        ...form,
+        [name]: value
+      })
+    }
   }
 
   //removing image functionality
@@ -128,180 +76,139 @@ function App() {
     })
   }
 
-  //handle-crop
-  const cropImage = () => {
-    if (areAllFieldsValid(form) && points.length > 1 && (points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y)) {
-      var tempCtx = document.createElement('canvas').getContext('2d');
-
-      const minX = Math.min(...points.map(point => point.x));
-      const minY = Math.min(...points.map(point => point.y));
-      const maxX = Math.max(...points.map(point => point.x));
-      const maxY = Math.max(...points.map(point => point.y));
-
-      const calculatedWidth = maxX - minX;
-      const calculatedHeight = maxY - minY;
-
-      tempCtx.canvas.width = calculatedWidth;
-      tempCtx.canvas.height = calculatedHeight;
-
-      if (points.length > 1) {
-        const mask = new Path2D();
-        mask.moveTo(points[0].x - minX, points[0].y - minY);
-        points.slice(1).forEach(point => mask.lineTo(point.x - minX, point.y - minY));
-
-        tempCtx.fillStyle = 'white';
-        tempCtx.fill(mask);
-
-        const image = new Image();
-        image.src = canvasImage;
-
-        image.onload = () => {
-          tempCtx.globalCompositeOperation = 'source-in';
-
-          tempCtx.drawImage(image, -minX, -minY, form.imageWidth, form.imageHeight);
-          const croppedImageDataUrl = tempCtx.canvas.toDataURL();
-          setCroppedImage(croppedImageDataUrl)
-          setNext(1)
-        };
-      }
-    } else {
-      alert("please provide all fields")
-    }
-  };
-
-  //calculation for parent cutout
-  const handleParentCalculate = () => {
-    if (newSize?.width && newSize?.height) {
-      calculateSelectedArea(form, newSize?.width, newSize?.height, points, setCalculation)
-    }
+  //calculation for cutout
+  const handleCalculate = () => {
+    calculateSelectedArea(form, cropImg.width, cropImg.height, points, setCalculation)
   }
 
-  //calculation for child cutout
-  const handleChildCalculate = () => {
-    if (newSize?.width && newSize?.height) {
-      calculateChildArea(form, newSize?.width, newSize?.height, childPoints, setCalculation, childNewSize?.width, childNewSize?.height)
+
+  const imgRef = useRef(null);
+  const { centerShift_x, centerShift_y, w, h } = getDimention(form.imageWidth, form.imageHeight, imgRef?.current?.width, imgRef?.current?.height)
+
+  //Api fetching
+  const handleCrop = async () => {
+    const tempCrop = {
+      x: crop.x - centerShift_x,
+      y: crop.y - centerShift_y,
+      width: crop.width,
+      height: crop.height
+    }
+    setCropLoading(true)
+    const formData = new FormData();
+    formData.append('image', form.image);
+    const jsonString = JSON.stringify(getCanvasPoints(tempCrop));
+    formData.append('contour_data', jsonString);
+    formData.append('image_height', Math.abs(h));
+    formData.append('image_width', Math.abs(w));
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/img_upload/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response) {
+        setCropImg({
+          width: response?.data?.image_width,
+          height: response?.data?.image_height
+        })
+        setCropLoading(false)
+        setCroppedImage('/output_image.png')
+        setNext(1)
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
     }
   }
 
   //Api fetching
-  const handleSubmit = async () => {
-    if (areAllFieldsValid(form) && childPoints.length > 1 && (childPoints[0]?.x === childPoints[childPoints.length - 1]?.x && childPoints[0]?.y === childPoints[childPoints.length - 1]?.y)) {
-      var tempCtx = document.createElement('canvas').getContext('2d');
+  const handleCutout = async () => {
+    setCutoutLoading(true)
+    const formData = new FormData();
+    formData.append('image', await fetch(croppedImage).then(res => res.blob()), 'image.png');
+    const newArr = points.map(item => ({
+      'x1': item.x,
+      'y1': item.y
+    }));
+    const jsonString = JSON.stringify(newArr);
+    formData.append('contour_data', jsonString);
+    formData.append('image_height', cropImg.height);
+    formData.append('image_width', cropImg.width);
 
-      const minX = Math.min(...childPoints.map(point => point.x));
-      const minY = Math.min(...childPoints.map(point => point.y));
-      const maxX = Math.max(...childPoints.map(point => point.x));
-      const maxY = Math.max(...childPoints.map(point => point.y));
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/img_upload/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response) {
+        setCutoutLoading(false)
+        setCutImg({
+          width: response?.data?.image_width,
+          height: response?.data?.image_height
+        })
+        setChildCroppedImage('/output_image.png')
+        const minX = Math.min(...points.map(point => point.x));
+        const minY = Math.min(...points.map(point => point.y));
 
-      setPosition({
-        x: minX,
-        y: minY
-      })
-
-      const calculatedWidth = maxX - minX;
-      const calculatedHeight = maxY - minY;
-
-      tempCtx.canvas.width = calculatedWidth;
-      tempCtx.canvas.height = calculatedHeight;
-
-      if (childPoints.length > 1) {
-        const mask = new Path2D();
-        mask.moveTo(childPoints[0].x - minX, childPoints[0].y - minY);
-        childPoints.slice(1).forEach(point => mask.lineTo(point.x - minX, point.y - minY));
-
-        tempCtx.fillStyle = 'white';
-        tempCtx.fill(mask);
-
-        const image = new Image();
-        image.src = croppedImage;
-
-        image.onload = () => {
-          tempCtx.globalCompositeOperation = 'source-in';
-
-          tempCtx.drawImage(image, -minX, -minY, newSize.width, newSize.height);
-          const croppedImageDataUrl = tempCtx.canvas.toDataURL();
-          setChildCroppedImage(croppedImageDataUrl)
-          setNext(3)
-        };
+        setPosition({
+          x: minX,
+          y: minY
+        })
+        setNext(3)
       }
-    } else {
-      alert("please make a contour first")
+    } catch (error) {
+      console.error('Error uploading file:', error);
     }
   }
-
-  // const api = async () => {
-  //   const formData = new FormData();
-  //   formData.append('image', form.image);
-  //   const newArr = points.map(item => ({
-  //     'x1': item.x,
-  //     'y1': item.y
-  //   }));
-  //   const jsonString = JSON.stringify(newArr);
-  //   formData.append('contour_data', jsonString);
-  //   formData.append('image_height', form.imageHeight);
-  //   formData.append('image_width', form.imageWidth);
-
-  //   try {
-  //     const response = await axios.post('http://192.168.18.131:8000/api/img_upload/', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //       responseType: 'blob'
-  //     });
-  //     const imageUrl = URL.createObjectURL(response?.data)
-  //     setCroppedImage(imageUrl)
-  //   } catch (error) {
-  //     console.error('Error uploading file:', error);
-  //   }
-  // }
 
   return (
     <section className='container'>
       <div className="elementor-container">
         <Elementor
+          setFocus={setFocus}
           form={form}
           handleChange={handleChange}
-          cropImage={cropImage}
-          handleParentCalculate={handleParentCalculate}
-          handleChildCalculate={handleChildCalculate}
+          handleCalculate={handleCalculate}
           next={next}
           setNext={setNext}
-          handleSubmit={handleSubmit}
-          disabled={!areAllFieldsValid(form) || points.length < 2 || (points[0]?.x !== points[points.length - 1]?.x || points[0]?.y !== points[points.length - 1]?.y)}
+          handleCrop={handleCrop}
+          handleCutout={handleCutout}
+          disableCrop={!areAllFieldsValid(form) || !crop.width > 0 || !crop.height > 0}
+          disabledCutout={points.length < 2 || (points[0]?.x !== points[points.length - 1]?.x || points[0]?.y !== points[points.length - 1]?.y)}
         />
       </div>
       <div className="canvas-container">
-        {next >= 2 ?
+        {next >= 1 ?
           <Canvas
+            cropImg={cropImg}
+            loading={cropLoading}
+            next={next}
             form={form}
-            newSize={newSize}
-            childCanvas
-            points={childPoints}
-            setPoints={setChildPoints}
             img={croppedImage}
-            setForm={setForm}
-          />
-          :
-          <Canvas
-            form={form}
             points={points}
             setPoints={setPoints}
-            handleChange={handleChange}
+          />
+          :
+          <ImageCropper
+            focus={focus}
+            form={form}
+            crop={crop}
+            setCrop={setCrop}
             handleRemoveImage={handleRemoveImage}
-            img={canvasImage}
+            image={canvasImage}
+            handleChange={handleChange}
             setCanvasImage={setCanvasImage}
-            setForm={setForm}
-          />}
-        {next < 3 && croppedImage && <Grid imageWidth={form.gridWidth} imageHeight={form.gridHeight} width={form.width} height={form.length}>
-          <img style={{ position: "absolute", left: 0, top: 0, zIndex: 999, width: `${form.gridWidth}px`, height: `${form.gridHeight}px` }} src={croppedImage} />
-        </Grid>}
-        {next >= 3 && childCroppedImage && <Grid imageWidth={newSize.width} imageHeight={newSize.height} width={form.width} height={form.length}>
-          <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, zIndex: 999 }} src={childCroppedImage} />
-        </Grid>}
-        {croppedImage && <img style={{ display: "none" }} ref={imageRef} src={croppedImage} />}
-        {childCroppedImage && <img style={{ display: "none" }} ref={childImageRef} src={childCroppedImage} />}
+            setImagetoShow={setImagetoShow}
+          />
+        }
+        {cutoutoading ?
+          <>loading</> : next >= 2 && childCroppedImage && <Grid imageWidth={cropImg.width} imageHeight={cropImg.height} width={form.width} height={form.length}>
+            <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${cutImg.width}px`, height: `${cutImg.height}px`, zIndex: -9 }} src={childCroppedImage} />
+          </Grid>}
         {calculation.size !== "" && calculation.size !== 0 && <p className='calculation'>Total Size : {Number(calculation.size).toFixed(2)} {form.unit === "cm" ? "Cm" : "In"}&#xb2;</p>}
         {calculation.weight !== "" && calculation.weight !== 0 && <p className='calculation'>Total Weight : {Number(calculation.weight).toFixed(2)} Kg</p>}
+        {imagetoShow && <img ref={imgRef} style={{ display: "none" }} src={imagetoShow} alt="img" />}
       </div>
     </section>
   )

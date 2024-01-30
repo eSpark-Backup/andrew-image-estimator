@@ -23,10 +23,11 @@ section.container {
     flex-direction: column;
     justify-content: flex-start;
     height: 100vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .card {
+    margin-top: 20px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     width: calc(100% - 50px);
     height: calc(100% - 140px);

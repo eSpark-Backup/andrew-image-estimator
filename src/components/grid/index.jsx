@@ -1,14 +1,17 @@
+import { totalBoxCounts } from "../../algorithm";
 
 const Box = () => (
-    <div style={{ border: '1px solid black' }}></div>
+    <div style={{ border: '1px solid grey' }}></div>
 );
 
 const Grid = ({ imageWidth, imageHeight, width, height, children }) => {
     const totalWidth = imageWidth;
     const totalHeight = imageHeight;
 
-    const numHorizontalBoxes = width;
-    const numVerticalBoxes = height;
+    const boxesCount = totalBoxCounts(width, height)
+
+    const numHorizontalBoxes = boxesCount.boxCountX;
+    const numVerticalBoxes = boxesCount.boxCountY;
 
     const widthOfEachBox = totalWidth / numHorizontalBoxes;
     const heightOfEachBox = totalHeight / numVerticalBoxes;

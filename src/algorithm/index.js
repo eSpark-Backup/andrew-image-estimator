@@ -76,7 +76,6 @@ export const calculateChildArea = (form, width, height, points, setCalculation, 
 }
 
 const getChildDimention = (form, parentWidth, parentHeight, childWidth, childHeight) => {
-    console.log(form, parentWidth, parentHeight, childWidth, childHeight)
     const dpiWidth = parentWidth / form.width;
     const dpiHeight = parentHeight / form.length;
     const averageDPI = (dpiWidth + dpiHeight) / 2;
@@ -98,4 +97,88 @@ export const areAllFieldsValid = (obj) => {
     }
 
     return true;
+}
+
+export const handleBoxSize = (totalWidth, totalHeight, objectWidth, objectHeight) => {
+    let boxWidth;
+    let boxHeight;
+    if (objectWidth <= 300) {
+        boxWidth = totalWidth / (objectWidth * 0.5)
+    } else if (objectWidth > 300 && objectWidth <= 600) {
+        boxWidth = totalWidth / (objectWidth * 0.25)
+    } else {
+        boxWidth = totalWidth / (objectWidth * 0.1)
+    }
+    if (objectHeight <= 300) {
+        boxHeight = totalHeight / (objectHeight * 0.5)
+    } else if (objectHeight > 300 && objectHeight <= 600) {
+        boxHeight = totalHeight / (objectHeight * 0.25)
+    } else {
+        boxHeight = totalHeight / (objectHeight * 0.1)
+    }
+
+    return { boxWidth, boxHeight }
+}
+
+export const totalBoxCounts = (objectWidth, objectHeight) => {
+    let boxCountX;
+    let boxCountY;
+    if (objectWidth <= 300) {
+        boxCountX = objectWidth * 0.5
+    } else if (objectWidth > 300 && objectWidth <= 600) {
+        boxCountX = objectWidth * 0.25
+    } else {
+        boxCountX = objectWidth * 0.1
+    }
+    if (objectHeight <= 300) {
+        boxCountY = objectHeight * 0.5
+    } else if (objectHeight > 300 && objectHeight <= 600) {
+        boxCountY = objectHeight * 0.25
+    } else {
+        boxCountY = objectHeight * 0.1
+    }
+    return { boxCountX, boxCountY }
+}
+
+export const getCanvasPoints = (crop) => {
+    let points = [];
+    if (crop.width < 0 && crop.height < 0) {
+        points = [
+            { 'x1': crop.x - Math.abs(crop.width), 'y1': crop.y - Math.abs(crop.height) },
+            { 'x1': crop.x, 'y1': crop.y - Math.abs(crop.height) },
+            { 'x1': crop.x, 'y1': crop.y },
+            { 'x1': crop.x - Math.abs(crop.width), 'y1': crop.y },
+        ]
+    } else if (crop.width < 0) {
+        points = [
+            { 'x1': crop.x - Math.abs(crop.width), 'y1': crop.y },
+            { 'x1': crop.x, 'y1': crop.y },
+            { 'x1': crop.x, 'y1': crop.height + crop.y },
+            { 'x1': crop.x - Math.abs(crop.width), 'y1': crop.height + crop.y },
+        ]
+    } else if (crop.height < 0) {
+        points = [
+            { 'x1': crop.x, 'y1': crop.y },
+            { 'x1': crop.width + crop.x, 'y1': crop.y },
+            { 'x1': crop.width + crop.x, 'y1': crop.height + crop.y },
+            { 'x1': crop.x, 'y1': crop.height + crop.y },
+        ]
+    } else {
+        points = [
+            { 'x1': crop.x, 'y1': crop.y },
+            { 'x1': crop.width + crop.x, 'y1': crop.y },
+            { 'x1': crop.width + crop.x, 'y1': crop.y + Math.abs(crop.height) },
+            { 'x1': crop.x, 'y1': crop.y + Math.abs(crop.height) },
+        ]
+    }
+    return points
+}
+
+export const getDimention = (canvasW, canvasH, imgW, imgH) => {
+    var hRatio = canvasW / imgW;
+    var vRatio = canvasH / imgH;
+    var ratio = Math.min(hRatio, vRatio);
+    var centerShift_x = (canvasW - imgW * ratio) / 2;
+    var centerShift_y = (canvasH - imgH * ratio) / 2;
+    return { centerShift_x, centerShift_y, w: imgW * ratio, h: imgH * ratio }
 }

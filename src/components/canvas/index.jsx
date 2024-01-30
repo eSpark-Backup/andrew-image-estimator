@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
+import { handleBoxSize } from '../../algorithm';
 
-const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints, setCanvasImage, childCanvas, newSize }) => {
+const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
     const canvasRef = useRef(null);
 
 
@@ -15,7 +16,33 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
 
         image.onload = () => {
             context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        };
+            drawGraph()
+        }
+
+        function drawGraph() {
+            const { boxWidth, boxHeight } = handleBoxSize(canvas.width, canvas.height, form.width, form.length)
+            context.globalAlpha = 1
+            // Draw horizontal lines
+            for (let y = 0; y <= canvas.height; y += boxHeight) {
+                context.strokeStyle = '#fff';
+                context.lineWidth = 1;
+                context.globalAlpha = 0.3
+                context.beginPath();
+                context.moveTo(0, y);
+                context.lineTo(canvas.width, y);
+                context.stroke();
+            }
+            
+            // Draw vertical lines
+            for (let x = 0; x <= canvas.width; x += boxWidth) {
+                context.globalAlpha = 0.3
+                context.beginPath();
+                context.moveTo(x, 0);
+                context.lineTo(x, canvas.height);
+                context.stroke();
+            }
+            context.globalAlpha = 1
+        }
 
         const animate = () => {
             redrawCanvas();
@@ -43,6 +70,7 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
         const redrawCanvas = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            drawGraph()
 
             if (points.length > 1) {
                 context.beginPath();
@@ -79,23 +107,6 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
         };
     }, [points, img]);
 
-    const handleAddImage = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleChange("image", file);
-            const imageUrl = URL.createObjectURL(file);
-            setCanvasImage(imageUrl);
-        }
-    }
-
-    const removeImage = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        handleRemoveImage()
-        setPoints([])
-    }
-
     const handleReset = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
@@ -125,38 +136,19 @@ const Canvas = ({ form, img, handleRemoveImage, handleChange, points, setPoints,
 
     return (
         <>
-            <div className="button-container">
+            {next < 3 && <div className="button-container">
                 <button onClick={handleRevert}>Revert</button>
                 <button onClick={handleReset}>Reset</button>
-                {!childCanvas && <button disabled={!img} onClick={removeImage}>Remove Image</button>}
-            </div>
+            </div>}
             <div className='card'>
-                {childCanvas ?
+                {loading ?
+                    <>loading</> :
                     <canvas
                         ref={canvasRef}
-                        width={newSize.width}
-                        height={newSize.height}
+                        width={cropImg.width}
+                        height={cropImg.height}
                         style={{ cursor: 'crosshair' }}
-                    ></canvas>
-                    :
-                    img ?
-                        <canvas
-                            ref={canvasRef}
-                            width={form.imageWidth}
-                            height={form.imageHeight}
-                            style={{ cursor: 'crosshair' }}
-                        ></canvas>
-                        :
-                        <label htmlFor="imageInput" className="button">
-                            Add Image
-                            <input
-                                id="imageInput"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleAddImage}
-                                className="hidden-input"
-                            />
-                        </label>}
+                    ></canvas>}
             </div>
         </>
     );
