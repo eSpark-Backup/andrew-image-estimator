@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { handleBoxSize } from '../../algorithm';
 
-const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
+const Canvas = ({ next, form, img, points, setPoints, loading, cropImg, gridWidth }) => {
     const canvasRef = useRef(null);
 
 
@@ -20,7 +20,7 @@ const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
         }
 
         function drawGraph() {
-            const { boxWidth, boxHeight } = handleBoxSize(canvas.width, canvas.height, form.width, form.length)
+            const { boxWidth, boxHeight } = handleBoxSize(gridWidth.width, gridWidth.height, form.width, form.length)
             context.globalAlpha = 1
             // Draw horizontal lines
             for (let y = 0; y <= canvas.height; y += boxHeight) {

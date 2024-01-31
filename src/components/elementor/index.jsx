@@ -1,7 +1,7 @@
 import { SelectInput } from "../inputs/select-input"
 import TextInput from "../inputs/text-input"
 
-const Elementor = ({ setFocus, form, handleChange, handleCrop, disableCrop, disableCutout, handleCalculate, next, setNext, handleCutout }) => {
+const Elementor = ({ setFocus, form, handleChange, handleCrop, disableCrop, disableCutout, handleCalculate, next, setNext, handleCutout, handleInsideCutout }) => {
 
   const thicknessOptions = [
     { label: "5 mm", value: 5 },
@@ -73,6 +73,10 @@ const Elementor = ({ setFocus, form, handleChange, handleCrop, disableCrop, disa
         : next === 1 ?
           <>
             <button disabled={disableCutout} className="button" onClick={handleCutout}>Crop inside Object</button>
+          </>
+          : next === 2 ?
+          <>
+            <button className="button" onClick={handleInsideCutout}>Crop inside Object</button>
           </>
           :
           <>

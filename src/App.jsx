@@ -2,24 +2,31 @@ import { useRef, useState } from 'react'
 import { Canvas, Elementor, Grid } from './components'
 import './App.css'
 import axios from 'axios';
-import { areAllFieldsValid, calculateSelectedArea, getCanvasPoints, getDimention } from './algorithm';
+import { areAllFieldsValid, calculateChildArea, getCanvasPoints, getDimention } from './algorithm';
 import { ImageCropper } from './components/cropper';
 
 function App() {
   const [focus, setFocus] = useState(null)
   const [cropLoading, setCropLoading] = useState(false)
   const [cutoutoading, setCutoutLoading] = useState(false)
+  const [insideCutoutoading, setInsideCutoutLoading] = useState(false)
   const [crop, setCrop] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [points, setPoints] = useState([]);
+  const [childPoints, setChildPoints] = useState([]);
   const [next, setNext] = useState(0)
   const [canvasImage, setCanvasImage] = useState(null)
   const [imagetoShow, setImagetoShow] = useState(null)
   const [croppedImage, setCroppedImage] = useState(null)
+  const [insideChildCroppedImage, setInsideChildCroppedImage] = useState(null)
   const [position, setPosition] = useState({
     x: 0,
     y: 0
   })
   const [cutImg, setCutImg] = useState({
+    width: "",
+    height: ""
+  })
+  const [insideCutImg, setInsideCutImg] = useState({
     width: "",
     height: ""
   })
@@ -78,7 +85,8 @@ function App() {
 
   //calculation for cutout
   const handleCalculate = () => {
-    calculateSelectedArea(form, cropImg.width, cropImg.height, points, setCalculation)
+    calculateChildArea(form, cropImg.width, cropImg.height, childPoints, setCalculation, insideCutImg.width, insideCutImg.height)
+    // calculateSelectedArea(form, cropImg.width, cropImg.height, points, setCalculation)
   }
 
 
@@ -155,6 +163,46 @@ function App() {
           x: minX,
           y: minY
         })
+        setNext(2)
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  }
+
+  const handleInsideCutout = async () => {
+    setInsideCutoutLoading(true)
+    const formData = new FormData();
+    formData.append('image', await fetch(croppedImage).then(res => res.blob()), 'image.png');
+    const newArr = childPoints.map(item => ({
+      'x1': item.x,
+      'y1': item.y
+    }));
+    const jsonString = JSON.stringify(newArr);
+    formData.append('contour_data', jsonString);
+    formData.append('image_height', cutImg.height);
+    formData.append('image_width', cutImg.width);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/img_upload/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response) {
+        setInsideCutoutLoading(false)
+        setInsideCutImg({
+          width: response?.data?.image_width,
+          height: response?.data?.image_height
+        })
+        setInsideChildCroppedImage('/output_image.png')
+        const minX = Math.min(...childPoints.map(point => point.x));
+        const minY = Math.min(...childPoints.map(point => point.y));
+
+        setPosition({
+          x: minX,
+          y: minY
+        })
         setNext(3)
       }
     } catch (error) {
@@ -174,37 +222,50 @@ function App() {
           setNext={setNext}
           handleCrop={handleCrop}
           handleCutout={handleCutout}
+          handleInsideCutout={handleInsideCutout}
           disableCrop={!areAllFieldsValid(form) || !crop.width > 0 || !crop.height > 0}
           disabledCutout={points.length < 2 || (points[0]?.x !== points[points.length - 1]?.x || points[0]?.y !== points[points.length - 1]?.y)}
         />
       </div>
       <div className="canvas-container">
-        {next >= 1 ?
+        {next >= 2 ?
           <Canvas
-            cropImg={cropImg}
-            loading={cropLoading}
+            gridWidth={cropImg}
+            cropImg={cutImg}
+            loading={cutoutoading}
             next={next}
             form={form}
-            img={croppedImage}
-            points={points}
-            setPoints={setPoints}
+            img={childCroppedImage}
+            points={childPoints}
+            setPoints={setChildPoints}
           />
-          :
-          <ImageCropper
-            focus={focus}
-            form={form}
-            crop={crop}
-            setCrop={setCrop}
-            handleRemoveImage={handleRemoveImage}
-            image={canvasImage}
-            handleChange={handleChange}
-            setCanvasImage={setCanvasImage}
-            setImagetoShow={setImagetoShow}
-          />
+          : next === 1 ?
+            <Canvas
+              gridWidth={cropImg}
+              cropImg={cropImg}
+              loading={cropLoading}
+              next={next}
+              form={form}
+              img={croppedImage}
+              points={points}
+              setPoints={setPoints}
+            />
+            :
+            <ImageCropper
+              focus={focus}
+              form={form}
+              crop={crop}
+              setCrop={setCrop}
+              handleRemoveImage={handleRemoveImage}
+              image={canvasImage}
+              handleChange={handleChange}
+              setCanvasImage={setCanvasImage}
+              setImagetoShow={setImagetoShow}
+            />
         }
-        {cutoutoading ?
-          <>loading</> : next >= 2 && childCroppedImage && <Grid imageWidth={cropImg.width} imageHeight={cropImg.height} width={form.width} height={form.length}>
-            <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${cutImg.width}px`, height: `${cutImg.height}px`, zIndex: -9 }} src={childCroppedImage} />
+        {insideCutoutoading ?
+          <>loading</> : next >= 3 && insideChildCroppedImage && <Grid imageWidth={cutImg.width} imageHeight={cutImg.height} width={form.width} height={form.length}>
+            <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${insideCutImg.width}px`, height: `${insideCutImg.height}px`, zIndex: -9 }} src={insideChildCroppedImage} />
           </Grid>}
         {calculation.size !== "" && calculation.size !== 0 && <p className='calculation'>Total Size : {Number(calculation.size).toFixed(2)} {form.unit === "cm" ? "Cm" : "In"}&#xb2;</p>}
         {calculation.weight !== "" && calculation.weight !== 0 && <p className='calculation'>Total Weight : {Number(calculation.weight).toFixed(2)} Kg</p>}
