@@ -21,7 +21,7 @@ export const calculateSelectedArea = (form, width, height, points, setCalculatio
     }
 
     const baseArea = Math.abs(area) / 2;
-    
+
     const baseAreaInMeters = baseArea * 0.00064516;
 
     const volumeInMeters = baseAreaInMeters * Number(form.thickness);
@@ -37,6 +37,7 @@ export const calculateSelectedArea = (form, width, height, points, setCalculatio
 
 }
 
+//algorithm of calculating the selected size of metal and and it's weight according to parent's given dimention
 export const calculateChildArea = (form, width, height, points, setCalculation, childWidth, childHeight) => {
     const childDimention = getChildDimention(form, width, height, childWidth, childHeight)
     let scale_factor_x = childDimention.width / childWidth;
@@ -66,15 +67,21 @@ export const calculateChildArea = (form, width, height, points, setCalculation, 
 
     const weightInKgs = volumeInMeters * Number(form.density);
 
-    if (!isNaN(weightInKgs) && !isNaN(baseArea)) {
+    const weightInPounds = weightInKgs * 2.20462;
+
+    const platePrice = weightInPounds * 0.5
+
+    if (!isNaN(weightInPounds) && !isNaN(baseArea)) {
         setCalculation({
-            weight: weightInKgs,
-            size: baseArea
+            weight: weightInPounds,
+            size: baseArea,
+            platePrice
         });
     }
 
 }
 
+////algorithm of calculating the child dimention according to parent dimention
 const getChildDimention = (form, parentWidth, parentHeight, childWidth, childHeight) => {
     const dpiWidth = parentWidth / form.width;
     const dpiHeight = parentHeight / form.length;
@@ -86,19 +93,7 @@ const getChildDimention = (form, parentWidth, parentHeight, childWidth, childHei
     return { width: childWidthInches, length: childHeightInches }
 }
 
-
-export const areAllFieldsValid = (obj) => {
-    for (const [key, value] of Object.entries(obj)) {
-        if (Object.hasOwnProperty.call(obj, key)) {
-            if (value === null || (typeof value === 'string' && value.trim() === '')) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
+//algorithm of calculating the box-size of grid 
 export const handleBoxSize = (totalWidth, totalHeight, objectWidth, objectHeight) => {
     let boxWidth;
     let boxHeight;
@@ -120,6 +115,7 @@ export const handleBoxSize = (totalWidth, totalHeight, objectWidth, objectHeight
     return { boxWidth, boxHeight }
 }
 
+//algorithm of calculating the box-count
 export const totalBoxCounts = (objectWidth, objectHeight) => {
     let boxCountX;
     let boxCountY;
@@ -140,6 +136,7 @@ export const totalBoxCounts = (objectWidth, objectHeight) => {
     return { boxCountX, boxCountY }
 }
 
+//algorithm of calculating the canvas points
 export const getCanvasPoints = (crop) => {
     let points = [];
     if (crop.width < 0 && crop.height < 0) {
@@ -174,6 +171,7 @@ export const getCanvasPoints = (crop) => {
     return points
 }
 
+//algorithm of calculating the dimention of scale image to show in canvas
 export const getDimention = (canvasW, canvasH, imgW, imgH) => {
     var hRatio = canvasW / imgW;
     var vRatio = canvasH / imgH;
@@ -181,4 +179,40 @@ export const getDimention = (canvasW, canvasH, imgW, imgH) => {
     var centerShift_x = (canvasW - imgW * ratio) / 2;
     var centerShift_y = (canvasH - imgH * ratio) / 2;
     return { centerShift_x, centerShift_y, w: imgW * ratio, h: imgH * ratio }
+}
+
+//algorithm of calculating the grid dimention
+export const gridDimention = (imageWidth, imageHeight, width, height) => {
+    const totalWidth = imageWidth;
+    const totalHeight = imageHeight;
+
+    const boxesCount = totalBoxCounts(width, height)
+
+    const numHorizontalBoxes = boxesCount.boxCountX;
+    const numVerticalBoxes = boxesCount.boxCountY;
+
+    const widthOfEachBox = totalWidth / numHorizontalBoxes;
+    const heightOfEachBox = totalHeight / numVerticalBoxes;
+
+    const fractionalWidthPart = numHorizontalBoxes % 1;
+    const integerWidthPart = Math.floor(numHorizontalBoxes);
+
+    const widthColumnWidths = Array.from({ length: integerWidthPart }, () => widthOfEachBox);
+    if (fractionalWidthPart) {
+        widthColumnWidths.push(widthOfEachBox * fractionalWidthPart);
+    }
+
+    const gridTemplateColumns = widthColumnWidths.map(width => `${width}px`).join(' ');
+
+    const fractionalHeightPart = numVerticalBoxes % 1;
+    const integerHeightPart = Math.floor(numVerticalBoxes);
+
+    const heightRowHeights = Array.from({ length: integerHeightPart }, () => heightOfEachBox);
+    if (fractionalHeightPart) {
+        heightRowHeights.push(heightOfEachBox * fractionalHeightPart);
+    }
+
+    const gridTemplateRows = heightRowHeights.map(height => `${height}px`).join(' ');
+
+    return { gridTemplateColumns, gridTemplateRows, numHorizontalBoxes, numVerticalBoxes }
 }

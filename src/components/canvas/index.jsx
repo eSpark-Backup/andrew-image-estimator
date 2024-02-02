@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { handleBoxSize } from '../../algorithm';
 
-const Canvas = ({ next, form, img, points, setPoints, loading, cropImg, gridWidth }) => {
+const Canvas = ({ form, img, points, setPoints, loading, cropImg, gridWidth }) => {
     const canvasRef = useRef(null);
 
 
@@ -32,7 +32,7 @@ const Canvas = ({ next, form, img, points, setPoints, loading, cropImg, gridWidt
                 context.lineTo(canvas.width, y);
                 context.stroke();
             }
-            
+
             // Draw vertical lines
             for (let x = 0; x <= canvas.width; x += boxWidth) {
                 context.globalAlpha = 0.3
@@ -107,49 +107,21 @@ const Canvas = ({ next, form, img, points, setPoints, loading, cropImg, gridWidt
         };
     }, [points, img]);
 
-    const handleReset = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        setPoints([])
-    }
 
-    const handleRevert = () => {
-        points.pop()
-        setPoints(points)
-    }
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.ctrlKey && (event.key === 'z' || event.key === 'Z')) {
-                handleRevert()
-            }
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [points]);
 
 
 
 
     return (
         <>
-            {next < 3 && <div className="button-container">
-                <button onClick={handleRevert}>Revert</button>
-                <button onClick={handleReset}>Reset</button>
-            </div>}
-            <div className='card'>
-                {loading ?
-                    <>loading</> :
-                    <canvas
-                        ref={canvasRef}
-                        width={cropImg.width}
-                        height={cropImg.height}
-                        style={{ cursor: 'crosshair' }}
-                    ></canvas>}
-            </div>
+            {loading ?
+                <>loading</> :
+                <canvas
+                    ref={canvasRef}
+                    width={cropImg.width}
+                    height={cropImg.height}
+                    style={{ cursor: 'crosshair' }}
+                ></canvas>}
         </>
     );
 };

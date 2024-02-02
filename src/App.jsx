@@ -1,23 +1,23 @@
-import { useRef, useState } from 'react'
-import { Canvas, Elementor, Grid } from './components'
-import './App.css'
+import { useEffect, useRef, useState } from 'react'
+import { Canvas, Grid, ImageRenderer, SelectInput, TextInput, ImageCropper, NormalTable, FabricationTable } from './components'
+import { calculateChildArea, getCanvasPoints, getDimention } from './algorithm';
 import axios from 'axios';
-import { areAllFieldsValid, calculateChildArea, getCanvasPoints, getDimention } from './algorithm';
-import { ImageCropper } from './components/cropper';
+import './App.css'
 
 function App() {
-  const [focus, setFocus] = useState(null)
   const [cropLoading, setCropLoading] = useState(false)
   const [cutoutoading, setCutoutLoading] = useState(false)
   const [insideCutoutoading, setInsideCutoutLoading] = useState(false)
-  const [crop, setCrop] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [imagetoShow, setImagetoShow] = useState(null)
+  const [canvasImage, setCanvasImage] = useState(null)
+  const [croppedImage, setCroppedImage] = useState(null)
+  const [childCroppedImage, setChildCroppedImage] = useState(null)
+  const [insideChildCroppedImage, setInsideChildCroppedImage] = useState(null)
+  const [next, setNext] = useState(0)
   const [points, setPoints] = useState([]);
   const [childPoints, setChildPoints] = useState([]);
-  const [next, setNext] = useState(0)
-  const [canvasImage, setCanvasImage] = useState(null)
-  const [imagetoShow, setImagetoShow] = useState(null)
-  const [croppedImage, setCroppedImage] = useState(null)
-  const [insideChildCroppedImage, setInsideChildCroppedImage] = useState(null)
+  const [shapeDrawn, setShapeDrawn] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [position, setPosition] = useState({
     x: 0,
     y: 0
@@ -34,7 +34,6 @@ function App() {
     width: "",
     height: ""
   })
-  const [childCroppedImage, setChildCroppedImage] = useState(null)
   const [form, setForm] = useState({
     imageWidth: 700,
     imageHeight: 700,
@@ -42,13 +41,61 @@ function App() {
     unit: "",
     length: "",
     width: "",
-    thickness: "",
-    density: 7.85
+    thickness: 5,
+    density: 7.85,
+    fabricator: false
+  })
+  const [dropdowns, setDropdowns] = useState({
+    perimeterWelding: false,
+    stitchWelding: false,
+    fastening: "",
+    brakeBends: "",
+    rolledBends: "",
+    sunkBoltsHoles: "",
+    plateType: "",
+    deliveryDate: "",
+    plateTypeUsed: "",
+    abrasionType: "",
+    impactType: "",
+    dtsDate: "",
+    zipCode: ""
   })
   const [calculation, setCalculation] = useState({
     weight: "",
-    size: ""
+    size: "",
+    platePrice: "",
+    perimeterWelding: "",
+    stitchWelding: "",
+    fastening: "",
+    brakeBends: "",
+    rolledBends: "",
+    sunkBoltsHoles: "",
+    totalPrice: "",
+    plateType: "",
+    deliveryDate: "",
+    plateTypeUsed: "",
+    abrasionType: "",
+    impactType: "",
   })
+
+  let options = [];
+  for (let i = 0; i <= 50; i++) {
+    options.push({ label: i.toString(), value: i })
+  }
+
+  let weakOptions = [];
+  for (let i = 1; i <= 25; i++) {
+    weakOptions.push({ label: `${i} ${i === 1 ? "Week" : "Weeks"}`, value: i.toString() })
+  }
+  weakOptions.push({ label: `upto 25 Weeks`, value: "25+" })
+
+  //handle dropdowns function
+  const handleDropdowns = (name, value) => {
+    setDropdowns({
+      ...dropdowns,
+      [name]: value
+    })
+  }
 
   //handle inputs function
   const handleChange = (name, value) => {
@@ -76,24 +123,36 @@ function App() {
       image: null,
     })
     setCanvasImage(null)
-    setCroppedImage(null)
-    setCalculation({
-      weight: "",
-      size: ""
-    })
   }
 
   //calculation for cutout
   const handleCalculate = () => {
     calculateChildArea(form, cropImg.width, cropImg.height, childPoints, setCalculation, insideCutImg.width, insideCutImg.height)
-    // calculateSelectedArea(form, cropImg.width, cropImg.height, points, setCalculation)
+    setNext(8)
   }
 
+  const calculateFabrication = () => {
+    setCalculation(prev => ({
+      ...prev,
+      perimeterWelding: dropdowns.perimeterWelding ? Number(calculation.weight) * 0.20 : 0,
+      stitchWelding: dropdowns.stitchWelding ? Number(calculation.weight) * 0.30 : 0,
+      fastening: Number(dropdowns.fastening) * 1.50,
+      brakeBends: Number(dropdowns.brakeBends) * 0.60,
+      rolledBends: Number(dropdowns.rolledBends) * 0.60,
+      sunkBoltsHoles: Number(dropdowns.sunkBoltsHoles) * 0.35,
+      totalPrice: Number(calculation.platePrice) + (dropdowns.perimeterWelding ? Number(calculation.weight) * 0.20 : 0) + (dropdowns.stitchWelding ? Number(calculation.weight) * 0.30 : 0) + (Number(dropdowns.fastening) * 1.50) + (Number(dropdowns.brakeBends) * 0.60) + (Number(dropdowns.rolledBends) * 0.60) + (Number(dropdowns.sunkBoltsHoles) * 0.35)
 
+    }))
+    setNext(10)
+  }
+
+  //image ref to get image actual dimention
   const imgRef = useRef(null);
+
+  //scale the image
   const { centerShift_x, centerShift_y, w, h } = getDimention(form.imageWidth, form.imageHeight, imgRef?.current?.width, imgRef?.current?.height)
 
-  //Api fetching
+  //Crop proper shape
   const handleCrop = async () => {
     const tempCrop = {
       x: crop.x - centerShift_x,
@@ -122,14 +181,14 @@ function App() {
         })
         setCropLoading(false)
         setCroppedImage('/output_image.png')
-        setNext(1)
+        setNext(5)
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
+      alert("Something went wrong!")
     }
   }
 
-  //Api fetching
+  //Crop bigger object
   const handleCutout = async () => {
     setCutoutLoading(true)
     const formData = new FormData();
@@ -163,13 +222,14 @@ function App() {
           x: minX,
           y: minY
         })
-        setNext(2)
+        setNext(6)
       }
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   }
 
+  //Crop smaller object
   const handleInsideCutout = async () => {
     setInsideCutoutLoading(true)
     const formData = new FormData();
@@ -203,72 +263,387 @@ function App() {
           x: minX,
           y: minY
         })
-        setNext(3)
+        setNext(7)
       }
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   }
 
+  //reset shape
+  const resetShape = () => {
+    setShapeDrawn(false);
+    setCrop({ x: 0, y: 0, width: 0, height: 0 });
+  };
+
+  //reset bigger object
+  const handleReset = () => {
+    setPoints([])
+  }
+
+  //revert bigger object
+  const handleRevert = () => {
+    points.pop()
+    setPoints(points)
+  }
+
+  //reset smaller object
+  const handleResetChild = () => {
+    setChildPoints([])
+  }
+
+  //revert smaller object
+  const handleRevertChild = () => {
+    childPoints.pop()
+    setChildPoints(childPoints)
+  }
+
+  //reverting with ctrl + z
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && (event.key === 'z' || event.key === 'Z')) {
+        handleRevert()
+        handleRevertChild()
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [points]);
+
   return (
     <section className='container'>
-      <div className="elementor-container">
-        <Elementor
-          setFocus={setFocus}
-          form={form}
-          handleChange={handleChange}
-          handleCalculate={handleCalculate}
-          next={next}
-          setNext={setNext}
-          handleCrop={handleCrop}
-          handleCutout={handleCutout}
-          handleInsideCutout={handleInsideCutout}
-          disableCrop={!areAllFieldsValid(form) || !crop.width > 0 || !crop.height > 0}
-          disabledCutout={points.length < 2 || (points[0]?.x !== points[points.length - 1]?.x || points[0]?.y !== points[points.length - 1]?.y)}
-        />
-      </div>
       <div className="canvas-container">
-        {next >= 2 ?
-          <Canvas
-            gridWidth={cropImg}
-            cropImg={cutImg}
-            loading={cutoutoading}
-            next={next}
-            form={form}
-            img={childCroppedImage}
-            points={childPoints}
-            setPoints={setChildPoints}
-          />
-          : next === 1 ?
-            <Canvas
-              gridWidth={cropImg}
-              cropImg={cropImg}
-              loading={cropLoading}
-              next={next}
+        {/* top buttons */}
+        <div className='button-container left'>
+          {canvasImage && next === 0 ?
+            <button onClick={handleRemoveImage}>Change Image</button> :
+            next === 2 ?
+              <button onClick={resetShape}>Reset</button>
+              : next === 5 ?
+                <div className="button-container">
+                  <button onClick={handleRevert}>Revert</button>
+                  <button onClick={handleReset}>Reset</button>
+                </div>
+                : next === 6 ?
+                  <div className="button-container">
+                    <button onClick={handleRevertChild}>Revert</button>
+                    <button onClick={handleResetChild}>Reset</button>
+                  </div>
+                  : null}
+        </div>
+        {/* canvas card */}
+        <div className='card'>
+          {next === 0 ?
+            <ImageRenderer
               form={form}
-              img={croppedImage}
-              points={points}
-              setPoints={setPoints}
-            />
-            :
-            <ImageCropper
-              focus={focus}
-              form={form}
-              crop={crop}
-              setCrop={setCrop}
-              handleRemoveImage={handleRemoveImage}
               image={canvasImage}
               handleChange={handleChange}
               setCanvasImage={setCanvasImage}
               setImagetoShow={setImagetoShow}
             />
-        }
-        {insideCutoutoading ?
-          <>loading</> : next >= 3 && insideChildCroppedImage && <Grid imageWidth={cutImg.width} imageHeight={cutImg.height} width={form.width} height={form.length}>
-            <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${insideCutImg.width}px`, height: `${insideCutImg.height}px`, zIndex: -9 }} src={insideChildCroppedImage} />
-          </Grid>}
-        {calculation.size !== "" && calculation.size !== 0 && <p className='calculation'>Total Size : {Number(calculation.size).toFixed(2)} {form.unit === "cm" ? "Cm" : "In"}&#xb2;</p>}
-        {calculation.weight !== "" && calculation.weight !== 0 && <p className='calculation'>Total Weight : {Number(calculation.weight).toFixed(2)} Kg</p>}
+            : next === 1 ?
+              <div>
+                <SelectInput
+                  name="unit"
+                  value={form.unit}
+                  label="Select Your Measuring Scale"
+                  options={[{ label: "Inches (inch)", value: "inch" }]}
+                  placeholder="Select Unit"
+                  handleChange={handleChange}
+                />
+              </div>
+              : next === 2 ?
+                <ImageCropper
+                  form={form}
+                  crop={crop}
+                  setCrop={setCrop}
+                  handleRemoveImage={handleRemoveImage}
+                  image={canvasImage}
+                  handleChange={handleChange}
+                  setCanvasImage={setCanvasImage}
+                  setImagetoShow={setImagetoShow}
+                  setShapeDrawn={setShapeDrawn}
+                  shapeDrawn={shapeDrawn}
+                />
+                : next === 3 ?
+                  <div>
+                    <ImageCropper
+                      focus={"length"}
+                      form={form}
+                      crop={crop}
+                      setCrop={setCrop}
+                      handleRemoveImage={handleRemoveImage}
+                      image={canvasImage}
+                      handleChange={handleChange}
+                      setCanvasImage={setCanvasImage}
+                      setImagetoShow={setImagetoShow}
+                    />
+                    <TextInput
+                      name="length"
+                      value={form.length}
+                      label="Height"
+                      type="number"
+                      placeholder="Enter the length of your object"
+                      handleChange={handleChange}
+                    />
+                  </div>
+                  : next === 4 ?
+                    <div>
+                      <ImageCropper
+                        focus={"height"}
+                        form={form}
+                        crop={crop}
+                        setCrop={setCrop}
+                        handleRemoveImage={handleRemoveImage}
+                        image={canvasImage}
+                        handleChange={handleChange}
+                        setCanvasImage={setCanvasImage}
+                        setImagetoShow={setImagetoShow}
+                      />
+                      <TextInput
+                        name="width"
+                        value={form.width}
+                        label="Length"
+                        type="number"
+                        placeholder="Enter the width of your object"
+                        handleChange={handleChange}
+                      />
+                    </div>
+                    : next === 5 ?
+                      <Canvas
+                        gridWidth={cropImg}
+                        cropImg={cropImg}
+                        loading={cropLoading}
+                        form={form}
+                        img={croppedImage}
+                        points={points}
+                        setPoints={setPoints}
+                      />
+                      : next === 6 ?
+                        <Canvas
+                          gridWidth={cropImg}
+                          cropImg={cutImg}
+                          loading={cutoutoading}
+                          form={form}
+                          img={childCroppedImage}
+                          points={childPoints}
+                          setPoints={setChildPoints}
+                        />
+                        : next === 7 ?
+                          <div>
+                            {insideCutoutoading ?
+                              <>loading</> : insideChildCroppedImage && <Grid imageWidth={cutImg.width} imageHeight={cutImg.height} width={form.width} height={form.length}>
+                                <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${insideCutImg.width}px`, height: `${insideCutImg.height}px`, zIndex: -9 }} src={insideChildCroppedImage} />
+                              </Grid>}</div>
+                          : next === 8 ?
+                            <div>
+                              <SelectInput
+                                name="fabricator"
+                                value={form.fabricator}
+                                label="Do you want fabrication services"
+                                options={[{ label: "No", value: false }, { label: "Yes", value: true }]}
+                                placeholder="Select"
+                                handleChange={handleChange}
+                              />
+                            </div>
+                            : next === 9 ?
+                              <div className='image-dropdown'>
+                                {<Grid imageWidth={cutImg.width} imageHeight={cutImg.height} width={form.width} height={form.length}>
+                                  <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${insideCutImg.width}px`, height: `${insideCutImg.height}px`, zIndex: -9 }} src={insideChildCroppedImage} />
+                                </Grid>}
+                                <div className='dropdown'>
+                                  <div>
+                                    <SelectInput
+                                      name="plateType"
+                                      value={dropdowns.plateType}
+                                      label="Wear Plate Type for Estimate"
+                                      options={[{ label: "AR plate", value: "AR" }, { label: "CCO plate", value: "CCO" }]}
+                                      placeholder="Select Wear Plate Type for Estimate"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="deliveryDate"
+                                      value={dropdowns.deliveryDate}
+                                      label="Estimated Delivery Date"
+                                      options={weakOptions}
+                                      placeholder="Select Estimated Delivery Date"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="plateTypeUsed"
+                                      value={dropdowns.plateTypeUsed}
+                                      label="Type of wear Plate Used Currently"
+                                      options={[{ label: "QT plate", value: "QT" }, { label: "AR plate", value: "AR" }, { label: "Weld Overlay", value: "weld" }, { label: "Others", value: "others" }]}
+                                      placeholder="Select Type of wear Plate Used Currently"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="perimeterWelding"
+                                      value={dropdowns.perimeterWelding}
+                                      label="Perimeter Welding"
+                                      options={[{ label: "No", value: false }, { label: "Yes", value: true }]}
+                                      placeholder="Select Perimeter Welding"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="stitchWelding"
+                                      value={dropdowns.stitchWelding}
+                                      label="Stitch Welding"
+                                      options={[{ label: "No", value: false }, { label: "Yes", value: true }]}
+                                      placeholder="Select Stitch Welding"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="fastening"
+                                      value={dropdowns.fastening}
+                                      label="Fastening using Studs"
+                                      options={options}
+                                      placeholder="Select Fastening"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="brakeBends"
+                                      value={dropdowns.brakeBends}
+                                      label="How many Press Brake Bends to bend the radius"
+                                      options={options}
+                                      placeholder="Select Brake Bends"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="rolledBends"
+                                      value={dropdowns.rolledBends}
+                                      label="How many Rolled Bends"
+                                      options={options}
+                                      placeholder="Select Rolled Bends"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="sunkBoltsHoles"
+                                      value={dropdowns.sunkBoltsHoles}
+                                      label="How Many Counter Sunk Bolts Holes"
+                                      options={options}
+                                      placeholder="Select Sunk Bolts Holes"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="abrasionType"
+                                      value={dropdowns.abrasionType}
+                                      label="Abrasion Type"
+                                      options={[{ label: "Low", value: "low" }, { label: "Heavy", value: "heavy" }, { label: "Medium", value: "medium" }]}
+                                      placeholder="Select Abrasion Type"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="impactType"
+                                      value={dropdowns.impactType}
+                                      label="Impact Type"
+                                      options={[{ label: "Low", value: "low" }, { label: "Heavy", value: "heavy" }, { label: "Medium", value: "medium" }]}
+                                      placeholder="Select Impact Type"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <TextInput
+                                      name="dtsDate"
+                                      value={dropdowns.dtsDate}
+                                      label="Delivery to Site Date"
+                                      type="text"
+                                      placeholder="Enter Delivery to Site Date"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <TextInput
+                                      name="zipCode"
+                                      value={dropdowns.zipCode}
+                                      label="Zip Code"
+                                      type="number"
+                                      placeholder="Enter Zip Code"
+                                      handleChange={handleDropdowns}
+                                    />
+                                  </div>
+                                  <div>
+                                    <SelectInput
+                                      name="fabricator"
+                                      value={form.fabricator}
+                                      label="Calculate Estimate with Fabrication Services"
+                                      options={[{ label: "No", value: false }, { label: "Yes", value: true }]}
+                                      placeholder="Select"
+                                      handleChange={handleChange}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              :
+                              <div className='image-dropdown'>
+                                {<Grid imageWidth={cutImg.width} imageHeight={cutImg.height} width={form.width} height={form.length}>
+                                  <img style={{ position: "absolute", left: `${position.x}px`, top: `${position.y}px`, width: `${insideCutImg.width}px`, height: `${insideCutImg.height}px`, zIndex: -9 }} src={insideChildCroppedImage} />
+                                </Grid>}
+                                {!form.fabricator || form.fabricator === "false" ?
+                                  <NormalTable calculation={calculation} form={form} />
+                                  :
+                                  <FabricationTable calculation={calculation} form={form} dropdowns={dropdowns} />}
+                              </div>
+          }
+        </div>
+        {console.log(form)}
+        {/* bottom buttons */}
+        <div className='button-container right'>
+          {(next <= 8 || (form.fabricator && next === 9)) && canvasImage &&
+            <button
+              onClick={() => {
+                if (next === 0) {
+                  setNext(1)
+                } else if (next === 1) {
+                  setNext(2)
+                } else if (next === 2) {
+                  setNext(3)
+                } else if (next === 3) {
+                  setNext(4)
+                } else if (next === 4) {
+                  handleCrop()
+                } else if (next === 5) {
+                  handleCutout()
+                } else if (next === 6) {
+                  handleInsideCutout()
+                } else if (next === 7) {
+                  handleCalculate()
+                } else if (next === 8) {
+                  if (form.fabricator) {
+                    setNext(9)
+                  } else { setNext(10) }
+                } else if (next === 9) {
+                  if (form?.fabricator === "false") {
+                    setNext(10)
+                  } else {
+                    calculateFabrication()
+                  }
+                }
+              }}>{next >= 4 && next <= 6 ? "Crop" : "Next"}</button>}
+        </div>
+        {/* image for getting it's actual width and height */}
         {imagetoShow && <img ref={imgRef} style={{ display: "none" }} src={imagetoShow} alt="img" />}
       </div>
     </section>
