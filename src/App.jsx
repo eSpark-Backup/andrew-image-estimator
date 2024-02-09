@@ -608,7 +608,6 @@ function App() {
                               </div>
           }
         </div>
-        {console.log(form)}
         {/* bottom buttons */}
         <div className='button-container right'>
           {(next <= 8 || (form.fabricator && next === 9)) && canvasImage &&

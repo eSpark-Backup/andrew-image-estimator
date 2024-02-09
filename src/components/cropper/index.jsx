@@ -10,17 +10,21 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
   const isDrawingRef = useRef(false);
 
   useEffect(() => {
-    if (focus === "height") {
-      setXColor("#ff0000")
-    } else {
-      setXColor("#ffffff")
-    }
-    if (focus === "length") {
-      setYColor("#ff0000")
-    } else {
-      setYColor("#ffffff")
-    }
-  }, [focus, xColor, yColor])
+    const timeout = setTimeout(() => {
+      if (focus === "height") {
+        setXColor(xColor === "#ff0000" ? "#ffffff" : "#ff0000");
+        setYColor("#ffffff");
+      } else if (focus === "length") {
+        setYColor(yColor === "#ff0000" ? "#ffffff" : "#ff0000");
+        setXColor("#ffffff");
+      } else {
+        setXColor("#ffffff");
+        setYColor("#ffffff");
+      }
+    }, 300); // Delay of 1000 milliseconds (1 second)
+  
+    return () => clearTimeout(timeout);
+  }, [focus, xColor, yColor]);
 
   useEffect(() => {
     if (image) {
