@@ -38,7 +38,7 @@ export const calculateSelectedArea = (form, width, height, points, setCalculatio
 }
 
 //algorithm of calculating the selected size of metal and and it's weight according to parent's given dimention
-export const calculateChildArea = (form, width, height, points, setCalculation, childWidth, childHeight) => {
+export const calculateChildArea = (form, width, height, points, childWidth, childHeight) => {
     const childDimention = getChildDimention(form, width, height, childWidth, childHeight)
     let scale_factor_x = childDimention.width / childWidth;
     let scale_factor_y = childDimention.length / childHeight;
@@ -72,11 +72,11 @@ export const calculateChildArea = (form, width, height, points, setCalculation, 
     const platePrice = weightInPounds * 0.5
 
     if (!isNaN(weightInPounds) && !isNaN(baseArea)) {
-        setCalculation({
+        return {
             weight: weightInPounds,
             size: baseArea,
             platePrice
-        });
+        }
     }
 
 }

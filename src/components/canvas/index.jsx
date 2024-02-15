@@ -1,9 +1,19 @@
 import { useRef, useEffect } from 'react';
 import { handleBoxSize } from '../../algorithm';
 
-const Canvas = ({ form, img, points, setPoints, loading, cropImg, gridWidth }) => {
+const Canvas = ({ form, img, points, setPoints, loading, cropImg, gridWidth, polygonArr, setPolygonArr }) => {
     const canvasRef = useRef(null);
 
+    useEffect(() => {
+        if (polygonArr) {
+            let arr = []
+            arr.push({ new: true, points })
+            if (points.length > 2 && points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y) {
+                polygonArr.length > 0 ? setPolygonArr([...polygonArr, ...arr]) : setPolygonArr([...arr])
+                arr = []
+            }
+        }
+    }, [points])
 
     useEffect(() => {
         if (!img) {
@@ -19,7 +29,38 @@ const Canvas = ({ form, img, points, setPoints, loading, cropImg, gridWidth }) =
             drawGraph()
         }
 
+        const drawPolygons = () => polygonArr && polygonArr.length > 0 ? polygonArr?.forEach(({ new: newArr, points }) => { if (!newArr) redrawCanvasLoop(points) }) : null
+
+        const redrawCanvasLoop = (points) => {
+            if (points.length > 1) {
+                context.beginPath();
+                context.moveTo(points[0].x, points[0].y);
+
+                for (let i = 1; i < points.length; i++) {
+                    context.lineTo(points[i].x, points[i].y);
+                }
+
+                if (points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y) {
+                    context.strokeStyle = "#157c4b";
+                    context.lineWidth = 5;
+                    context.stroke();
+                } else {
+                    context.strokeStyle = "#FFF";
+                    context.lineWidth = 3;
+                    context.stroke();
+                }
+            }
+
+            context.fillStyle = "#FFF";
+            for (let i = 0; i < points.length; i++) {
+                context.beginPath();
+                context.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
+                context.fill();
+            }
+        };
+
         function drawGraph() {
+            drawPolygons()
             const { boxWidth, boxHeight } = handleBoxSize(gridWidth.width, gridWidth.height, form.width, form.length)
             context.globalAlpha = 1
             // Draw horizontal lines
@@ -106,11 +147,6 @@ const Canvas = ({ form, img, points, setPoints, loading, cropImg, gridWidth }) =
             canvas.removeEventListener('mousedown', handleMouseDown);
         };
     }, [points, img]);
-
-
-
-
-
 
     return (
         <>
