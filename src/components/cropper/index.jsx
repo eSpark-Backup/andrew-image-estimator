@@ -1,56 +1,48 @@
 import { useState, useRef, useEffect } from 'react';
 import { getDimention } from '../../algorithm';
 
-export const ImageCropper = ({ focus, form, crop, setCrop, image, handleChange, setCanvasImage, handleRemoveImage, setImagetoShow }) => {
+export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, setCrop, image }) => {
   const [xColor, setXColor] = useState("#ffffff")
   const [yColor, setYColor] = useState("#ffffff")
-  const [rotation] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [shapeDrawn, setShapeDrawn] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
 
   useEffect(() => {
-    if (focus === "height") {
-      // if (xColor === "#ff0000") {
-      //   setXColor("#ffffff")
-      // } else {
-      //   setXColor("#ff0000")
-      // }
-      setXColor("#ff0000")
-    } else {
-      setXColor("#ffffff")
-    }
-    if (focus === "length") {
-      // if (yColor === "#ff0000") {
-      //   setYColor("#ffffff")
-      // } else {
-      //   setYColor("#ff0000")
-      // }
-      setYColor("#ff0000")
-    } else {
-      setYColor("#ffffff")
-    }
-  }, [focus, xColor, yColor])
+    const timeout = setTimeout(() => {
+      if (focus === "height") {
+        setXColor(xColor === "#ff0000" ? "#ffffff" : "#ff0000");
+        setYColor("#ffffff");
+      } else if (focus === "length") {
+        setYColor(yColor === "#ff0000" ? "#ffffff" : "#ff0000");
+        setXColor("#ffffff");
+      } else {
+        setXColor("#ffffff");
+        setYColor("#ffffff");
+      }
+    }, 300); // Delay of 1000 milliseconds (1 second)
+  
+    return () => clearTimeout(timeout);
+  }, [focus, xColor, yColor]);
 
   useEffect(() => {
     if (image) {
       const context = canvasRef.current.getContext('2d');
       var canvas = context.canvas;
-      const { centerShift_x, centerShift_y, w, h} = getDimention(canvas.width, canvas.height, image.width, image.height)
+      const { centerShift_x, centerShift_y, w, h } = getDimention(canvas.width, canvas.height, image.width, image.height)
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(image, 0, 0, image.width, image.height,
         centerShift_x, centerShift_y, w, h);
-      // context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      // context.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
-      // context.clearRect(0, 0, image.width, image.height);
-      // context.drawImage(image, 0, 0, image.width, image.height);
-      if (isDrawing || shapeDrawn) {
+      if (focus) {
         drawCropRectangle(context);
+      } else {
+        if (isDrawing || shapeDrawn) {
+          drawCropRectangle(context);
+        }
       }
     }
-  }, [image, crop, isDrawing, shapeDrawn, rotation, xColor, yColor]);
+  }, [image, crop, isDrawing, shapeDrawn, xColor, yColor]);
 
   const handleResizeMove = (e) => {
     if (!isDrawingRef.current || !crop.handleType) return;
@@ -146,6 +138,7 @@ export const ImageCropper = ({ focus, form, crop, setCrop, image, handleChange, 
       }
     }
   };
+
   const drawCropRectangle = (context) => {
     const originalStrokeStyle = context.strokeStyle;
 
@@ -274,11 +267,6 @@ export const ImageCropper = ({ focus, form, crop, setCrop, image, handleChange, 
     return handles.find((handle) => x >= handle.x - 4 && x <= handle.x + 4 && y >= handle.y - 4 && y <= handle.y + 4);
   };
 
-  const resetShape = () => {
-    setShapeDrawn(false);
-    setCrop({ x: 0, y: 0, width: 0, height: 0 });
-  };
-
   const isPointInCropArea = (x, y) => {
     return (
       x >= crop.x &&
@@ -288,58 +276,17 @@ export const ImageCropper = ({ focus, form, crop, setCrop, image, handleChange, 
     );
   };
 
-  const handleAddImage = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleChange("image", file);
-      const imageUrl = URL.createObjectURL(file);
-      const img = new Image();
-      img.src = imageUrl;
-
-      img.onload = () => {
-        setCanvasImage(img);
-      };
-      setImagetoShow(imageUrl)
-    }
-  }
-
-  const removeImage = () => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    handleRemoveImage()
-    setCrop({ x: 0, y: 0, width: 0, height: 0 })
-  }
-
   return (
     <>
-      <div className="button-container">
-        <button onClick={resetShape}>Reset</button>
-        <button disabled={!image} onClick={removeImage}>Remove Image</button>
-      </div>
-      <div className='card'>
-        {image ? (
-          <canvas
-            ref={canvasRef}
-            width={form.imageWidth}
-            height={form.imageHeight}
-            style={{ cursor: shapeDrawn ? 'move' : 'crosshair' }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-          />
-        ) :
-          <label htmlFor="imageInput" className="button">
-            Add Image
-            <input
-              id="imageInput"
-              type="file"
-              accept="image/*"
-              onChange={handleAddImage}
-              className="hidden-input"
-            />
-          </label>}
-      </div>
+      <canvas
+        ref={canvasRef}
+        width={form.imageWidth}
+        height={form.imageHeight}
+        style={{ cursor: focus ? "pointer" : shapeDrawn ? 'move' : 'crosshair' }}
+        onMouseDown={!focus && handleMouseDown}
+        onMouseMove={!focus && handleMouseMove}
+        onMouseUp={!focus && handleMouseUp}
+      />
     </>
   );
 };

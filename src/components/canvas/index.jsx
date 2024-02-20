@@ -1,9 +1,19 @@
 import { useRef, useEffect } from 'react';
 import { handleBoxSize } from '../../algorithm';
 
-const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
+const Canvas = ({ form, img, points, setPoints, loading, cropImg, gridWidth, polygonArr, setPolygonArr }) => {
     const canvasRef = useRef(null);
 
+    useEffect(() => {
+        if (polygonArr) {
+            let arr = []
+            arr.push({ new: true, points })
+            if (points.length > 2 && points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y) {
+                polygonArr.length > 0 ? setPolygonArr([...polygonArr, ...arr]) : setPolygonArr([...arr])
+                arr = []
+            }
+        }
+    }, [points])
 
     useEffect(() => {
         if (!img) {
@@ -19,8 +29,39 @@ const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
             drawGraph()
         }
 
+        const drawPolygons = () => polygonArr && polygonArr.length > 0 ? polygonArr?.forEach(({ new: newArr, points }) => { if (!newArr) redrawCanvasLoop(points) }) : null
+
+        const redrawCanvasLoop = (points) => {
+            if (points.length > 1) {
+                context.beginPath();
+                context.moveTo(points[0].x, points[0].y);
+
+                for (let i = 1; i < points.length; i++) {
+                    context.lineTo(points[i].x, points[i].y);
+                }
+
+                if (points[0]?.x === points[points.length - 1]?.x && points[0]?.y === points[points.length - 1]?.y) {
+                    context.strokeStyle = "#157c4b";
+                    context.lineWidth = 5;
+                    context.stroke();
+                } else {
+                    context.strokeStyle = "#FFF";
+                    context.lineWidth = 3;
+                    context.stroke();
+                }
+            }
+
+            context.fillStyle = "#FFF";
+            for (let i = 0; i < points.length; i++) {
+                context.beginPath();
+                context.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
+                context.fill();
+            }
+        };
+
         function drawGraph() {
-            const { boxWidth, boxHeight } = handleBoxSize(canvas.width, canvas.height, form.width, form.length)
+            drawPolygons()
+            const { boxWidth, boxHeight } = handleBoxSize(gridWidth.width, gridWidth.height, form.width, form.length)
             context.globalAlpha = 1
             // Draw horizontal lines
             for (let y = 0; y <= canvas.height; y += boxHeight) {
@@ -32,7 +73,7 @@ const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
                 context.lineTo(canvas.width, y);
                 context.stroke();
             }
-            
+
             // Draw vertical lines
             for (let x = 0; x <= canvas.width; x += boxWidth) {
                 context.globalAlpha = 0.3
@@ -107,49 +148,16 @@ const Canvas = ({ next, form, img, points, setPoints, loading, cropImg }) => {
         };
     }, [points, img]);
 
-    const handleReset = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        setPoints([])
-    }
-
-    const handleRevert = () => {
-        points.pop()
-        setPoints(points)
-    }
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.ctrlKey && (event.key === 'z' || event.key === 'Z')) {
-                handleRevert()
-            }
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [points]);
-
-
-
-
     return (
         <>
-            {next < 3 && <div className="button-container">
-                <button onClick={handleRevert}>Revert</button>
-                <button onClick={handleReset}>Reset</button>
-            </div>}
-            <div className='card'>
-                {loading ?
-                    <>loading</> :
-                    <canvas
-                        ref={canvasRef}
-                        width={cropImg.width}
-                        height={cropImg.height}
-                        style={{ cursor: 'crosshair' }}
-                    ></canvas>}
-            </div>
+            {loading ?
+                <>loading</> :
+                <canvas
+                    ref={canvasRef}
+                    width={cropImg.width}
+                    height={cropImg.height}
+                    style={{ cursor: 'crosshair' }}
+                ></canvas>}
         </>
     );
 };
