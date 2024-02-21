@@ -245,7 +245,7 @@ function App() {
     formData.append('contour_data', jsonString);
     formData.append('image_height', Math.abs(h));
     formData.append('image_width', Math.abs(w));
-    formData.append('path', 'crop.png');
+    formData.append('file_name', 'crop.png');
     // formData.append('file_name', 'crop.png');
 
     try {
@@ -257,8 +257,8 @@ function App() {
       });
       if (response) {
         setCropImg({
-          width: response?.data?.image_width,
-          height: response?.data?.image_height
+          width: response?.data?.image_width / 2,
+          height: response?.data?.image_height / 2
         })
         setCropLoading(false)
         setCroppedImage('/crop.png')
@@ -283,7 +283,7 @@ function App() {
     formData.append('contour_data', jsonString);
     formData.append('image_height', cropImg.height);
     formData.append('image_width', cropImg.width);
-    formData.append('path', 'cutout.png');
+    formData.append('file_name', 'cutout.png');
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/img_upload/', formData, {
@@ -294,8 +294,8 @@ function App() {
       if (response) {
         setCutoutLoading(false)
         setCutImg({
-          width: response?.data?.image_width,
-          height: response?.data?.image_height
+          width: response?.data?.image_width / 2,
+          height: response?.data?.image_height / 2
         })
         setChildCroppedImage('/cutout.png')
         setNext(6)
@@ -318,7 +318,7 @@ function App() {
     formData.append('contour_data', jsonString);
     formData.append('image_height', cutImg.height);
     formData.append('image_width', cutImg.width);
-    formData.append('path', `cutout${polygonsInd}.png`);
+    formData.append('file_name', `cutout${polygonsInd}.png`);
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/img_upload/', formData, {
@@ -330,8 +330,8 @@ function App() {
         setChildPoints([])
         setInsideCutoutLoading(false)
         setInsideCutImg({
-          width: response?.data?.image_width,
-          height: response?.data?.image_height
+          width: response?.data?.image_width / 2,
+          height: response?.data?.image_height / 2
         })
         setInsideChildCroppedImage(`/cutout${polygonsInd}.png`)
         const minX = Math.min(...childPoints.map(point => point.x));
@@ -347,8 +347,8 @@ function App() {
           polygonsInd,
           image: `/cutout${polygonsInd}.png`,
           dimention: {
-            width: response?.data?.image_width,
-            height: response?.data?.image_height
+            width: response?.data?.image_width / 2,
+            height: response?.data?.image_height / 2
           },
           position: {
             x: minX,
