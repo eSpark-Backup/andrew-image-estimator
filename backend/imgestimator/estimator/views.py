@@ -15,6 +15,7 @@ class ExtractCutout(APIView):
         contour_data = request.data.get('contour_data')
         image_height = float(request.data.get('image_height'))
         image_width = float(request.data.get('image_width'))
+        chunk_size = (200,200)
 
         # Convert contour data from JSON string to a list of dictionaries
         contour_coordinates = json.loads(contour_data)
@@ -27,10 +28,32 @@ class ExtractCutout(APIView):
         path = 'EDSR_x2.pb'
         sr.readModel(path)
         sr.setModel('edsr', 2)
-        image = sr.upsample(image)
+
+        # if you have cuda support
+        sr.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+        sr.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
+        new_size = (image.shape[1] * 2, image.shape[0] * 2)
+
+        output_image = np.zeros((new_size[1], new_size[0], image.shape[2]), dtype=np.uint8)
+
+        # Loop over the image chunks
+        for y in range(0, image.shape[0], chunk_size[1]):
+            for x in range(0, image.shape[1], chunk_size[0]):
+                # Extract the chunk from the input image
+                chunk = image[y:y+chunk_size[1], x:x+chunk_size[0], :]
+
+                # Upsample the chunk
+                upsampled_chunk = sr.upsample(chunk)
+
+                # Insert the upscaled chunk into the output image
+                output_image[y*2:(y+chunk_size[1])*2, x*2:(x+chunk_size[0])*2, :] = upsampled_chunk
+
+
+
 
         # Create an empty binary mask
-        mask = np.zeros_like(image[:, :, 0])
+        mask = np.zeros_like(output_image[:, :, 0])
 
         # Extract and adjust contour coordinates based on image height and width
         contour_coordinates = [(2*int(coord["x1"]), 2*int(coord["y1"]))
@@ -44,7 +67,7 @@ class ExtractCutout(APIView):
         cv2.drawContours(mask, [contour_coordinates], 0, 255, thickness=cv2.FILLED)
 
         # Bitwise AND operation to extract the specific part of the image
-        result = cv2.bitwise_and(image, image, mask=mask)
+        result = cv2.bitwise_and(output_image, output_image, mask=mask)
         cropped_image = result[y:y+h, x:x+w]
 
         cv2.imwrite('extracted_part1.png', cropped_image)

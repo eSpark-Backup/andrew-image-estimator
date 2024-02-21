@@ -69,3 +69,13 @@ python manage.py runserver
 ### Usage
 
 > The backend provides API endpoint for image processing. 
+
+### Note
+
+>First, you need to build the OpenCV module with CUDA support and then link it with the virtual environment configured for this project. Follow these steps to build OpenCV with CUDA support.
+```
+https://medium.com/@juancrrn/installing-opencv-4-with-cuda-in-ubuntu-20-04-fde6d6a0a367
+
+```
+
+> If you have built OpenCV with CUDA, it is recommended to manually install all the required modules and libraries instead of using the requirements.txt file. This is because there might be version errors for some libraries. To avoid any issues, it is better to install all the libraries and modules manually according to the Python version for which you have built OpenCV with GPU access.
