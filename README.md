@@ -1,8 +1,43 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Image Estimator
 
-Currently, two official plugins are available:
+This is a React application that estimate the area and weight of an object from image uploaded
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Node Version
+
+This project was developed using Node.js version 20.10.0.
+
+## GitHub Branch
+
+The current branch for this project is `frontend`.
+
+
+## Getting Started
+
+To get started with this project, follow these steps:
+
+1. Clone the repository or download zip file
+
+    ```bash
+    git clone https://github.com/eSpark-Consultants/andrew-imageestimator.git
+    ```
+
+2. Navigate into the project directory:
+
+    ```bash
+    cd andrew-imageestimator
+    ```
+
+3. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+4. Start the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+> The frontend should now be accessible at http://localhost:5173/
