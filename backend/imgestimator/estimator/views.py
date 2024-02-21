@@ -16,6 +16,7 @@ class ExtractCutout(APIView):
         image_height = float(request.data.get('image_height'))
         image_width = float(request.data.get('image_width'))
         chunk_size = (200,200)
+	file_name = request.data.get('file_name')
 
         # Convert contour data from JSON string to a list of dictionaries
         contour_coordinates = json.loads(contour_data)
@@ -77,11 +78,11 @@ class ExtractCutout(APIView):
         target_color = (0, 0, 0)
         new_data = [(r, g, b, 0) if (r, g, b) == target_color else (r, g, b, a) for (r, g, b, a) in data]
         image.putdata(new_data)
-        image.save("output_image.png")
+        image.save("C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name)
         image_width, image_height = image.size
         
       
-        data= {"image_path": os.path.abspath("output_image.png"),
+        data= {"image_path": "C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name,
                "image_width": image_width,
                "image_height": image_height}
 
