@@ -13,8 +13,8 @@ class ExtractCutout(APIView):
         # Get image file and contour data from the POST request
         image_file = request.FILES.get('image')
         contour_data = request.data.get('contour_data')
-        image_height = int(request.data.get('image_height'))
-        image_width = int(request.data.get('image_width'))
+        image_height = float(request.data.get('image_height'))
+        image_width = float(request.data.get('image_width'))
 
         # Convert contour data from JSON string to a list of dictionaries
         contour_coordinates = json.loads(contour_data)
@@ -22,7 +22,7 @@ class ExtractCutout(APIView):
         # Read the image from the uploaded file
         image_content = image_file.read()
         image = cv2.imdecode(np.frombuffer(image_content, np.uint8), cv2.IMREAD_COLOR)
-        image = cv2.resize(image, (image_width,image_height), Image.LANCZOS)
+        image = cv2.resize(image, (round(image_width),round(image_height)), Image.LANCZOS)
         sr = dnn_superres.DnnSuperResImpl_create()
         path = 'EDSR_x2.pb'
         sr.readModel(path)
@@ -46,11 +46,7 @@ class ExtractCutout(APIView):
         # Bitwise AND operation to extract the specific part of the image
         result = cv2.bitwise_and(image, image, mask=mask)
         cropped_image = result[y:y+h, x:x+w]
-        # sr = dnn_superres.DnnSuperResImpl_create()
-        # path = 'EDSR_x2.pb'
-        # sr.readModel(path)
-        # sr.setModel('edsr', 2)
-        # upscaled = sr.upsample(cropped_image)
+
         cv2.imwrite('extracted_part1.png', cropped_image)
         input = Image.open("extracted_part1.png")
         image = input.convert("RGBA")

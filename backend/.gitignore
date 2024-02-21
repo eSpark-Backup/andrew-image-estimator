@@ -21,6 +21,7 @@ env/
 .Python
 pip-selfcheck.json
 Myenv/
+myEnv/
 
 # Development
 *.sqlite3
