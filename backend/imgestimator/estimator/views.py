@@ -16,7 +16,7 @@ class ExtractCutout(APIView):
         image_height = float(request.data.get('image_height'))
         image_width = float(request.data.get('image_width'))
         chunk_size = (200,200)
-	file_name = request.data.get('file_name')
+        file_name = request.data.get('file_name')
 
         # Convert contour data from JSON string to a list of dictionaries
         contour_coordinates = json.loads(contour_data)
