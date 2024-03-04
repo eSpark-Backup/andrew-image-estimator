@@ -1,0 +1,24 @@
+import React from 'react'
+import { DustbinfillIcon, EditIcon } from '../../assets'
+
+const EstimatorBoxCard = ({ item }) => {
+    const { id, name, createdAt } = item || {}
+    return (
+        <div key={id} className='esmitimation-list-card-container'>
+            <div className='esmitimation-list-card'>
+                <div>
+                    <p className='esmitimation-list-item-name'>{name}</p>
+                </div>
+
+                <div className='esmitimation-list-item-options'>
+                    <img width={50} className='rounded' src={EditIcon} alt="icon" />
+                    <img width={50} className='rounded' src={DustbinfillIcon} alt="icon" />
+                </div>
+            </div>
+
+            <span>Created on:  {createdAt}</span>
+        </div>
+    )
+}
+
+export default EstimatorBoxCard

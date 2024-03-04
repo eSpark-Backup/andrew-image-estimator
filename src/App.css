@@ -232,6 +232,98 @@ th {
 
 }
 
+.dashboard-screen-container {
+    padding: 30px;
+    width: 80%;
+}
+
+
+.search-bar-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+    height: 80px;
+    padding: 0 20px;
+    border-bottom: 1px solid #BABABA;
+}
+
+.search-bar-input-box {
+    width: 100%;
+}
+
+.search-bar-input {
+    width: 100%;
+    padding: 10px;
+    outline: none;
+    border: 1px solid white;
+    font-size: 20px;
+}
+
+.rounded {
+    display: flex;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #303032;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.estimator-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.listing-view-container {
+    display: flex;
+    gap: 10px;
+}
+
+
+.esmitimation-list-container {
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.esmitimation-list-card-container {
+    width: 40%;
+    margin-bottom: 30px;
+}
+
+.esmitimation-list-card {
+    border: 1px solid #303032;
+    padding: 5px 15px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.esmitimation-list-item-name {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.esmitimation-list-item-options {
+    display: flex;
+    gap: 15px;
+}
+
+
+/* DASHBOARD ENDS  */
+
+
+
+
 .main-conatiner{
     width: 100vw;
     display: flex;
@@ -350,6 +442,31 @@ th {
 
 @media screen and (max-width:1550px){
     .signup-inputs, .signin-inputs{
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* RESPONSIVE SECTION  */
+
+@media screen and (max-width: 1000px) {
+    .esmitimation-list-card-container {
         width: 100%;
     }
 }

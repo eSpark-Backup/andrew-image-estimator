@@ -61,3 +61,27 @@ export const signinItems = [
         type: "password"
     },
 ]
+
+
+export const estimatorListData = [
+    {
+        id: 1,
+        name: 'My friend card 1',
+        createdAt: '26 September,23'
+    },
+    {
+        id: 2,
+        name: 'My friend card 2',
+        createdAt: '19 September,23'
+    },
+    {
+        id: 3,
+        name: 'My friend card 3',
+        createdAt: '18 September,23'
+    },
+    {
+        id: 4,
+        name: 'My friend card 4',
+        createdAt: '12 September,23'
+    },
+]
