@@ -171,3 +171,62 @@ th {
 ::-webkit-scrollbar {
     width: 0px;
 }
+
+
+/* DASHBOARD  */
+
+.dashboard-card {
+    margin-top: 20px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    width: calc(100% - 50px);
+    height: calc(100% - 140px);
+    display: flex;
+    border-radius: 10px;
+}
+
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #303032;
+    border-radius: 10px 0 0 10px;
+    width: 20%;
+}
+
+.sidebar-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px 0 0;
+}
+.sidebar-header h6{
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.sidebar-menu {
+    padding: 0px 10px;
+}
+
+.sidebar-menu-item {
+    margin: 10px 0;
+    padding: 5px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #BABABA;
+}
+
+.sidebar-menu-text {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+}

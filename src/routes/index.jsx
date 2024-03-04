@@ -13,9 +13,9 @@ const Routes = () => {
         {
             path: "/", element: <DashboardLayout />,
             children: [
-               
-                { path: "/dashboard/estimations", element: <Estimations /> },
-                { path: "/dashboard/trash", element: <Trash /> },
+
+                { path: "/", element: <Estimations /> },
+                { path: "/trash", element: <Trash /> },
             ]
         },
         { path: "/tool", element: <Elementor /> },
