@@ -5,12 +5,19 @@ import {
     Elementor,
     SignUp,
     Login,
+    DashboardLayout,
 } from '../pages';
 
 const Routes = () => {
     return useRoutes([
-        { path: "/dashboard/estimations", element: <Estimations /> },
-        { path: "/dashboard/trash", element: <Trash /> },
+        {
+            path: "/", element: <DashboardLayout />,
+            children: [
+               
+                { path: "/dashboard/estimations", element: <Estimations /> },
+                { path: "/dashboard/trash", element: <Trash /> },
+            ]
+        },
         { path: "/tool", element: <Elementor /> },
         { path: "404", element: <div>Not Found</div> },
         { path: "/sign-up", element: <SignUp /> },
