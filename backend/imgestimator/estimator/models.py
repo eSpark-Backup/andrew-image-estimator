@@ -38,6 +38,8 @@ class end_user(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
+    objects = client_manager()
+
     def __str__(self):
         return self.email
 
@@ -58,7 +60,7 @@ def valid_imgfile_type(file):
 
 class estimation(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id=models.EmailField(unique=True)
+    user_id=models.EmailField()
     name = models.CharField(max_length=30)
     image = models.FileField(
         upload_to="estimations/",
@@ -70,12 +72,17 @@ class estimation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.user_id}"
 
 
 class estimation_detail(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id=models.EmailField(unique=True)
+    user_id=models.EmailField()
+    image = models.FileField(
+        upload_to="estimation_details/",
+        validators=[img_ext_valid, valid_imgfile_type],
+        default="",
+    )
     wear_plate_type_est=models.CharField(max_length=30)
     wear_plate_type_curr=models.CharField(max_length=30)
     stich_welding=models.BooleanField()
@@ -94,4 +101,4 @@ class estimation_detail(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.id
+        return f"{self.id} - {self.user_id}"
