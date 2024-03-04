@@ -1,9 +1,37 @@
 import React from 'react'
+import signupPic from "../../assets/signup.svg"
+import SignupForm from '../../components/forms/SignupForm';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const navigate = useNavigate()
   return (
-    <div>SignUp</div>
+    <>
+      {/* , boxShadow: "0px 4px 4px 0px #00000040" */}
+      <div className='main-conatiner'>
+        <div className="container">
+
+          <div className='signup-left-container'>
+            <div className='signup-left-container-head'>
+              <h2 className='center'>Welcome to  Image Estimator. Please Sign up</h2>
+            </div>
+            <img src={signupPic} alt="Signup" style={{ width: "100%", height: "100%" }} />
+          </div>
+
+          <div className="signup-right-container">
+
+            <h2 className='center'>Please fill all the details to sign up. If you already have an account just <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/login")}>Login</span></h2>
+
+            <div className='signup-form-parent'>
+              <SignupForm />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
+
+
 
 export default SignUp
