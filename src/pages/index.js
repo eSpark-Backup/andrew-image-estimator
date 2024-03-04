@@ -1,9 +1,12 @@
-import Dashboard from "./dashboard";
+import { Estimations, Trash } from "./dashboard";
 import Elementor from "./elementor";
 import SignUp from './SignUp';
+import Login from './login';
 
 export {
-    Dashboard,
+    Estimations,
+    Trash,
     Elementor,
-    SignUp
+    SignUp,
+    Login,
 }

@@ -1,16 +1,20 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import {
-    Dashboard,
+    Estimations,
+    Trash,
     Elementor,
-    SignUp
+    SignUp,
+    Login,
 } from '../pages';
 
 const Routes = () => {
     return useRoutes([
-        { path: "/", element: <Dashboard /> },
+        { path: "/dashboard/estimations", element: <Estimations /> },
+        { path: "/dashboard/trash", element: <Trash /> },
         { path: "/tool", element: <Elementor /> },
         { path: "404", element: <div>Not Found</div> },
         { path: "/sign-up", element: <SignUp /> },
+        { path: "/login", element: <Login /> },
         {
             path: "*",
             element: <Navigate to="/404" />,
