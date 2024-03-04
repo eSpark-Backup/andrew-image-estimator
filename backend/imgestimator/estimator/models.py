@@ -41,15 +41,15 @@ class end_user(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-img_ext_valid = FileExtensionValidator(["png", "jpg"])
+img_ext_valid = FileExtensionValidator(["png", "jpg", "img"])
 
 
 def valid_imgfile_type(file):
-    accept = ["image/png", "image/jpeg"]
+    accept = ["image/png", "image/jpeg", "application/octet-stream"]
     file_type = magic.from_buffer(file.read(1024), mime=True)
     if file_type not in accept:
         raise ValidationError(
-            "Unsupported file type. Only PNG and JPEG images are allowed."
+            "Unsupported file type. Only PNG JPEG and IMG images are allowed."
         )
     limit = 10 * 1024 * 1024
     if file.size > limit:
