@@ -197,7 +197,7 @@ th {
 .signup-left-container-head, .signin-left-container-head{
     border-bottom: 1px solid #9D9D9D;
     height: 80px;
-    /* box-shadow: 0px 4px 4px 0px #00000040; */
+    box-shadow: 0px 3px 0px 0px #00000040;
     display: flex;
     justify-content: center;
     align-items: center;

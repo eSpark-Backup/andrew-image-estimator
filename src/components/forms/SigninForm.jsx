@@ -44,7 +44,7 @@ const SigninForm = () => {
                 </button>
 
             </div>
-            <p>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
+            <p style={{fontSize:"14px"}}>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
         </>
     )
 }
