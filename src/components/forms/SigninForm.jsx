@@ -1,0 +1,52 @@
+import React,{useState} from 'react'
+import { signinItems } from '../../constants'
+import TextInput from '../inputs/text-input'
+import { useNavigate } from 'react-router-dom'
+
+const SigninForm = () => {
+    const navigate = useNavigate()
+    const [userData, setUserData] = useState({
+        email: "",
+        password: ""
+    })
+    const InputChangeHandler = (name, value) => {
+        setUserData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+    const SubmitHandler = () => {
+        if (Object.values(userData).some(value => value.trim() === "")) {
+            alert("All fields are required");
+            return;
+        }
+
+        console.log(userData);
+    };
+    return (
+        <>
+            <div className='signin-inputs'>
+                {signinItems.map((item, index) => (
+                    <div style={{ width: "75.5%" }}>
+                        <TextInput handleChange={InputChangeHandler} style={{ height: "40px" }} key={index} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
+                    </div>
+                ))}
+            </div>
+            <div className='signin-button-parents'>
+                <button>
+                    Cancel
+                </button>
+
+                <button
+                onClick={SubmitHandler}
+                >
+                    Login
+                </button>
+
+            </div>
+            <p>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
+        </>
+    )
+}
+
+export default SigninForm

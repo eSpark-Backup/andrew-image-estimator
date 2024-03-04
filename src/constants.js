@@ -30,3 +30,18 @@ export const signupItems = [
         type: "password"
     },
 ]
+
+export const signinItems = [
+    {
+        label: "Email:",
+        name: "email",
+        placeholder: "Enter email",
+        type: "email"
+    },
+    {
+        label: "Password",
+        name: "password",
+        placeholder: "Enter password",
+        type: "password"
+    },
+]
