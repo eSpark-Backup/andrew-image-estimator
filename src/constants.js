@@ -86,4 +86,19 @@ export const estimatorListData = [
         name: 'My friend card 4',
         createdAt: '12 September,23'
     },
+    {
+        id: 5,
+        name: 'My friend card 5',
+        createdAt: '12 September,23'
+    },
+    {
+        id: 6,
+        name: 'My friend card 6',
+        createdAt: '12 September,23'
+    },
+    {
+        id: 7,
+        name: 'My friend card 7',
+        createdAt: '12 September,23'
+    },
 ]
