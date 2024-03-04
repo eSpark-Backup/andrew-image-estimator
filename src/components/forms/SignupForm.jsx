@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import TextInput from '../inputs/text-input';
 import { signupItems } from '../../constants';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignupForm = () => {
     const [userData, setUserData] = useState({
@@ -18,16 +20,46 @@ const SignupForm = () => {
     };
     const SubmitHandler = () => {
         if (Object.values(userData).some(value => value.trim() === "")) {
-            alert("All fields are required");
+            toast.error("All fields are required", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+            });
             return;
         }
 
         if (userData.password.length < 8) {
-            alert("Password must be at least 8 characters long");
+            toast.error("Password must be of 8 characters", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+            });
             return;
         }
         if (userData.password !== userData.confirmPassword) {
-            alert("Confirm password didn't match");
+            toast.error("Password didn't match", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+            });
             return;
         }
 
@@ -55,6 +87,8 @@ const SignupForm = () => {
                 </button>
 
             </div>
+            <ToastContainer />
+
         </>
     );
 };
