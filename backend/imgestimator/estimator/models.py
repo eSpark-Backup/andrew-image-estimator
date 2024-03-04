@@ -1,11 +1,28 @@
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
+    BaseUserManager,
     PermissionsMixin,
 )
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 import magic
+
+
+class client_manager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(email, password, **extra_fields)
 
 
 class end_user(AbstractBaseUser, PermissionsMixin):
@@ -36,10 +53,10 @@ def valid_imgfile_type(file):
         )
     limit = 10 * 1024 * 1024
     if file.size > limit:
-        raise ValidationError("File too large. Size should not exceed 5 MB.")
+        raise ValidationError("File too large. Size should not exceed 10 MB.")
 
 
-class Estimation(models.Model):
+class estimation(models.Model):
     id = models.AutoField(primary_key=True)
     user_id=models.EmailField(unique=True)
     name = models.CharField(max_length=30)
@@ -56,7 +73,7 @@ class Estimation(models.Model):
         return self.name
 
 
-class EstimationDetail(models.Model):
+class estimation_detail(models.Model):
     id = models.AutoField(primary_key=True)
     user_id=models.EmailField(unique=True)
     wear_plate_type_est=models.CharField(max_length=30)
