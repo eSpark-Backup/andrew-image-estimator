@@ -1,35 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    BaseUserManager,
     PermissionsMixin,
 )
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 import magic
 
 
-class ClientManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError("The Email field must be set")
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("role", "super_admin")
-        return self.create_user(email, password, **extra_fields)
-
-
-# Create your models here.
 class end_user(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50)
@@ -42,8 +20,6 @@ class end_user(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
-
-    objects = ClientManager()
 
     def __str__(self):
         return self.email
@@ -58,25 +34,14 @@ def valid_imgfile_type(file):
         raise ValidationError(
             "Unsupported file type. Only PNG and JPEG images are allowed."
         )
-    limit = 5 * 1024 * 1024
+    limit = 10 * 1024 * 1024
     if file.size > limit:
         raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 
-class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    email = models.EmailField(unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.email
-
-
 class Estimation(models.Model):
     id = models.AutoField(primary_key=True)
+    user_id=models.EmailField(unique=True)
     name = models.CharField(max_length=30)
     image = models.FileField(
         upload_to="estimations/",
@@ -93,6 +58,7 @@ class Estimation(models.Model):
 
 class EstimationDetail(models.Model):
     id = models.AutoField(primary_key=True)
+    user_id=models.EmailField(unique=True)
     wear_plate_type_est=models.CharField(max_length=30)
     wear_plate_type_curr=models.CharField(max_length=30)
     stich_welding=models.BooleanField()
