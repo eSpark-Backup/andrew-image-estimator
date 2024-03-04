@@ -1,15 +1,17 @@
-import { DustbinIcon, EstimationsIcon } from "./assets";
+import { DustbinIcon, EstimationsIcon, EstimationBlack, DustbinBlack } from "./assets";
 
 export const menuList = [
     {
         name: 'Estimations',
         icon: EstimationsIcon,
-        path: '/'
+        path: '/',
+        activeIcon: EstimationBlack
     },
     {
         name: 'Trash',
         icon: DustbinIcon,
-        path: '/trash'
+        path: '/trash',
+        activeIcon: DustbinBlack
     },
 ]
 

@@ -2,11 +2,13 @@ import React from 'react'
 import signupPic from "../../assets/signup.svg"
 import SignupForm from '../../components/forms/SignupForm';
 import { useNavigate } from 'react-router-dom';
+import Header from '../../components/header/Header';
 
 const SignUp = () => {
   const navigate = useNavigate()
   return (
     <>
+      <Header />
       {/* , boxShadow: "0px 4px 4px 0px #00000040" */}
       <div className='main-conatiner'>
         <div className="container">
