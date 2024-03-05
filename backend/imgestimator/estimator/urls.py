@@ -7,4 +7,5 @@ urlpatterns = [
     path('sign_up/', SignupView.as_view(), name='sign_up'),
     path('create_est/', CreateEstimtion.as_view(), name='create_estimation'),
     path('update_est/', UpdateEstimtion.as_view(), name='update_estimation'),
+    path('home/', Dashboard.as_view(), name='home'),
 ]

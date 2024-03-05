@@ -160,5 +160,29 @@ class UpdateEstimtion(APIView):
             return Response({"error":e.message},status=status.HTTP_400_BAD_REQUEST
                 )
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class Dashboard(APIView):
+    def get(self,request, *args, **kwargs):
+        user_id=request.user
+
+        try:
+            estimation_data = estimation.objects.get(user_id=user_id)
+        except estimation.DoesNotExist:
+            return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
             )
+        if estimation_data:
+            record = {
+                "id": estimation_data.id,
+                "user_id": estimation_data.user_id,
+                "name": estimation_data.name,
+                "image": estimation_data.image,
+                "polygons": estimation_data.polygons
+            }
+            return Response(record, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+            
