@@ -1,0 +1,89 @@
+import React, { useState } from 'react'
+import { EstimatorBoxCard, EstimatorTableCard, GeneralButton } from '../components'
+import { listIcon, squareIcon, squareIconWhite, listIconWhite } from '../assets'
+import { useLocation } from 'react-router-dom'
+import ModalComponent from '../components/modal/Modal'
+
+
+const EstimatorList = ({ estimatorListData }) => {
+    const [view, setView] = useState(2)
+    const hasData = estimatorListData?.length > 0
+    const location = useLocation()
+    const isTrash = location.pathname.includes('trash')
+    const [isCreateModalOpen, setCreateModalOpen] = useState(false)
+
+
+    return (
+        <>
+            <div className='estimator-header-container'>
+                <div className={!hasData || isTrash ? "hidden" : ""}>
+                    <GeneralButton style={{ width: "200px", height: "40px" }} text='Create Estimation' onClick={() => setCreateModalOpen(true)} />
+                </div>
+
+                <div className='listing-view-container'>
+                    <img onClick={() => setView(2)} width={50} className={`rounded ${view === 2 ? "active-choice" : ""}`} src={view === 2 ? squareIconWhite : squareIcon} alt="icon" />
+                    <img width={50} onClick={() => setView(1)} className={`rounded ${view === 1 ? "active-choice" : ""}`} src={view === 1 ? listIconWhite : listIcon} alt="icon" />
+                </div>
+            </div>
+
+            <div className='overflow-y-auto' >
+                {hasData ?
+                    <>
+                        {
+                            view === 2 ? <>
+                                {/* Estimation lists Box view  */}
+                                <div className='esmitimation-list-container'>
+
+                                    {
+                                        estimatorListData?.map((item, index) => {
+                                            return (
+                                                <EstimatorBoxCard key={index} item={item} hideControls={isTrash} />
+                                            )
+                                        }
+                                        )
+                                    }
+                                </div>
+                            </>
+
+                                :
+
+                                <>
+                                    {/* Estimation lists Table view  */}
+                                    <div className='esmitimation-list-table-container'>
+                                        {
+                                            estimatorListData?.map((item, index) => {
+                                                return (
+                                                    <EstimatorTableCard key={index} item={item} hideControls={isTrash} />
+                                                )
+                                            }
+                                            )
+                                        }
+                                    </div>
+                                </>
+                        }
+                    </>
+                    :
+
+
+                    <div className='estimation-empty-data-container'>
+                        <p>You have not created any estimations yet!</p>
+                        <br />
+                        <GeneralButton style={{ width: "200px", height: "40px" }} text='Create Estimation' onClick={() => setCreateModalOpen(true)} />
+                    </div>
+
+                }
+                <ModalComponent
+                    heading={"Create Estimation"}
+                    label={"Estimation name"}
+                    placeholder={"Enter estimation name"}
+                    btn1Text={"Cancel"}
+                    btn2Text={"Done"}
+                    closeModal={() => setCreateModalOpen(false)}
+                    modalIsOpen={isCreateModalOpen}
+                />
+            </div>
+        </>
+    )
+}
+
+export default EstimatorList

@@ -3,12 +3,15 @@ import signupPic from "../../assets/signup.svg"
 
 import { useNavigate } from 'react-router-dom'
 import SigninForm from '../../components/forms/SigninForm'
+import Header from '../../components/header/Header'
 
 const Login = () => {
   const navigate = useNavigate()
 
   return (
     <>
+      <Header />
+
       <div className='main-conatiner'>
         <div className="container">
 
@@ -26,7 +29,7 @@ const Login = () => {
             <div className='signin-form-parent'>
               <SigninForm />
             </div>
-            
+
           </div>
         </div>
       </div>
