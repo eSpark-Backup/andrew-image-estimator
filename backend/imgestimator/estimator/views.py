@@ -14,6 +14,10 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from .models  import *
+from django.contrib.auth import authenticate
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -111,3 +115,50 @@ class SignupView(APIView):
         end_user.objects.create_user(email=email, password=password, username=username)
 
         return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
+
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class CreateEstimtion(APIView):
+    def post(self,request, *args, **kwargs):
+        user_id=request.user
+        polygons={}
+        image=""
+        name=request.data.get("name")
+        if name:
+            estimation.objects.create(
+                user_id=user_id,
+                name=name,
+                image=image,
+                polygons=polygons
+            )
+            return Response(
+                {"message":"Resquest created."}, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response({"error":"Name field is required."},status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class UpdateEstimtion(APIView):
+    def patch(self,request, *args, **kwargs):
+        id = request.query_params.get("id")
+        updates=request.data
+        try:
+            estimation_record=estimation.objects.get(id=id)
+        except estimation.DoesNotExist:
+            return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
+            )
+        try:
+            for key in updates:
+                setattr(estimation_record, key, updates[key])
+            estimation_record.save()
+            return Response(status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({"error":e.message},status=status.HTTP_400_BAD_REQUEST
+                )
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST
+            )
