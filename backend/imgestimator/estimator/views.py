@@ -102,7 +102,7 @@ class SignupView(APIView):
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         password = request.data.get("password")
-        username = first_name + " " + last_name
+        username = str(first_name) + " " + str(last_name)
         try:
             validate_email(email)
         except ValidationError:
@@ -170,19 +170,22 @@ class Dashboard(APIView):
         user_id=request.user
 
         try:
-            estimation_data = estimation.objects.get(user_id=user_id)
+            estimation_data = estimation.objects.filter(user_id=user_id)
         except estimation.DoesNotExist:
             return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
             )
         if estimation_data:
-            record = {
-                "id": estimation_data.id,
-                "user_id": estimation_data.user_id,
-                "name": estimation_data.name,
-                "image": estimation_data.image,
-                "polygons": estimation_data.polygons
-            }
-            return Response(record, status=status.HTTP_200_OK)
+            records = []
+            for data in estimation_data:
+                record = {
+                    "id": data.id,
+                    "user_id": data.user_id,
+                    "name": data.name,
+                    "image": data.image,
+                    "polygons": data.polygons
+                }
+                records.append(record)
+                return Response(record, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)
             
