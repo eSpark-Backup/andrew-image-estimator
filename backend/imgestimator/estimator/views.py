@@ -185,7 +185,7 @@ class Dashboard(APIView):
                     "polygons": data.polygons
                 }
                 records.append(record)
-                return Response(record, status=status.HTTP_200_OK)
+            return Response(records, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)
             
