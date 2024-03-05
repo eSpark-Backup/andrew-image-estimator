@@ -5,15 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation()
-    const [activeItem, setActiveItem] = useState("")
-    useEffect(() => {
-        if (location.pathname === "/") {
-            setActiveItem("Estimations")
-        }
-        else if (location.pathname === '/trash') {
-            setActiveItem("Trash")
-        }
-    }, [location.pathname])
 
     return (
         <div className='sidebar-container'>
@@ -27,11 +18,11 @@ const Sidebar = () => {
                     {
                         menuList.map((item, index) => {
                             return (
-                                <div key={index} onClick={() => navigate(item.path)} className={`sidebar-menu-item ${activeItem === item?.name ? "active-item" : ""}`}>
+                                <div key={index} onClick={() => navigate(item.path)} className={`sidebar-menu-item ${location.pathname === item?.path ? "active-item" : ""}`}>
                                     <div className='sidebar-menu-icon'>
-                                        <img width={25} src={activeItem === item?.name ? item?.activeIcon : item?.icon} alt='icon' />
+                                        <img width={25} src={location.pathname === item?.path ? item?.activeIcon : item?.icon} alt='icon' />
                                     </div>
-                                    <div className={`sidebar-menu-text ${activeItem === item?.name ? "active-text" : ""}`}>
+                                    <div className={`sidebar-menu-text ${location.pathname === item?.path ? "active-text" : ""}`}>
                                         <h6>{item.name}</h6>
                                     </div>
                                 </div>
