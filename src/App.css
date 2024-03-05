@@ -465,6 +465,8 @@ th {
 }
 .signup-button-parents button:nth-child(2),  .signin-button-parents button:nth-child(2) {
     background-color: #000000;
+    font-weight: 600;
+    font-size: 16px;
     border: 1px solid #303032;
     cursor: pointer;
     color: #ffffff;
@@ -498,7 +500,32 @@ th {
 .active-choice{
     background-color: #030303;
 }
+.modal{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    align-items: center;
+    /* row-gap: 40px; */
+}
+.modal-heading{
+    font-size: 20px;
+    font-weight: 600;
+}
+.modal-description{
+    font-size: 14px;
+    font-weight: 400;
+}
 
+.login-modal-inputs{
+    width: 70%;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px
+}
 
 
 @media screen and (min-width:900px){

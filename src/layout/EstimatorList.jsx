@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { EstimatorBoxCard, EstimatorTableCard, GeneralButton } from '../components'
 import { listIcon, squareIcon, squareIconWhite, listIconWhite } from '../assets'
 import { useLocation } from 'react-router-dom'
+import ModalComponent from '../components/modal/Modal'
 
 
 const EstimatorList = ({ estimatorListData }) => {
@@ -9,13 +10,14 @@ const EstimatorList = ({ estimatorListData }) => {
     const hasData = estimatorListData?.length > 0
     const location = useLocation()
     const isTrash = location.pathname.includes('trash')
+    const [isCreateModalOpen, setCreateModalOpen] = useState(false)
 
 
     return (
         <>
             <div className='estimator-header-container'>
                 <div className={!hasData || isTrash ? "hidden" : ""}>
-                    <GeneralButton style={{ width: "200px", height: "40px" }} text='Create Estimation' />
+                    <GeneralButton style={{ width: "200px", height: "40px" }} text='Create Estimation' onClick={() => setCreateModalOpen(true)} />
                 </div>
 
                 <div className='listing-view-container'>
@@ -66,10 +68,19 @@ const EstimatorList = ({ estimatorListData }) => {
                     <div className='estimation-empty-data-container'>
                         <p>You have not created any estimations yet!</p>
                         <br />
-                        <GeneralButton style={{ width: "200px", height: "40px" }} text='Create Estimation' />
+                        <GeneralButton style={{ width: "200px", height: "40px" }} text='Create Estimation' onClick={() => setCreateModalOpen(true)} />
                     </div>
 
                 }
+                <ModalComponent
+                    heading={"Create Estimation"}
+                    label={"Estimation name"}
+                    placeholder={"Enter estimation name"}
+                    btn1Text={"Cancel"}
+                    btn2Text={"Done"}
+                    closeModal={() => setCreateModalOpen(false)}
+                    modalIsOpen={isCreateModalOpen}
+                />
             </div>
         </>
     )

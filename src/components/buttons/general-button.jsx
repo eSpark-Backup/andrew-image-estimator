@@ -1,6 +1,6 @@
 import React from 'react'
 
-const GeneralButton = ({ style, text }) => {
+const GeneralButton = ({ style, text,onClick }) => {
     return (
 
         <button style={{
@@ -13,7 +13,7 @@ const GeneralButton = ({ style, text }) => {
             width: "120px",
             height: "40px",
             ...style,
-        }}>
+        }} onClick={onClick}>
             {text}
         </button>
 
