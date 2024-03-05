@@ -1,3 +1,4 @@
+from imaplib import _Authenticator
 import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,8 +9,11 @@ import numpy as np
 from PIL import Image
 from cv2 import dnn_superres
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-from models import *
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from .models  import *
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -86,3 +90,24 @@ class LoginView(APIView):
             return Response(
                 {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
+
+
+class SignupView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        password = request.data.get("password")
+        username = first_name + " " + last_name
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({"error": "Invalid email address"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+        end_user.objects.create_user(email=email, password=password, username=username)
+
+        return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
