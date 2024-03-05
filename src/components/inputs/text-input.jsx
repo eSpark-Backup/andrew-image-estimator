@@ -1,4 +1,4 @@
-const TextInput = ({ onFocus, onBlur, name, label, type, placeholder, value, handleChange, style, error }) => {
+const TextInput = ({ onFocus, onBlur, name, label, type, placeholder, value, handleChange, style }) => {
     return (
         <div className="text-input">
             <p className="label">{label}</p>
@@ -12,7 +12,6 @@ const TextInput = ({ onFocus, onBlur, name, label, type, placeholder, value, han
                 value={value}
                 onChange={(e) => handleChange(e.target.name, e.target.value)}
             />
-            {error && <p className="error" style={{color:"red", fontSize:"12px", marginTop:"2px"}}>{error}</p>}
         </div>
     )
 }

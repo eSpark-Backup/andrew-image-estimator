@@ -1,7 +1,9 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import { signinItems } from '../../constants'
 import TextInput from '../inputs/text-input'
 import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SigninForm = () => {
     const navigate = useNavigate()
@@ -17,7 +19,17 @@ const SigninForm = () => {
     };
     const SubmitHandler = () => {
         if (Object.values(userData).some(value => value.trim() === "")) {
-            alert("All fields are required");
+            toast.error("All fields are required", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+            });
             return;
         }
 
@@ -38,13 +50,14 @@ const SigninForm = () => {
                 </button>
 
                 <button
-                onClick={SubmitHandler}
+                    onClick={SubmitHandler}
                 >
                     Login
                 </button>
 
             </div>
-            <p style={{fontSize:"14px"}}>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
+            <p style={{ fontSize: "14px" }}>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
+            <ToastContainer />
         </>
     )
 }
