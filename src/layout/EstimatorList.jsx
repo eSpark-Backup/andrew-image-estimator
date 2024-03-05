@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { EstimatorBoxCard, EstimatorTableCard, GeneralButton } from '../components'
-import { listIcon, squareIcon } from '../assets'
+import { listIcon, squareIcon, squareIconWhite, listIconWhite } from '../assets'
 import { useLocation } from 'react-router-dom'
 
 
 const EstimatorList = ({ estimatorListData }) => {
-    const [view, setView] = useState(1)
+    const [view, setView] = useState(2)
     const hasData = estimatorListData?.length > 0
     const location = useLocation()
     const isTrash = location.pathname.includes('trash')
-
 
 
     return (
@@ -20,8 +19,8 @@ const EstimatorList = ({ estimatorListData }) => {
                 </div>
 
                 <div className='listing-view-container'>
-                    <img width={50} onClick={() => setView(1)} className='rounded' src={squareIcon} alt="icon" />
-                    <img onClick={() => setView(2)} width={50} className='rounded' src={listIcon} alt="icon" />
+                    <img onClick={() => setView(2)} width={50} className={`rounded ${view === 2 ? "active-choice" : ""}`} src={view === 2 ? squareIconWhite : squareIcon} alt="icon" />
+                    <img width={50} onClick={() => setView(1)} className={`rounded ${view === 1 ? "active-choice" : ""}`} src={view === 1 ? listIconWhite : listIcon} alt="icon" />
                 </div>
             </div>
 
@@ -29,7 +28,7 @@ const EstimatorList = ({ estimatorListData }) => {
                 {hasData ?
                     <>
                         {
-                            view === 1 ? <>
+                            view === 2 ? <>
                                 {/* Estimation lists Box view  */}
                                 <div className='esmitimation-list-container'>
 
