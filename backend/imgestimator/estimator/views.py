@@ -102,7 +102,7 @@ class SignupView(APIView):
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         password = request.data.get("password")
-        username = first_name + " " + last_name
+        username = str(first_name) + " " + str(last_name)
         try:
             validate_email(email)
         except ValidationError:
@@ -160,5 +160,32 @@ class UpdateEstimtion(APIView):
             return Response({"error":e.message},status=status.HTTP_400_BAD_REQUEST
                 )
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class Dashboard(APIView):
+    def get(self,request, *args, **kwargs):
+        user_id=request.user
+
+        try:
+            estimation_data = estimation.objects.filter(user_id=user_id)
+        except estimation.DoesNotExist:
+            return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
             )
+        if estimation_data:
+            records = []
+            for data in estimation_data:
+                record = {
+                    "id": data.id,
+                    "user_id": data.user_id,
+                    "name": data.name,
+                    "image": data.image,
+                    "polygons": data.polygons
+                }
+                records.append(record)
+            return Response(records, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+            
