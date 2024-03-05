@@ -74,6 +74,16 @@ class estimation(models.Model):
     def __str__(self):
         return f"{self.name} - {self.user_id}"
 
+    def save(self, *args, **kwargs):
+        if self.image:
+            try:
+                file_content = self.image.file.seek(0)
+                valid_imgfile_type(self.image.file)
+            except ValidationError as e:
+                raise ValidationError(e)
+
+        super().save(*args, **kwargs)
+
 
 class estimation_detail(models.Model):
     id = models.AutoField(primary_key=True)
@@ -102,3 +112,13 @@ class estimation_detail(models.Model):
 
     def __str__(self):
         return f"{self.id} - {self.user_id}"
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            try:
+                file_content = self.image.file.seek(0)
+                valid_imgfile_type(self.image.file)
+            except ValidationError as e:
+                raise ValidationError(e)
+
+        super().save(*args, **kwargs)

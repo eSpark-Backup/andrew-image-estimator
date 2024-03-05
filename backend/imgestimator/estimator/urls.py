@@ -5,4 +5,6 @@ urlpatterns = [
     path('img_upload/', ExtractCutout.as_view(), name='img_upload'),
     path('login/', LoginView.as_view(), name='login'),
     path('sign_up/', SignupView.as_view(), name='sign_up'),
+    path('create_est/', CreateEstimtion.as_view(), name='create_estimation'),
+    path('update_est/', UpdateEstimtion.as_view(), name='update_estimation'),
 ]
