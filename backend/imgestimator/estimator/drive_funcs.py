@@ -2,8 +2,8 @@ import json
 import requests
 def upload_file_to_google_drive(file_name, file_content):
     upload_url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart"
-    folder_id = "1k9vj5ap95GEzD7mhk9yuMsnUsTpwey2w"
-    access_token = "ya29.a0Ad52N3-v0R1O3bqxJatsIUPR0Gy7OpH5ZceP8Q-pyMqLfyPtavZLiiP1SJgbMOjIQdUIs_w3_WyVJpg79D8UzMQ1N-Yhgm0fjt8dltA5vN42qmLWYphKCIt45I6olOdsbyK4akXZgfXavKQdtkU-x0x_C-_LAhvYauOzaCgYKAUsSARASFQHGX2MiMveB5LwPvdeONxeieTgMdw0171"
+    folder_id = "1R1hNPYclYP-R8-_JKWPUcyTf9aROOJR4"
+    access_token = "ya29.a0Ad52N39t4_Rjle8WWhoCt2fvnJa98NRoHZdEUf8IFLTPYwuQlk0lFJfKcsOMCm6NNZKvUYWjazI9-EcLgdT1IcqKke-F62iRGYKX7ANxqMprFyWVqZyTje4M2D_xLt-D0vHPzdSjc45SA_R2DjmyfRWxRj6L6sxLQiFXaCgYKAT0SARASFQHGX2MiwpojiDBcMgCi58p29enwgA0171"
     headers = {
         "Authorization": "Bearer " + access_token
     }

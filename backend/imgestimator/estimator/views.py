@@ -132,7 +132,10 @@ class CreateEstimtion(APIView):
                 user_id=user_id,
                 name=name,
                 image=image,
-                polygons=polygons
+                polygons=polygons,
+                measuring_unit = "",
+                height = 0,
+                length = 0
             )
             id=est.id
             return Response(
