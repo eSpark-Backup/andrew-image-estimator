@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { EstimatorBoxCard, EstimatorTableCard, GeneralButton } from '../components'
 import { listIcon, squareIcon, squareIconWhite, listIconWhite } from '../assets'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ModalComponent from '../components/modal/Modal'
 
 
@@ -9,6 +9,7 @@ const EstimatorList = ({ estimatorListData }) => {
     const [view, setView] = useState(2)
     const hasData = estimatorListData?.length > 0
     const location = useLocation()
+    const navigate = useNavigate()
     const isTrash = location.pathname.includes('trash')
     const [isCreateModalOpen, setCreateModalOpen] = useState(false)
 
@@ -79,6 +80,7 @@ const EstimatorList = ({ estimatorListData }) => {
                     btn1Text={"Cancel"}
                     btn2Text={"Done"}
                     closeModal={() => setCreateModalOpen(false)}
+                    onSuccess={() => navigate("/tool")}
                     modalIsOpen={isCreateModalOpen}
                 />
             </div>

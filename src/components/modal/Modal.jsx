@@ -4,7 +4,7 @@ import TextInput from '../inputs/text-input'
 import { useNavigate } from 'react-router-dom';
 
 
-const ModalComponent = ({ modalIsOpen, closeModal, heading, label, placeholder, description, btn1Text, btn2Text, name, dashboard }) => {
+const ModalComponent = ({ modalIsOpen, closeModal, heading, label, placeholder, description, btn1Text, btn2Text, name, dashboard, onSuccess }) => {
     const customStyles = {
         content: {
             top: '50%',
@@ -61,7 +61,7 @@ const ModalComponent = ({ modalIsOpen, closeModal, heading, label, placeholder, 
                                 {btn1Text}
                             </button>
 
-                            <button
+                            <button onClick={onSuccess}
                             >
                                 {btn2Text}
                             </button>

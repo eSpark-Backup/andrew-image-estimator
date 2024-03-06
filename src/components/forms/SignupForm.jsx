@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import TextInput from '../inputs/text-input';
 import { signupItems } from '../../constants';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 const SignupForm = () => {
     const [userData, setUserData] = useState({
@@ -20,46 +19,16 @@ const SignupForm = () => {
     };
     const SubmitHandler = () => {
         if (Object.values(userData).some(value => value.trim() === "")) {
-            toast.error("All fields are required", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                // transition: Bounce,
-            });
+            toast.error("All fields are required");
             return;
         }
 
         if (userData.password.length < 8) {
-            toast.error("Password must be of 8 characters", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                // transition: Bounce,
-            });
+            toast.error("Password must be of 8 characters");
             return;
         }
         if (userData.password !== userData.confirmPassword) {
-            toast.error("Password didn't match", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                // transition: Bounce,
-            });
+            toast.error("Password didn't match");
             return;
         }
 
@@ -87,8 +56,6 @@ const SignupForm = () => {
                 </button>
 
             </div>
-            <ToastContainer />
-
         </>
     );
 };

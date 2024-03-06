@@ -9,6 +9,25 @@ import squareIconWhite from "./icons/squareIconWhite.svg"
 import EditIcon from "./icons/EditIcon.svg"
 import DustbinBlack from "./icons/DustbinBlack.svg"
 import EstimationBlack from "./icons/EstimationBlack.svg"
+import changeImage from "./icons/changeImg.png"
+import resetImg from "./icons/reset.png"
+import revertImg from "./icons/revert.png"
+import uploadImg from "./icons/Upload.svg"
 
-export { squareIcon, EditIcon, listIcon, DustbinIcon, DustbinfillIcon, EstimationsIcon, searchbarIcon, EstimationBlack, DustbinBlack, listIconWhite, squareIconWhite }
-
+export {
+  squareIcon,
+  EditIcon,
+  listIcon,
+  DustbinIcon,
+  DustbinfillIcon,
+  EstimationsIcon,
+  searchbarIcon,
+  EstimationBlack,
+  DustbinBlack,
+  listIconWhite,
+  squareIconWhite,
+  changeImage,
+  resetImg,
+  revertImg,
+  uploadImg,
+};
