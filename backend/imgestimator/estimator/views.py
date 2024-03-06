@@ -163,6 +163,7 @@ class UpdateEstimtion(APIView):
                         if new_image_url:
                             estimation_record.image=new_image_url
                             estimation_record.save()
+                            continue
                 setattr(estimation_record, key, updates[key])
             estimation_record.save()
             return Response({"id":id},status=status.HTTP_200_OK)
