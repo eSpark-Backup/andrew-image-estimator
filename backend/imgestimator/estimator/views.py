@@ -18,6 +18,7 @@ from django.contrib.auth import authenticate
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from .drive_funcs import upload_file_to_google_drive
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -67,16 +68,16 @@ class ExtractCutout(APIView):
         target_color = (0, 0, 0)
         new_data = [(r, g, b, 0) if (r, g, b) == target_color else (r, g, b, a) for (r, g, b, a) in data]
         image.putdata(new_data)
-        image.save("C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name)
         image_width, image_height = image.size
-        
-      
-        data= {"image_path": "C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name,
-               "image_width": image_width,
-               "image_height": image_height}
+        image_url=upload_file_to_google_drive(file_name, image)
+        if image_url:
+            data= {"image_url": image_url,
+                "image_width": image_width,
+                "image_height": image_height}
 
-
-        return Response(data, status=status.HTTP_200_OK)
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error":"No data available."}, status=status.HTTP_404_NOT_FOUND)
 
 		
 class LoginView(APIView):
@@ -126,14 +127,15 @@ class CreateEstimtion(APIView):
         image=""
         name=request.data.get("name")
         if name:
-            estimation.objects.create(
+            est=estimation.objects.create(
                 user_id=user_id,
                 name=name,
                 image=image,
                 polygons=polygons
             )
+            id=est.id
             return Response(
-                {"message":"Resquest created."}, status=status.HTTP_201_CREATED
+                {"message":"Resquest created.","id":id}, status=status.HTTP_201_CREATED
             )
         else:
             return Response({"error":"Name field is required."},status=status.HTTP_400_BAD_REQUEST
@@ -153,14 +155,24 @@ class UpdateEstimtion(APIView):
             )
         try:
             for key in updates:
+                if key=="image":
+                        user_name=end_user.objects.get(email=estimation_record.user_id)  
+                        file_name=f"esp_{user_name.username}_{id}"
+                        
+                        new_image_url=upload_file_to_google_drive(file_name, updates[key].read())
+                        if new_image_url:
+                            estimation_record.image=new_image_url
+                            estimation_record.save()
+                            continue
                 setattr(estimation_record, key, updates[key])
             estimation_record.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response({"id":id},status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"error":e.message},status=status.HTTP_400_BAD_REQUEST
                 )
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST
+            )
         
 
 @authentication_classes([JWTAuthentication])

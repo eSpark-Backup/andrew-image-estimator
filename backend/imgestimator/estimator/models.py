@@ -62,37 +62,23 @@ class estimation(models.Model):
     id = models.AutoField(primary_key=True)
     user_id=models.EmailField()
     name = models.CharField(max_length=30)
-    image = models.FileField(
-        upload_to="estimations/",
-        validators=[img_ext_valid, valid_imgfile_type],
-        default="",
-    )
+    image=models.URLField()
     polygons=models.JSONField()
+    measuring_unit=models.CharField(max_length=15)
+    height=models.FloatField()
+    weight=models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} - {self.user_id}"
 
-    def save(self, *args, **kwargs):
-        if self.image:
-            try:
-                file_content = self.image.file.seek(0)
-                valid_imgfile_type(self.image.file)
-            except ValidationError as e:
-                raise ValidationError(e)
-
-        super().save(*args, **kwargs)
-
 
 class estimation_detail(models.Model):
     id = models.AutoField(primary_key=True)
     user_id=models.EmailField()
-    image = models.FileField(
-        upload_to="estimation_details/",
-        validators=[img_ext_valid, valid_imgfile_type],
-        default="",
-    )
+    estimation_id=models.IntegerField()
+    image=models.URLField()
     wear_plate_type_est=models.CharField(max_length=30)
     wear_plate_type_curr=models.CharField(max_length=30)
     stich_welding=models.BooleanField()
@@ -112,13 +98,3 @@ class estimation_detail(models.Model):
 
     def __str__(self):
         return f"{self.id} - {self.user_id}"
-
-    def save(self, *args, **kwargs):
-        if self.image:
-            try:
-                file_content = self.image.file.seek(0)
-                valid_imgfile_type(self.image.file)
-            except ValidationError as e:
-                raise ValidationError(e)
-
-        super().save(*args, **kwargs)
