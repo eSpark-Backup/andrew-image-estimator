@@ -66,7 +66,7 @@ class estimation(models.Model):
     polygons=models.JSONField()
     measuring_unit=models.CharField(max_length=15)
     height=models.FloatField()
-    weight=models.FloatField()
+    length=models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

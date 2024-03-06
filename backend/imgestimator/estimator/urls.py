@@ -9,4 +9,5 @@ urlpatterns = [
     path('update_est/', UpdateEstimtion.as_view(), name='update_estimation'),
     path('home/', Dashboard.as_view(), name='home'),
     path('email/', EmailSend.as_view(), name='email'),
+    path('edit/', EditView.as_view(), name='email'),
 ]
