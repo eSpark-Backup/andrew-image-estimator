@@ -19,6 +19,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .drive_funcs import upload_file_to_google_drive
+from django.core.mail import send_mail
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -200,4 +201,16 @@ class Dashboard(APIView):
             return Response(records, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)
-            
+        
+class EmailSend(APIView):
+    def post(self, request, *args, **kwargs):
+        subject = 'Welcome to My Site'
+        message = 'Thank you for creating an account!'
+        from_email = 'test@esparkconsultants.com'
+        recipient_list = [request.data.get("email")]
+
+        # Send the email
+        send_mail(subject, message, from_email, recipient_list)
+
+        # Optionally, return a response indicating the email was sent successfully
+        return Response({"message": "Email sent successfully."})

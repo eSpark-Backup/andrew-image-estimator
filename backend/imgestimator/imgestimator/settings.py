@@ -80,6 +80,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'imgestimator.wsgi.application'
 
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'business89.web-hosting.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL  = True
+EMAIL_HOST_USER = 'test@esparkconsultants.com'
+EMAIL_HOST_PASSWORD = 'Test@eSpark'
+
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
