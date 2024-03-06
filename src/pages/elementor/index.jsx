@@ -98,21 +98,21 @@ function Elementor() {
 
   //handle inputs function
   const handleChange = (name, value) => {
-    if (name === "width" || name === "length") {
-      if (Number(value) > 1000) {
-        return;
-      } else {
-        setForm({
-          ...form,
-          [name]: value,
-        });
-      }
-    } else {
+    // if (name === "width" || name === "length") {
+    //   if (Number(value) > 1000) {
+    //     return;
+    //   } else {
+    //     setForm({
+    //       ...form,
+    //       [name]: value,
+    //     });
+    //   }
+    // } else {
       setForm({
         ...form,
         [name]: value,
       });
-    }
+    // }
   };
 
   //removing image functionality

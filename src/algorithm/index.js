@@ -41,6 +41,34 @@ export const calculateSelectedArea = (
   }
 };
 
+const unitConverter = (form, valueInInch) => {
+  if (form.unit === "cm") {
+    return valueInInch * 0.3937;
+  } else if (form.unit === "m") {
+    return valueInInch * 39.3701;
+  } else if (form.unit === "mm") {
+    return valueInInch * 0.0393701;
+  } else if (form.unit === "ft") {
+    return valueInInch * 12;
+  } else {
+    return valueInInch;
+  }
+};
+
+const baseAreaConverter = (form, valueInInch) => {
+  if (form.unit === "cm") {
+    return valueInInch * 6.452;
+  } else if (form.unit === "m") {
+    return valueInInch * 0.0006452;
+  } else if (form.unit === "mm") {
+    return valueInInch * 645.2;
+  } else if (form.unit === "ft") {
+    return valueInInch * 0.00694488;
+  } else {
+    return valueInInch;
+  }
+};
+
 //algorithm of calculating the selected size of metal and and it's weight according to parent's given dimention
 export const calculateChildArea = (
   form,
@@ -57,8 +85,8 @@ export const calculateChildArea = (
     childWidth,
     childHeight
   );
-  let scale_factor_x = childDimention.width / childWidth;
-  let scale_factor_y = childDimention.length / childHeight;
+  let scale_factor_x = unitConverter(form, childDimention.width) / childWidth;
+  let scale_factor_y = unitConverter(form, childDimention.length) / childHeight;
 
   let scaledPolygonVertices = points.map((vertex) => ({
     x: vertex.x * scale_factor_x,
@@ -91,7 +119,7 @@ export const calculateChildArea = (
   if (!isNaN(weightInPounds) && !isNaN(baseArea)) {
     return {
       weight: weightInPounds,
-      size: baseArea,
+      size: baseAreaConverter(form, baseArea),
       platePrice,
     };
   }

@@ -52,7 +52,13 @@ const ToolHeader = ({ active, form, handleChange }) => {
             name="unit"
             disabled={active !== "select"}
             value={form.unit}
-            options={[{ label: "Inches (inch)", value: "inch" }]}
+            options={[
+              {label: "cm", value: "cm" },
+              {label: "inch", value: "inch" },
+              {label: "m", value: "m" },
+              {label: "mm", value: "mm" },
+              {label: "ft", value: "ft" },
+            ]}
             placeholder="Select Unit"
             handleChange={handleChange}
           />

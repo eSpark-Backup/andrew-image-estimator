@@ -21,7 +21,7 @@ const FabricationTable = ({ calculation, form, dropdowns }) => {
                         <div className="col col-1" >Wear Plate Area</div>
                         <div className="col col-2" >-</div>
                         <div className="col col-3" >-</div>
-                        <div className="col col-4" >{Number(calculation?.size).toFixed(2)} {form?.unit === "cm" ? "Cm" : "In"}&#xb2;</div>
+                        <div className="col col-4" >{Number(calculation?.size).toFixed(2)} {form?.unit}&#xb2;</div>
                     </li>
                     <li className="table-row">
                         <div className="col col-1" >Wear Plate Weight</div>
