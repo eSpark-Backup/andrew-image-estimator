@@ -1,3 +1,4 @@
+from imaplib import _Authenticator
 import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +8,16 @@ import cv2
 import numpy as np
 from PIL import Image
 from cv2 import dnn_superres
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from .models  import *
+from django.contrib.auth import authenticate
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -79,9 +90,11 @@ class ExtractCutout(APIView):
         new_data = [(r, g, b, 0) if (r, g, b) == target_color else (r, g, b, a) for (r, g, b, a) in data]
         image.putdata(new_data)
         image.save("C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name)
+        image.save("C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name)
         image_width, image_height = image.size
         
       
+        data= {"image_path": "C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name,
         data= {"image_path": "C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name,
                "image_width": image_width,
                "image_height": image_height}
@@ -90,5 +103,113 @@ class ExtractCutout(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 		
+class LoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        password = request.data.get("password")
+        user = authenticate(request, email=email, password=password)
+        if user:
+            refresh = RefreshToken.for_user(user)
+            token = str(refresh.access_token)
+            return Response(
+                {"token": token}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+
+class SignupView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        password = request.data.get("password")
+        username = str(first_name) + " " + str(last_name)
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({"error": "Invalid email address"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+        end_user.objects.create_user(email=email, password=password, username=username)
+
+        return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
+
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class CreateEstimtion(APIView):
+    def post(self,request, *args, **kwargs):
+        user_id=request.user
+        polygons={}
+        image=""
+        name=request.data.get("name")
+        if name:
+            estimation.objects.create(
+                user_id=user_id,
+                name=name,
+                image=image,
+                polygons=polygons
+            )
+            return Response(
+                {"message":"Resquest created."}, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response({"error":"Name field is required."},status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class UpdateEstimtion(APIView):
+    def patch(self,request, *args, **kwargs):
+        id = request.query_params.get("id")
+        updates=request.data
+        try:
+            estimation_record=estimation.objects.get(id=id)
+        except estimation.DoesNotExist:
+            return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
+            )
+        try:
+            for key in updates:
+                setattr(estimation_record, key, updates[key])
+            estimation_record.save()
+            return Response(status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({"error":e.message},status=status.HTTP_400_BAD_REQUEST
+                )
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         
 
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class Dashboard(APIView):
+    def get(self,request, *args, **kwargs):
+        user_id=request.user
+
+        try:
+            estimation_data = estimation.objects.filter(user_id=user_id)
+        except estimation.DoesNotExist:
+            return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
+            )
+        if estimation_data:
+            records = []
+            for data in estimation_data:
+                record = {
+                    "id": data.id,
+                    "user_id": data.user_id,
+                    "name": data.name,
+                    "image": data.image,
+                    "polygons": data.polygons
+                }
+                records.append(record)
+            return Response(records, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+            
