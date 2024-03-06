@@ -90,11 +90,8 @@ class ExtractCutout(APIView):
         new_data = [(r, g, b, 0) if (r, g, b) == target_color else (r, g, b, a) for (r, g, b, a) in data]
         image.putdata(new_data)
         image.save("C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name)
-        image.save("C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name)
         image_width, image_height = image.size
         
-      
-        data= {"image_path": "C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name,
         data= {"image_path": "C://Users//classic//Downloads//andrew-imageestimator//public//" + file_name,
                "image_width": image_width,
                "image_height": image_height}
