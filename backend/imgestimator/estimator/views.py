@@ -69,9 +69,7 @@ class ExtractCutout(APIView):
         new_data = [(r, g, b, 0) if (r, g, b) == target_color else (r, g, b, a) for (r, g, b, a) in data]
         image.putdata(new_data)
         image_width, image_height = image.size
-        folder_id = "1k9vj5ap95GEzD7mhk9yuMsnUsTpwey2w"
-        access_token = "ya29.a0Ad52N3_0GwMukbR7DJ1q5XNWenBeONRh9zfbzf64Ef6k1WYmdE2LsZvGXHpvqkDtccoxwskN0ErhGdOhYoakQqIkWsw2bdbprhTLFYRLR1jxLApAaEP7gjZmH0G2aGWhrMamG7uhUzm6wZ36NI-hwj5s9TK6LNjvT18SaCgYKAdQSARASFQHGX2Mip_ejKg3c56_jwm8heMHyYg0171"
-        image_url=upload_file_to_google_drive(folder_id, access_token, file_name, image)
+        image_url=upload_file_to_google_drive(file_name, image)
         if image_url:
             data= {"image_url": image_url,
                 "image_width": image_width,
@@ -160,9 +158,8 @@ class UpdateEstimtion(APIView):
                 if key=="image":
                         user_name=end_user.objects.get(email=estimation_record.user_id)  
                         file_name=f"esp_{user_name.username}_{id}"
-                        folder_id = "1k9vj5ap95GEzD7mhk9yuMsnUsTpwey2w"
-                        access_token = "ya29.a0Ad52N3-v0R1O3bqxJatsIUPR0Gy7OpH5ZceP8Q-pyMqLfyPtavZLiiP1SJgbMOjIQdUIs_w3_WyVJpg79D8UzMQ1N-Yhgm0fjt8dltA5vN42qmLWYphKCIt45I6olOdsbyK4akXZgfXavKQdtkU-x0x_C-_LAhvYauOzaCgYKAUsSARASFQHGX2MiMveB5LwPvdeONxeieTgMdw0171"
-                        new_image_url=upload_file_to_google_drive(folder_id, access_token, file_name, updates[key].read())
+                        
+                        new_image_url=upload_file_to_google_drive(file_name, updates[key].read())
                         if new_image_url:
                             estimation_record.image=new_image_url
                             estimation_record.save()
