@@ -118,6 +118,7 @@ const ToolHeader = ({ active, form, handleChange }) => {
         run={tour}
         showProgress={false}
         showSkipButton={false}
+        hideCloseButton={true}
         steps={active === "select" ? selectTaker : active === "height" ? selectHeight : selectwidth}
         styles={{
           buttonNext: {
