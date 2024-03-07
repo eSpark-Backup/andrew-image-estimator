@@ -3,7 +3,7 @@ import requests
 def upload_file_to_google_drive(file_name, file_content):
     upload_url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart"
     folder_id = "1R1hNPYclYP-R8-_JKWPUcyTf9aROOJR4"
-    access_token = "ya29.a0Ad52N39t4_Rjle8WWhoCt2fvnJa98NRoHZdEUf8IFLTPYwuQlk0lFJfKcsOMCm6NNZKvUYWjazI9-EcLgdT1IcqKke-F62iRGYKX7ANxqMprFyWVqZyTje4M2D_xLt-D0vHPzdSjc45SA_R2DjmyfRWxRj6L6sxLQiFXaCgYKAT0SARASFQHGX2MiwpojiDBcMgCi58p29enwgA0171"
+    access_token = "ya29.a0Ad52N38g5D8IpV4TmWQiFHEunDhyw8p7MyuqvSka2Tyes5Ab_hVs0c15bcyKdXtuAlLH5Wa0OluBI46NbvT4FCQln1JP45N5ng5I7icsBCrsF3zisG1UZHK_l-QH_TRiEQS84KJIq5M0yQlfqD2OSuHyV5Fzywm23578aCgYKAdYSARASFQHGX2Mi9-l4Z4vE_iF8rn3AyqOigQ0171"
     headers = {
         "Authorization": "Bearer " + access_token
     }
@@ -14,8 +14,8 @@ def upload_file_to_google_drive(file_name, file_content):
     }
 
     files= {
-        'data': ('metadata', json.dumps(para), 'application/json; charset=UTC'),
-        'file': ('filename', file_content, 'application/octet-stream')
+        'data': ('metadata', json.dumps(para), 'application/json'),
+        'file': ('filename', file_content, 'image/png')
     }
 
    
