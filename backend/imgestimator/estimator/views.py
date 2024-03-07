@@ -196,18 +196,22 @@ class Dashboard(APIView):
             for data in estimation_data:
                 record = {
                     "id": data.id,
-                    "user_id": data.user_id,
                     "name": data.name,
-                    "image": data.image,
-                    "polygons": data.polygons,
-                    "unit": data.measuring_unit,
-                    "height": data.height,
-                    "length": data.length
+                    "created_at": data.created_at
                 }
                 records.append(record)
             return Response(records, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)
+        
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        delete_id = request.query_params.get("id")
+        try:
+            estimation.objects.filter(id=delete_id).delete()
+            return Response({"successfully deleted"},status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         
 class EmailSend(APIView):
     def post(self, request, *args, **kwargs):
