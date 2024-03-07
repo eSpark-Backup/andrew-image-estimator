@@ -71,7 +71,13 @@ class ExtractCutout(APIView):
         image.putdata(new_data)
         image.save("upload.png")
         image_width, image_height = image.size
-        image_url=upload_file_to_google_drive(file_name, "upload.png")
+        with open("upload.png", 'rb') as file_content:
+            image_url=upload_file_to_google_drive(file_name, file_content)
+
+        if os.path.exists("upload.png"):
+            os.remove("upload.png")
+        if os.path.exists("extracted_part1.png"):
+            os.remove("extracted_part1.png")
         if image_url:
             data= {"image_url": image_url,
                 "image_width": image_width,
