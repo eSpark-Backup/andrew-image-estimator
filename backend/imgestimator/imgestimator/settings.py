@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,19 @@ INSTALLED_APPS = [
     "rest_framework",
     'corsheaders',
 ]
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),  # Set the expiration time as needed
+    # other configurations...
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # ... other authentication classes
+    ],
+}
+
 
 AUTH_USER_MODEL = "estimator.end_user"
 
@@ -78,6 +92,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'imgestimator.wsgi.application'
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'business89.web-hosting.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL  = True
+EMAIL_HOST_USER = 'test@esparkconsultants.com'
+EMAIL_HOST_PASSWORD = 'Test@eSpark'
 
 
 # Database
