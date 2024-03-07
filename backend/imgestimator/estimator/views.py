@@ -296,7 +296,7 @@ class EstimationDetails(APIView):
             )
             return Response({"message":"Resquest created."},status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"error":"Invalid form data."},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error":"Invalid form data: " + str(e)},status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, *args, **kwargs):
         est_id=request.query_params.get("est_id")
@@ -348,5 +348,5 @@ class EstimationDetails(APIView):
             est_detail_record.save()
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST
+            return Response({"error":str(e)},status=status.HTTP_400_BAD_REQUEST
                 )
