@@ -273,7 +273,7 @@ class EstimationDetails(APIView):
         deliver_site_date=request.data.get("deliver_site_date")
         try:
             user_name=end_user.objects.get(email=user_id)
-            file_name=f"esp_detail_{user_name.username}_{id}"
+            file_name=f"esp_detail_{user_name.username}_{user_name.id}"
             image_url=upload_file_to_google_drive(file_name, image.read())
             estimation_detail.objects.create(
                 user_id=user_id,
