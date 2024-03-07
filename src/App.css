@@ -926,3 +926,12 @@ select:disabled {
 .tooltip:hover::before {
   opacity: 1;
 }
+.__floater__body div:first-child{
+  height: 60px !important;
+  padding: 0px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* top: 2px; */
+  left: 0px;
+}

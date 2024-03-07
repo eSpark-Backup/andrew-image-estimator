@@ -122,7 +122,7 @@ export const SelectorTour = [
 
 export const heightTour = [
     {
-        content: 'You can select the height of object',
+        content: 'Select the height of object to proceed',
         placement: 'bottom',
         styles: {
             options: {
@@ -137,7 +137,7 @@ export const heightTour = [
 
 export const widthTour = [
     {
-        content: 'You can select the Width of object',
+        content: 'Select the length of object to proceed',
         placement: 'bottom',
         styles: {
             options: {
@@ -152,7 +152,7 @@ export const widthTour = [
 
 export const SelectImageTour = [
     {
-        content: 'You can change your uploaded image',
+        content: 'You can change your selected image',
         placement: 'right',
         styles: {
             options: {

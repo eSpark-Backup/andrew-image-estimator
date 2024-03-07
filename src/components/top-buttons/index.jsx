@@ -143,6 +143,7 @@ const TopButtons = ({
         showSkipButton={false}
         callback={callback}
         steps={imageTour}
+        hideCloseButton={true}
         styles={{
           buttonNext: {
             display: "none",
