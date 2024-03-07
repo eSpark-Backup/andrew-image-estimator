@@ -9,10 +9,13 @@ import squareIconWhite from "./icons/squareIconWhite.svg"
 import EditIcon from "./icons/EditIcon.svg"
 import DustbinBlack from "./icons/DustbinBlack.svg"
 import EstimationBlack from "./icons/EstimationBlack.svg"
-import changeImage from "./icons/changeImg.png"
-import resetImg from "./icons/reset.png"
-import revertImg from "./icons/revert.png"
+import changeImage from "./icons/changeImg.svg"
+import resetImg from "./icons/reset.svg"
+import revertImg from "./icons/revert.svg"
 import uploadImg from "./icons/Upload.svg"
+import resetImgWhite from "./icons/resetWhite.svg"
+import revertImgWhite from "./icons/revertWhite.svg"
+import changeImageWhite from "./icons/changeImgWhite.svg"
 
 export {
   squareIcon,
@@ -30,4 +33,7 @@ export {
   resetImg,
   revertImg,
   uploadImg,
+  resetImgWhite,
+  revertImgWhite,
+  changeImageWhite,
 };

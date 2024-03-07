@@ -865,3 +865,64 @@ select:disabled {
 .py-0 {
   padding: 0px 50px !important
 }
+
+.undo {
+  border: 1px solid#303032;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.undo:hover {
+  background-color:#000;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip::after {
+  content: "Change Image";
+  position: absolute;
+  width: max-content;
+  bottom: -39px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.tooltipReset::after {
+  content: "Reset";
+}
+
+.tooltipRevert::after {
+  content: "Undo";
+}
+
+.tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+}
+.tooltip:hover::before {
+  opacity: 1;
+}
