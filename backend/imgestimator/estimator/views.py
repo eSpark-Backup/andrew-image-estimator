@@ -69,8 +69,9 @@ class ExtractCutout(APIView):
         target_color = (0, 0, 0)
         new_data = [(r, g, b, 0) if (r, g, b) == target_color else (r, g, b, a) for (r, g, b, a) in data]
         image.putdata(new_data)
+        image.save("upload.png")
         image_width, image_height = image.size
-        image_url=upload_file_to_google_drive(file_name, image)
+        image_url=upload_file_to_google_drive(file_name, "upload.png")
         if image_url:
             data= {"image_url": image_url,
                 "image_width": image_width,
