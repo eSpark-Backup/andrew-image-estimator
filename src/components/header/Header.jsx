@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ModalComponent from '../modal/Modal'
+import { logout } from '../../services/authApi'
 
 const Header = () => {
-    const location = useLocation()
     const navigate = useNavigate()
+    const token = window?.localStorage.getItem("token")
     const [isLogoutModalOpen, setLogoutModalOpen] = useState(false)
     return (
         <>
             <div className='header'>
                 <h2 style={{ color: "white" }}>Logo</h2>
-                {location?.pathname === "/" ? <div className='header-links'>
+                {!token ? <div className='header-links'>
                     <h2 style={{ color: "white" }}><span onClick={() => navigate("/sign-up")} style={{ cursor: "pointer" }}>Signup</span> | <span onClick={() => navigate("/login")} style={{ cursor: "pointer" }}>Login</span></h2>
-                </div> : location.pathname === "/trash" ? <div className='header-links'>
+                </div> : <div className='header-links'>
                     <h2 style={{ color: "white" }}><span style={{ cursor: "pointer" }} onClick={() => setLogoutModalOpen(true)}>Logout</span></h2>
-                </div> : null}
+                </div>}
 
             </div>
             <ModalComponent
@@ -24,6 +25,10 @@ const Header = () => {
                 btn2Text={"Logout"}
                 closeModal={() => setLogoutModalOpen(false)}
                 modalIsOpen={isLogoutModalOpen}
+                onSuccess={() => {
+                    logout()
+                    setLogoutModalOpen(false)
+                }}
             />
         </>
     )

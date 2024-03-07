@@ -409,3 +409,21 @@ export const calculateFabrication = (
   });
   setNext(10);
 };
+
+export const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
+export const getErrors = (err) => {
+  if (err?.response?.data?.error) {
+    return typeof err?.response?.data?.error === "string"
+      ? err?.response?.data?.error
+      : err?.response?.data?.error[0];
+  } else {
+    return "Something went wrong!";
+  }
+};

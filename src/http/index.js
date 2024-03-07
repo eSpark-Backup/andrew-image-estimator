@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const baseURL = "http://127.0.0.1:8000";
+export const baseURL = import.meta.env.VITE_BASE_URL;
 
 const http = (url, type, body, token) => {
   return new Promise((resolve, reject) => {

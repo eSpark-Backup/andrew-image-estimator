@@ -3,6 +3,8 @@ import { signinItems } from '../../constants'
 import TextInput from '../inputs/text-input'
 import { useNavigate } from 'react-router-dom'
 import { toast } from "react-toastify";
+import { loginApi } from "../../services/authApi";
+import { getErrors, validateEmail } from "../../algorithm";
 
 const SigninForm = () => {
     const navigate = useNavigate()
@@ -22,7 +24,19 @@ const SigninForm = () => {
             return;
         }
 
-        console.log(userData);
+        if (!validateEmail(userData.email)) {
+            toast.error("Please provide valid email");
+            return;
+        }
+
+        loginApi(userData)
+          .then((res) => {
+            localStorage.setItem("token", res?.data?.token);
+            navigate("/");
+          })
+          .catch((err) => {
+            toast.error(getErrors(err));
+          });
     };
     return (
         <>
