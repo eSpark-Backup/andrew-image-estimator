@@ -12,6 +12,10 @@ const EstimatorList = ({ estimatorListData }) => {
     const navigate = useNavigate()
     const isTrash = location.pathname.includes('trash')
     const [isCreateModalOpen, setCreateModalOpen] = useState(false)
+    const CloseHandler = () => {
+        navigate("/tool")
+        setCreateModalOpen(false)
+    }
 
 
     return (
@@ -73,7 +77,7 @@ const EstimatorList = ({ estimatorListData }) => {
                     </div>
 
                 }
-                <ModalComponent
+                {window?.localStorage.getItem("token") ? <ModalComponent
                     heading={"Create Estimation"}
                     label={"Estimation name"}
                     placeholder={"Enter estimation name"}
@@ -82,7 +86,15 @@ const EstimatorList = ({ estimatorListData }) => {
                     closeModal={() => setCreateModalOpen(false)}
                     onSuccess={() => navigate("/tool")}
                     modalIsOpen={isCreateModalOpen}
-                />
+                /> : <ModalComponent
+                    heading={"Continue as a Guest"}
+                    description={"Guest mode allows one-time use only. Estimations made will not be saved. Please sign in or create an account for saving your estimation."}
+                    btn1Text={"Continue"}
+                    btn2Text={"Sign Up"}
+                    closeModal={CloseHandler}
+                    onSuccess={() => navigate("/sign-up")}
+                    modalIsOpen={isCreateModalOpen}
+                />}
             </div>
         </>
     )
