@@ -248,3 +248,105 @@ class EditView(APIView):
             return Response(record, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)
+        
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class EstimationDetails(APIView):
+    def post(self, request, *args, **kwargs):
+        user_id=request.user
+        estimation_id=request.data.get("estimation_id")
+        image=request.FILES.get("image")
+        wear_plate_type_est=request.data.get("wear_plate_type_est")
+        wear_plate_type_curr=request.data.get("wear_plate_type_curr")
+        stich_welding=request.data.get("stich_welding")
+        press_break_bends=request.data.get("press_break_bends")
+        bolt_holes=request.data.get("bolt_holes")
+        impact_type=request.data.get("impact_type")
+        zip_code=request.data.get("zip_code")
+        est_delivery_date=request.data.get("est_delivery_date")
+        perimeter_welding=request.data.get("perimeter_welding")
+        fasten_use_studs=request.data.get("fasten_use_studs")
+        roll_bends=request.data.get("roll_bends")
+        abrasion_type=request.data.get("abrasion_type")
+        fab_service=request.data.get("fab_service")
+        deliver_site_date=request.data.get("deliver_site_date")
+        try:
+            user_name=end_user.objects.get(email=user_id)
+            file_name=f"esp_detail_{user_name.username}_{user_name.id}"
+            image_url=upload_file_to_google_drive(file_name, image.read())
+            estimation_detail.objects.create(
+                user_id=user_id,
+                estimation_id=estimation_id,
+                image=image_url,
+                wear_plate_type_est=wear_plate_type_est,
+                wear_plate_type_curr=wear_plate_type_curr,
+                stich_welding=stich_welding,
+                press_break_bends=press_break_bends,
+                bolt_holes=bolt_holes,
+                impact_type=impact_type,
+                zip_code=zip_code,
+                est_delivery_date=est_delivery_date,
+                perimeter_welding=perimeter_welding,
+                fasten_use_studs=fasten_use_studs,
+                roll_bends=roll_bends,
+                abrasion_type=abrasion_type,
+                est_fabric_serv=fab_service,
+                deliver_site_date=deliver_site_date,
+            )
+            return Response({"message":"Resquest created."},status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error":"Invalid form data: " + str(e)},status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, *args, **kwargs):
+        est_id=request.query_params.get("est_id")
+        est_details_records=estimation_detail.objects.filter(estimation_id=est_id)
+        if est_details_records:
+            records=[]
+            for rec in est_details_records:
+                record={
+                    "id":rec.id,
+                    "user_id":rec.user_id,
+                    "estimation_id":rec.estimation_id,
+                    "image":rec.image,
+                    "wear_plate_type_est":rec.wear_plate_type_est,
+                    "wear_plate_type_curr":rec.wear_plate_type_curr,
+                    "stich_welding":rec.stich_welding,
+                    "press_break_bends":rec.press_break_bends,
+                    "bolt_holes":rec.bolt_holes,
+                    "impact_type":rec.impact_type,
+                    "zip_code":rec.zip_code,
+                    "est_delivery_date":rec.est_delivery_date,
+                    "perimeter_welding":rec.perimeter_welding,
+                    "fasten_use_studs":rec.fasten_use_studs,
+                    "roll_bends":rec.roll_bends,
+                    "abrasion_type":rec.abrasion_type,
+                    "fab_service":rec.est_fabric_serv,
+                    "deliver_site_date":rec.deliver_site_date,
+                }
+                records.append(record)
+            return Response(records, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
+    def patch(self, request, *args, **kwargs):
+        id = request.query_params.get("id")
+        updates=request.data
+        try:
+            est_detail_record=estimation_detail.objects.get(id=id)
+        except estimation_detail.DoesNotExist:
+            return Response({"error":"Record not found."},status=status.HTTP_404_NOT_FOUND
+            )
+        try:
+            for key in updates:
+                if key=="image":
+                    continue
+                if key=="fab_service":
+                    est_detail_record.est_fabric_serv=updates["fab_service"]
+                    continue
+                setattr(est_detail_record, key, updates[key])
+            est_detail_record.save()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error":str(e)},status=status.HTTP_400_BAD_REQUEST
+                )
