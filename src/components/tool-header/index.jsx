@@ -4,6 +4,7 @@ import TextInput from "../inputs/text-input";
 import { useNavigate } from "react-router";
 import Joyride from 'react-joyride';
 import { SelectorTour, heightTour, widthTour } from "../../constants";
+import ModalComponent from "../modal/Modal";
 
 const ToolHeader = ({ active, form, handleChange }) => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const ToolHeader = ({ active, form, handleChange }) => {
   const [selectTaker] = useState(SelectorTour);
   const [selectHeight] = useState(heightTour);
   const [selectwidth] = useState(widthTour);
+  const [isNavigatorModalOpen, setIsNavigatorModalOpen] = useState(false)
 
   useEffect(() => {
     if (active === "select" && form.unit === "") {
@@ -31,6 +33,15 @@ const ToolHeader = ({ active, form, handleChange }) => {
 
   }, [active, form.unit, form.length, form.width]);
 
+  const NavigatorHandler = () => {
+    if (window.localStorage.getItem("token")) {
+      navigate("/")
+    }
+    else {
+      setIsNavigatorModalOpen(true)
+    }
+  }
+
   return (
     <>
       <div
@@ -47,7 +58,7 @@ const ToolHeader = ({ active, form, handleChange }) => {
         <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
           <p style={{ fontSize: "20px", fontWeight: 600, color: "#fff" }}>Logo</p>
           <p
-            onClick={() => navigate("/")}
+            onClick={NavigatorHandler}
             style={{
               fontSize: "18px",
               fontWeight: 400,
@@ -132,6 +143,15 @@ const ToolHeader = ({ active, form, handleChange }) => {
           }
         }
         }
+      />
+      <ModalComponent
+        heading={"Confirm Navigation"}
+        description={"As a guest account your estimation will not be saved if you decide to continue. Are  you sure you want to leave this page?"}
+        btn1Text={"Cancel"}
+        btn2Text={"Leave"}
+        closeModal={() => setIsNavigatorModalOpen(false)}
+        modalIsOpen={isNavigatorModalOpen}
+        onSuccess={() => navigate("/")}
       />
     </>
   );
