@@ -102,3 +102,65 @@ export const estimatorListData = [
         createdAt: '12 September,23'
     },
 ]
+
+export const SelectorTour = [
+    {
+        content: 'You can select the unit for measurement',
+        placement: 'bottom',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+                // hide close button 
+
+            },
+        },
+        target: '.select-taker',
+        disableBeacon: true
+    },
+]
+
+export const heightTour = [
+    {
+        content: 'You can select the height of object',
+        placement: 'bottom',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.height-taker',
+        disableBeacon: true
+    },
+]
+
+export const widthTour = [
+    {
+        content: 'You can select the Width of object',
+        placement: 'bottom',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.width-taker',
+        disableBeacon: true
+    },
+]
+
+export const SelectImageTour = [
+    {
+        content: 'You can change your uploaded image',
+        placement: 'right',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.select-image',
+        disableBeacon: true
+    },
+]

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   changeImage,
   changeImageWhite,
@@ -7,6 +7,8 @@ import {
   revertImg,
   revertImgWhite,
 } from "../../assets";
+import Joyride from 'react-joyride';
+import { SelectImageTour } from "../../constants";
 
 const TopButtons = ({
   canvasImage,
@@ -21,6 +23,8 @@ const TopButtons = ({
   handleRevertChild,
   points,
 }) => {
+  const [tour, setTour] = useState(false);
+  const [imageTour] = useState(SelectImageTour);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleMouseEnter = (name) => {
@@ -31,36 +35,39 @@ const TopButtons = ({
     setShowTooltip(false);
   };
 
+
+  const callback = (data) => {
+    if (data.action === 'close' && data.type === 'step:after') {
+      setTour(false);
+    }
+  }
+
+
+  useEffect(() => {
+    if (canvasImage && next === 0) {
+      setTour(true);
+    }
+  }
+    , [canvasImage, next]);
+
   return (
-    <div className="button-container topBtns">
-      {canvasImage && next === 0 ? (
-        <div
-          className="tooltip"
-          onMouseEnter={() => handleMouseEnter("change")}
-          onMouseLeave={handleMouseLeave}
-        >
-          <img
-            className="cursor-pointer undo"
-            src={showTooltip === "change" ? changeImageWhite : changeImage}
-            alt="change"
-            onClick={handleRemoveImage}
-          />
-        </div>
-      ) : next === 2 && crop.width !== 0 ? (
-        <div
-          className="tooltip tooltipReset"
-          onMouseEnter={() => handleMouseEnter("reset")}
-          onMouseLeave={handleMouseLeave}
-        >
-          <img
-            className="cursor-pointer undo"
-            src={showTooltip === "reset" ? resetImgWhite : resetImg}
-            alt="change"
-            onClick={resetShape}
-          />
-        </div>
-      ) : next === 5 && points.length > 0 ? (
-        <div className="button-container">
+
+    <>
+      <div className="button-container topBtns">
+        {canvasImage && next === 0 ? (
+          <div
+            className="tooltip"
+            onMouseEnter={() => handleMouseEnter("change")}
+            onMouseLeave={handleMouseLeave}
+          >
+            <img
+              className="cursor-pointer undo select-image"
+              src={showTooltip === "change" ? changeImageWhite : changeImage}
+              alt="change"
+              onClick={handleRemoveImage}
+            />
+          </div>
+        ) : next === 2 && crop.width !== 0 ? (
           <div
             className="tooltip tooltipReset"
             onMouseEnter={() => handleMouseEnter("reset")}
@@ -70,51 +77,80 @@ const TopButtons = ({
               className="cursor-pointer undo"
               src={showTooltip === "reset" ? resetImgWhite : resetImg}
               alt="change"
-              onClick={handleReset}
+              onClick={resetShape}
             />
           </div>
-          <div
-            className="tooltip tooltipRevert"
-            onMouseEnter={() => handleMouseEnter("revert")}
-            onMouseLeave={handleMouseLeave}
-          >
-            <img
-              className="cursor-pointer undo"
-              src={showTooltip === "revert" ? revertImgWhite : revertImg}
-              alt="change"
-              onClick={handleRevert}
-            />
+        ) : next === 5 && points.length > 0 ? (
+          <div className="button-container">
+            <div
+              className="tooltip tooltipReset"
+              onMouseEnter={() => handleMouseEnter("reset")}
+              onMouseLeave={handleMouseLeave}
+            >
+              <img
+                className="cursor-pointer undo"
+                src={showTooltip === "reset" ? resetImgWhite : resetImg}
+                alt="change"
+                onClick={handleReset}
+              />
+            </div>
+            <div
+              className="tooltip tooltipRevert"
+              onMouseEnter={() => handleMouseEnter("revert")}
+              onMouseLeave={handleMouseLeave}
+            >
+              <img
+                className="cursor-pointer undo"
+                src={showTooltip === "revert" ? revertImgWhite : revertImg}
+                alt="change"
+                onClick={handleRevert}
+              />
+            </div>
           </div>
-        </div>
-      ) : next === 6 && childPoints.length > 0 ? (
-        <div className="button-container">
-          <div
-            className="tooltip tooltipReset"
-            onMouseEnter={() => handleMouseEnter("reset")}
-            onMouseLeave={handleMouseLeave}
-          >
-            <img
-              className="cursor-pointer undo"
-              src={showTooltip === "reset" ? resetImgWhite : resetImg}
-              alt="change"
-              onClick={handleResetChild}
-            />
+        ) : next === 6 && childPoints.length > 0 ? (
+          <div className="button-container">
+            <div
+              className="tooltip tooltipReset"
+              onMouseEnter={() => handleMouseEnter("reset")}
+              onMouseLeave={handleMouseLeave}
+            >
+              <img
+                className="cursor-pointer undo"
+                src={showTooltip === "reset" ? resetImgWhite : resetImg}
+                alt="change"
+                onClick={handleResetChild}
+              />
+            </div>
+            <div
+              className="tooltip tooltipRevert"
+              onMouseEnter={() => handleMouseEnter("revert")}
+              onMouseLeave={handleMouseLeave}
+            >
+              <img
+                className="cursor-pointer undo"
+                src={showTooltip === "revert" ? revertImgWhite : revertImg}
+                alt="change"
+                onClick={handleRevertChild}
+              />
+            </div>
           </div>
-          <div
-            className="tooltip tooltipRevert"
-            onMouseEnter={() => handleMouseEnter("revert")}
-            onMouseLeave={handleMouseLeave}
-          >
-            <img
-              className="cursor-pointer undo"
-              src={showTooltip === "revert" ? revertImgWhite : revertImg}
-              alt="change"
-              onClick={handleRevertChild}
-            />
-          </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+
+      <Joyride
+        run={tour}
+        showProgress={false}
+        showSkipButton={false}
+        callback={callback}
+        steps={imageTour}
+        styles={{
+          buttonNext: {
+            display: "none",
+          }
+
+        }}
+      />
+    </>
   );
 };
 
