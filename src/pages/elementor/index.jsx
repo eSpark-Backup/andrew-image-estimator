@@ -133,8 +133,8 @@ function Elementor() {
     handleCropApi(crop, imgRef, form)
       .then((res) => {
         setCropImg({
-          width: res?.data?.image_width,
-          height: res?.data?.image_height,
+          width: res?.data?.image_width / 2,
+          height: res?.data?.image_height / 2,
         });
         setCropLoading(false);
         setCroppedImage("/crop.png");
