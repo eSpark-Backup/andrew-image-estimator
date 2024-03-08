@@ -18,6 +18,7 @@ const ModalComponent = ({
   name,
   dashboard,
   onSuccess,
+  loading2
 }) => {
   const customStyles = {
     content: {
@@ -34,6 +35,7 @@ const ModalComponent = ({
   };
   const navigate = useNavigate();
   const [value, setValue] = useState("");
+  const [loading,setLoading] = useState(false)
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -54,12 +56,15 @@ const ModalComponent = ({
       toast.error("Please provide valid email");
       return;
     }
+    setLoading(true)
 
     loginApi(userData)
       .then((res) => {
+        setLoading(false)
         closeModal()
       })
       .catch((err) => {
+        setLoading(false)
         toast.error(getErrors(err));
       });
   };
@@ -113,7 +118,13 @@ const ModalComponent = ({
             <div className="signin-button-parents">
               <button onClick={closeModal}>Skip</button>
 
-              <button onClick={handleLogin}>Login</button>
+              <button onClick={handleLogin}>{loading ?
+                <div className='button-loader'>
+                  <svg viewBox="25 25 50 50">
+                    <circle r="20" cy="50" cx="50"></circle>
+                  </svg>
+                </div>
+                : "Login"}</button>
             </div>
           </div>
         ) : (
@@ -141,7 +152,13 @@ const ModalComponent = ({
             <div className="signin-button-parents">
               <button onClick={closeModal}>{btn1Text}</button>
 
-              <button onClick={() => onSuccess(value)}>{btn2Text}</button>
+              <button onClick={() => onSuccess(value)}>{loading2 ?
+                        <div className='button-loader'>
+                            <svg viewBox="25 25 50 50">
+                                <circle r="20" cy="50" cx="50"></circle>
+                            </svg>
+                        </div>
+                        : btn2Text}</button>
             </div>
           </div>
         )}

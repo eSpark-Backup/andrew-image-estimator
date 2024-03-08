@@ -97,6 +97,7 @@ const ToolHeader = ({ active, form, handleChange }) => {
               ]}
               placeholder="Select Unit"
               handleChange={handleChange}
+              header={true}
             />
           </div>
           <div

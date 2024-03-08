@@ -27,6 +27,8 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   const navigate = useNavigate();
   const isTrash = location.pathname.includes("trash");
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [deleteLoading,setDeleteLoading] = useState(false)
   const CloseHandler = () => {
     navigate("/tool");
     setCreateModalOpen(false);
@@ -36,23 +38,33 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
     if (value.trim() === "") {
       toast.error("Please enter name");
     } else {
+      setLoading(true)
       createEstimationApi({ name: value })
         .then((res) => {
+          setLoading(false)
           toast.success("Estimation Created Successfully");
           navigate(`/tool/?id=${res?.data?.id}`);
         })
-        .catch((err) => getErrors(err));
+        .catch((err) => {
+          setLoading(false)
+          getErrors(err)
+        });
     }
   };
 
   const handleDelete = (id) => {
+    setDeleteLoading(true)
     deleteEstimationsApi(id)
       .then((res) => {
+        setDeleteLoading(false)
         toast.success(res?.data && res?.data[0]);
         setDeleteModalOpen(false);
         fetchAllEstimations()
       })
-      .catch((err) => toast.error(getErrors(err)));
+      .catch((err) => {
+        setDeleteLoading(false)
+        toast.error(getErrors(err)
+      )});
   };
 
   return (
@@ -134,6 +146,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
         )}
         {window?.localStorage.getItem("token") ? (
           <ModalComponent
+            loading2={loading}
             heading={"Create Estimation"}
             label={"Estimation name"}
             placeholder={"Enter estimation name"}
@@ -158,6 +171,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
         )}
         <ModalComponent
           heading={"Delete"}
+          loading2={deleteLoading}
           description={"Are you sure you want to delete this estimation?"}
           btn1Text={"Cancel"}
           btn2Text={"Delete"}

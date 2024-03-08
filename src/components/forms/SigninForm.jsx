@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from "react-toastify";
 import { loginApi } from "../../services/authApi";
 import { getErrors, validateEmail } from "../../algorithm";
+import Loader from '../loader/Loader';
 
 const SigninForm = () => {
     const navigate = useNavigate()
@@ -12,6 +13,7 @@ const SigninForm = () => {
         email: "",
         password: ""
     })
+    const [loading, setLoading] = useState(false)
     const InputChangeHandler = (name, value) => {
         setUserData(prevState => ({
             ...prevState,
@@ -29,13 +31,17 @@ const SigninForm = () => {
             return;
         }
 
+        setLoading(true)
         loginApi(userData)
-          .then((res) => {
-            navigate("/");
-          })
-          .catch((err) => {
-            toast.error(getErrors(err));
-          });
+            .then((res) => {
+                setLoading(false)
+                localStorage.setItem("token", res?.data?.token);
+                navigate("/");
+            })
+            .catch((err) => {
+                setLoading(false)
+                toast.error(getErrors(err));
+            });
     };
     return (
         <>
@@ -54,7 +60,13 @@ const SigninForm = () => {
                 <button
                     onClick={SubmitHandler}
                 >
-                    Login
+                    {loading ?
+                        <div className='button-loader'>
+                            <svg viewBox="25 25 50 50">
+                                <circle r="20" cy="50" cx="50"></circle>
+                            </svg>
+                        </div>
+                        : "Login"}
                 </button>
 
             </div>
