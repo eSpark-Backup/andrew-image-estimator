@@ -153,8 +153,8 @@ function Elementor() {
       .then((res) => {
         setCutoutLoading(false)
         setCutImg({
-          width: res?.data?.image_width,
-          height: res?.data?.image_height,
+          width: res?.data?.image_width / 2,
+          height: res?.data?.image_height / 2,
         });
         setChildCroppedImage("/cutout.png");
         setNext(6);
@@ -178,8 +178,8 @@ function Elementor() {
         setInsideCutoutLoading(false)
         setChildPoints([]);
         setInsideCutImg({
-          width: res?.data?.image_width,
-          height: res?.data?.image_height,
+          width: res?.data?.image_width / 2,
+          height: res?.data?.image_height / 2,
         });
         setInsideChildCroppedImage(`/cutout${polygonsInd}.png`);
 
@@ -188,8 +188,8 @@ function Elementor() {
           polygonsInd,
           image: `/cutout${polygonsInd}.png`,
           dimention: {
-            width: res?.data?.image_width,
-            height: res?.data?.image_height,
+            width: res?.data?.image_width / 2,
+            height: res?.data?.image_height / 2,
           },
         };
         setCalArr((prevArr) => [...prevArr, tempObj]);
