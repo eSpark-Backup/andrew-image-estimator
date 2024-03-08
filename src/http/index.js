@@ -7,10 +7,10 @@ const http = (url, type, body, token) => {
   return new Promise((resolve, reject) => {
     axios[type](
       `${baseURL}${url}`,
-      token
+      window.localStorage.getItem("token")
         ? {
             headers: {
-              Authorization: `Bearer ${token}`,}
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,}
           }
         : body
     )

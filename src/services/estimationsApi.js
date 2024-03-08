@@ -1,6 +1,7 @@
 import http from "../http";
 
 export const createEstimationApi = (payload) => {
+  console.log(payload)
   return new Promise((resolve, reject) => {
     http(`/api/create_est/`, "post", payload, null)
       .then((res) => {

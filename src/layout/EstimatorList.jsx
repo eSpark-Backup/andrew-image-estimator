@@ -35,10 +35,11 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   };
 
   const handleCreateEstimation = (value) => {
+    setLoading(true)
     if (value.trim() === "") {
+      setLoading(false)
       toast.error("Please enter name");
     } else {
-      setLoading(true)
       createEstimationApi({ name: value })
         .then((res) => {
           setLoading(false)

@@ -61,6 +61,7 @@ const ModalComponent = ({
     loginApi(userData)
       .then((res) => {
         setLoading(false)
+        navigate("/")
         closeModal()
       })
       .catch((err) => {

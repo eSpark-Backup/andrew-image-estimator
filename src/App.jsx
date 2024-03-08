@@ -15,7 +15,7 @@ const App = () => {
     } else {
       delete axios.defaults.headers.common.Authorization;
     }
-  })
+  },[])
   return (
     <BrowserRouter>
       <div style={{ fontFamily: 'Inter, sans-serif' }}>

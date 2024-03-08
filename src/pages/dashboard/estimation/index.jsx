@@ -14,21 +14,25 @@ const Estimations = () => {
   const token = window?.localStorage?.getItem("token");
 
   const fetchAllEstimations = () => {
-    setLoading(true)
-    getAllEstimationsApi()
-      .then((res) => {
-        setLoading(false)
-        setData(res?.data);
-        setFilteredData(res?.data);
-      })
-      .catch((err) => {
-        setLoading(false)
-        getErrors(err)
-      });
-  }
+    if (token) {
+      setLoading(true);
+      getAllEstimationsApi()
+        .then((res) => {
+          setLoading(false);
+          setData(res?.data);
+          setFilteredData(res?.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+          getErrors(err);
+        });
+    }
+  };
+  
+
   useEffect(() => {
     if (token) {
-      fetchAllEstimations()
+            fetchAllEstimations()
     }
   }, [token]);
 
