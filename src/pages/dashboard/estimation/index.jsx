@@ -1,11 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SearchBar } from '../../../components'
-import { estimatorListData } from '../../../constants'
+import { getAllEstimationsApi } from "../../../services/estimationsApi";
+import { getErrors } from "../../../algorithm";
 import { EstimatorList } from '../../../layout'
 
 const Estimations = () => {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
+  const token = window?.localStorage?.getItem("token");
+
+  const fetchAllEstimations = () => {
+    getAllEstimationsApi()
+    .then((res) => {
+      setData(res?.data);
+      setFilteredData(res?.data);
+    })
+    .catch((err) => getErrors(err));
+  }
+  useEffect(() => {
+    if (token) {
+      fetchAllEstimations()
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (search !== "") {
+      setFilteredData(data.filter((item) => item.name.includes(search)));
+    } else {
+      setFilteredData(data)
+    }
+  }, [search]);
 
   return (
     <div className='dashboard-main-box'>
@@ -13,10 +39,10 @@ const Estimations = () => {
       <SearchBar search={search} setSearch={setSearch} />
 
       {/* Estimation lists  */}
-      <EstimatorList estimatorListData={estimatorListData} />
+      <EstimatorList fetchAllEstimations={fetchAllEstimations} estimatorListData={filteredData} />
 
     </div>
   )
 }
 
-export default Estimations
+export default Estimations;

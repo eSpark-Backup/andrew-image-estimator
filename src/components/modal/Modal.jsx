@@ -33,6 +33,7 @@ const ModalComponent = ({
     },
   };
   const navigate = useNavigate();
+  const [value, setValue] = useState("");
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -56,8 +57,7 @@ const ModalComponent = ({
 
     loginApi(userData)
       .then((res) => {
-        localStorage.setItem("token", res?.data?.token);
-        navigate("/");
+        closeModal()
       })
       .catch((err) => {
         toast.error(getErrors(err));
@@ -128,6 +128,8 @@ const ModalComponent = ({
                   style={{ height: "100%", width: "100%" }}
                   name={name}
                   label={label}
+                  value={value}
+                  handleChange={(_, value) => setValue(value)}
                   type={"text"}
                   placeholder={placeholder}
                 />
@@ -139,7 +141,7 @@ const ModalComponent = ({
             <div className="signin-button-parents">
               <button onClick={closeModal}>{btn1Text}</button>
 
-              <button onClick={onSuccess}>{btn2Text}</button>
+              <button onClick={() => onSuccess(value)}>{btn2Text}</button>
             </div>
           </div>
         )}

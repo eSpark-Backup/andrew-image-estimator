@@ -31,7 +31,6 @@ const SigninForm = () => {
 
         loginApi(userData)
           .then((res) => {
-            localStorage.setItem("token", res?.data?.token);
             navigate("/");
           })
           .catch((err) => {
