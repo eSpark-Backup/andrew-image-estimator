@@ -81,6 +81,9 @@ class estimation_detail(models.Model):
     image=models.URLField()
     wear_plate_type_est=models.CharField(max_length=30)
     wear_plate_type_curr=models.CharField(max_length=30)
+    wear_plate_area=models.FloatField(default=0)
+    wear_plate_weight=models.FloatField(default=0)
+    plate_price=models.FloatField(default=0)
     stich_welding=models.BooleanField()
     press_break_bends=models.IntegerField()
     bolt_holes=models.IntegerField()
@@ -93,6 +96,7 @@ class estimation_detail(models.Model):
     abrasion_type=models.CharField(max_length=30)
     est_fabric_serv=models.BooleanField()
     deliver_site_date=models.DateField()
+    total_price=models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
