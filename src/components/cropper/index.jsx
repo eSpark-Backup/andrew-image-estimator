@@ -1,9 +1,17 @@
-import { useState, useRef, useEffect } from 'react';
-import { getDimention } from '../../algorithm';
+import { useState, useRef, useEffect } from "react";
+import { getDimention } from "../../algorithm";
 
-export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, setCrop, image }) => {
-  const [xColor, setXColor] = useState("#ffffff")
-  const [yColor, setYColor] = useState("#ffffff")
+export const ImageCropper = ({
+  shapeDrawn,
+  setShapeDrawn,
+  focus,
+  form,
+  crop,
+  setCrop,
+  image,
+}) => {
+  const [xColor, setXColor] = useState("#BFBFBF");
+  const [yColor, setYColor] = useState("#BFBFBF");
   const [isDrawing, setIsDrawing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
@@ -12,28 +20,42 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (focus === "height") {
-        setXColor(xColor === "#ff0000" ? "#ffffff" : "#ff0000");
-        setYColor("#ffffff");
+        setXColor(xColor === "#ff0000" ? "#BFBFBF" : "#ff0000");
+        setYColor("#BFBFBF");
       } else if (focus === "length") {
-        setYColor(yColor === "#ff0000" ? "#ffffff" : "#ff0000");
-        setXColor("#ffffff");
+        setYColor(yColor === "#ff0000" ? "#BFBFBF" : "#ff0000");
+        setXColor("#BFBFBF");
       } else {
-        setXColor("#ffffff");
-        setYColor("#ffffff");
+        setXColor("#BFBFBF");
+        setYColor("#BFBFBF");
       }
     }, 300); // Delay of 1000 milliseconds (1 second)
-  
+
     return () => clearTimeout(timeout);
   }, [focus, xColor, yColor]);
 
   useEffect(() => {
     if (image) {
-      const context = canvasRef.current.getContext('2d');
+      const context = canvasRef.current.getContext("2d");
       var canvas = context.canvas;
-      const { centerShift_x, centerShift_y, w, h } = getDimention(canvas.width, canvas.height, image.width, image.height)
+      const { centerShift_x, centerShift_y, w, h } = getDimention(
+        canvas.width,
+        canvas.height,
+        image.width,
+        image.height
+      );
       context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, 0, 0, image.width, image.height,
-        centerShift_x, centerShift_y, w, h);
+      context.drawImage(
+        image,
+        0,
+        0,
+        image.width,
+        image.height,
+        centerShift_x,
+        centerShift_y,
+        w,
+        h
+      );
       if (focus) {
         drawCropRectangle(context);
       } else {
@@ -51,7 +73,7 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
     const deltaY = e.clientY - dragStart.y;
 
     switch (crop.handleType) {
-      case 'top-left':
+      case "top-left":
         setCrop((prevCrop) => ({
           ...prevCrop,
           x: crop.x + deltaX,
@@ -60,7 +82,7 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
           height: crop.height - deltaY,
         }));
         break;
-      case 'top-right':
+      case "top-right":
         setCrop((prevCrop) => ({
           ...prevCrop,
           y: crop.y + deltaY,
@@ -68,7 +90,7 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
           height: crop.height - deltaY,
         }));
         break;
-      case 'bottom-left':
+      case "bottom-left":
         setCrop((prevCrop) => ({
           ...prevCrop,
           x: crop.x + deltaX,
@@ -76,7 +98,7 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
           height: crop.height + deltaY,
         }));
         break;
-      case 'bottom-right':
+      case "bottom-right":
         setCrop((prevCrop) => ({
           ...prevCrop,
           width: crop.width + deltaX,
@@ -93,15 +115,35 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
   const drawResizeHandles = (context) => {
     const handleSize = 5;
     const handles = [
-      { x: crop.x, y: crop.y, cursor: 'nwse-resize', type: 'top-left' },
-      { x: crop.x + crop.width, y: crop.y, cursor: 'nesw-resize', type: 'top-right' },
-      { x: crop.x, y: crop.y + crop.height, cursor: 'nesw-resize', type: 'bottom-left' },
-      { x: crop.x + crop.width, y: crop.y + crop.height, cursor: 'nwse-resize', type: 'bottom-right' },
+      { x: crop.x, y: crop.y, cursor: "nwse-resize", type: "top-left" },
+      {
+        x: crop.x + crop.width,
+        y: crop.y,
+        cursor: "nesw-resize",
+        type: "top-right",
+      },
+      {
+        x: crop.x,
+        y: crop.y + crop.height,
+        cursor: "nesw-resize",
+        type: "bottom-left",
+      },
+      {
+        x: crop.x + crop.width,
+        y: crop.y + crop.height,
+        cursor: "nwse-resize",
+        type: "bottom-right",
+      },
     ];
 
     handles.forEach((handle) => {
-      context.fillStyle = '#ffffff';
-      context.fillRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize);
+      context.fillStyle = "#BFBFBF";
+      context.fillRect(
+        handle.x - handleSize / 2,
+        handle.y - handleSize / 2,
+        handleSize,
+        handleSize
+      );
     });
   };
 
@@ -142,7 +184,7 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
   const drawCropRectangle = (context) => {
     const originalStrokeStyle = context.strokeStyle;
 
-    context.strokeStyle = "#ffffff";
+    context.strokeStyle = "#BFBFBF";
     context.lineWidth = 1;
     context.strokeRect(crop.x, crop.y, crop.width, crop.height);
 
@@ -242,9 +284,9 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
       if (handle) {
         canvasRef.current.style.cursor = handle.cursor;
       } else if (isPointInCropArea(x, y)) {
-        canvasRef.current.style.cursor = 'move';
+        canvasRef.current.style.cursor = "move";
       } else {
-        canvasRef.current.style.cursor = shapeDrawn ? 'default' : 'crosshair';
+        canvasRef.current.style.cursor = shapeDrawn ? "default" : "crosshair";
       }
     }
   };
@@ -258,13 +300,19 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
 
   const getHandleAtPosition = (x, y) => {
     const handles = [
-      { x: crop.x, y: crop.y, type: 'top-left' },
-      { x: crop.x + crop.width, y: crop.y, type: 'top-right' },
-      { x: crop.x, y: crop.y + crop.height, type: 'bottom-left' },
-      { x: crop.x + crop.width, y: crop.y + crop.height, type: 'bottom-right' },
+      { x: crop.x, y: crop.y, type: "top-left" },
+      { x: crop.x + crop.width, y: crop.y, type: "top-right" },
+      { x: crop.x, y: crop.y + crop.height, type: "bottom-left" },
+      { x: crop.x + crop.width, y: crop.y + crop.height, type: "bottom-right" },
     ];
 
-    return handles.find((handle) => x >= handle.x - 4 && x <= handle.x + 4 && y >= handle.y - 4 && y <= handle.y + 4);
+    return handles.find(
+      (handle) =>
+        x >= handle.x - 4 &&
+        x <= handle.x + 4 &&
+        y >= handle.y - 4 &&
+        y <= handle.y + 4
+    );
   };
 
   const isPointInCropArea = (x, y) => {
@@ -278,11 +326,20 @@ export const ImageCropper = ({ shapeDrawn, setShapeDrawn, focus, form, crop, set
 
   return (
     <>
+      {!focus && <div className="details">
+        <p className="details-heading">Crop</p>
+        <p className="details-desc">
+          Click and drag to create a crop box over your image. Resize and
+          reposition the box to cover the portion you want to keep.
+        </p>
+      </div>}
       <canvas
         ref={canvasRef}
         width={form.imageWidth}
         height={form.imageHeight}
-        style={{ cursor: focus ? "pointer" : shapeDrawn ? 'move' : 'crosshair' }}
+        style={{
+          cursor: focus ? "pointer" : shapeDrawn ? "move" : "crosshair",
+        }}
         onMouseDown={!focus && handleMouseDown}
         onMouseMove={!focus && handleMouseMove}
         onMouseUp={!focus && handleMouseUp}
