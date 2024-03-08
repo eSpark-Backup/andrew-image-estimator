@@ -19,7 +19,8 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .drive_funcs import upload_file_to_google_drive
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -222,14 +223,17 @@ class Dashboard(APIView):
 class EmailSend(APIView):
     def post(self, request, *args, **kwargs):
         subject = 'Welcome to My Site'
-        message = 'Thank you for creating an account!'
         from_email = 'test@esparkconsultants.com'
         recipient_list = [request.data.get("email")]
-
-        # Send the email
-        send_mail(subject, message, from_email, recipient_list)
-
-        # Optionally, return a response indicating the email was sent successfully
+        recipient_name=request.data.get("recipient_name")
+        table_data=request.data.get("data")
+        html_content = render_to_string('emailformat.html', {
+            'recipient_name': recipient_name,
+            'estimation_results': table_data,
+        })
+        email_message = EmailMessage(subject, html_content, from_email, recipient_list)
+        email_message.content_subtype = "html"
+        email_message.send()
         return Response({"message": "Email sent successfully."})
     
 
@@ -270,6 +274,9 @@ class EstimationDetails(APIView):
         image=request.FILES.get("image")
         wear_plate_type_est=request.data.get("wear_plate_type_est")
         wear_plate_type_curr=request.data.get("wear_plate_type_curr")
+        wear_plate_area=request.data.get("wear_plate_area")
+        wear_plate_weight=request.data.get("wear_plate_weight")
+        plate_price=request.data.get("plate_price")
         stich_welding=request.data.get("stich_welding")
         press_break_bends=request.data.get("press_break_bends")
         bolt_holes=request.data.get("bolt_holes")
@@ -282,6 +289,7 @@ class EstimationDetails(APIView):
         abrasion_type=request.data.get("abrasion_type")
         fab_service=request.data.get("fab_service")
         deliver_site_date=request.data.get("deliver_site_date")
+        total_price=request.data.get("total_price")
         try:
             user_name=end_user.objects.get(email=user_id)
             file_name=f"esp_detail_{user_name.username}_{user_name.id}"
@@ -292,6 +300,9 @@ class EstimationDetails(APIView):
                 image=image_url,
                 wear_plate_type_est=wear_plate_type_est,
                 wear_plate_type_curr=wear_plate_type_curr,
+                wear_plate_area=wear_plate_area,
+                wear_plate_weight=wear_plate_weight,
+                plate_price=plate_price,
                 stich_welding=stich_welding,
                 press_break_bends=press_break_bends,
                 bolt_holes=bolt_holes,
@@ -304,6 +315,7 @@ class EstimationDetails(APIView):
                 abrasion_type=abrasion_type,
                 est_fabric_serv=fab_service,
                 deliver_site_date=deliver_site_date,
+                total_price=total_price,
             )
             return Response({"message":"Resquest created."},status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -322,6 +334,9 @@ class EstimationDetails(APIView):
                     "image":rec.image,
                     "wear_plate_type_est":rec.wear_plate_type_est,
                     "wear_plate_type_curr":rec.wear_plate_type_curr,
+                    "wear_plate_area":rec.wear_plate_area,
+                    "wear_plate_weight":rec.wear_plate_weight,
+                    "plate_price":rec.plate_price,
                     "stich_welding":rec.stich_welding,
                     "press_break_bends":rec.press_break_bends,
                     "bolt_holes":rec.bolt_holes,
@@ -334,6 +349,7 @@ class EstimationDetails(APIView):
                     "abrasion_type":rec.abrasion_type,
                     "fab_service":rec.est_fabric_serv,
                     "deliver_site_date":rec.deliver_site_date,
+                    "total_price":rec.total_price,
                 }
                 records.append(record)
             return Response(records, status=status.HTTP_200_OK)
