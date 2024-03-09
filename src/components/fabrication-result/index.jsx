@@ -1,6 +1,7 @@
 import React from "react";
 import NormalTable from "../tables/normalTable";
 import FabricationTable from "../tables/fabricationTable";
+import { getImgSrc } from "../../algorithm";
 
 const Result = ({ calArr, form }) => {
   return (
@@ -22,7 +23,7 @@ const Result = ({ calArr, form }) => {
                           ? "590px"
                           : Object.keys(item).includes("dropdowns")
                           ? "1635px"
-                          : "440px",
+                          : "590px",
                       borderRadius:
                         calArr.length === 1
                           ? "10px 0 0 10px"
@@ -41,7 +42,7 @@ const Result = ({ calArr, form }) => {
                           height: `${item?.dimention?.height}px`,
                           zIndex: -9,
                         }}
-                        src={item?.image}
+                        src={getImgSrc(item?.image)}
                       />
                     </div>
                   </div>

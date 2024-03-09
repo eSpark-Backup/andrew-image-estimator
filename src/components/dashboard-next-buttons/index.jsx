@@ -6,6 +6,9 @@ import {
 } from "../../algorithm";
 
 const DashboardNextButtons = ({
+  token,
+  id,
+  calArr,
   cutImg,
   next,
   setNext,
@@ -27,12 +30,15 @@ const DashboardNextButtons = ({
   setCalArr,
   setPolygonArr,
   setPolygonInd,
+  loader,
+  setLoader,
 }) => {
   return (
     <div className="button-container right">
       {(next <= 10 || (form.fabricator && next === 9)) && (
         <button
           disabled={
+            loader ||
             (next === 0 && !canvasImage) ||
             (next === 1 && form.unit === "") ||
             (next === 2 && crop.width === 0) ||
@@ -65,6 +71,9 @@ const DashboardNextButtons = ({
               handleInsideCutout();
             } else if (next === 7) {
               handleCalculate(
+                token,
+                id,
+                calArr,
                 form,
                 cutImg,
                 polygonArr,
@@ -115,7 +124,17 @@ const DashboardNextButtons = ({
             }
           }}
         >
-          {next > 9 ? "Need more polygons" : "Next"}
+          {loader ? (
+            <div className="button-loader">
+              <svg viewBox="25 25 50 50">
+                <circle r="20" cy="50" cx="50"></circle>
+              </svg>
+            </div>
+          ) : next > 9 ? (
+            "Need more polygons"
+          ) : (
+            "Next"
+          )}
         </button>
       )}
       {next > 9 && <button>Share via email</button>}

@@ -1,3 +1,39 @@
+import { toast } from "react-toastify";
+import {
+  createEstimationFromById,
+  updateEstimationById,
+} from "../services/estimationsApi";
+
+export const getImgSrc = (img) => {
+  const id = img?.split("/")[5];
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+};
+
+export async function downloadFileFromDrive(fileId, token) {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch file");
+    }
+
+    const fileData = await response.blob();
+    const url = URL.createObjectURL(fileData);
+    return { url, fileData };
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    throw error; // Re-throw the error for handling at higher levels
+  }
+}
+
 //algorithm of calculating the selected size of metal and and it's weight
 export const calculateSelectedArea = (
   form,
@@ -298,7 +334,10 @@ export function hasNoFalsyValue(obj) {
 }
 
 //calculate area and weight
-export const handleCalculate = (
+export const handleCalculate = async (
+  token,
+  id,
+  calArr,
   form,
   cropImg,
   polygonArr,
@@ -337,7 +376,33 @@ export const handleCalculate = (
   });
   setPolygonInd(polygonsInd + 1);
   if (!form.fabricator || form?.fabricator === "false") {
-    setNext(10);
+    // if (!form.fabricator || form?.fabricator === "false") {
+    //   updateEstimationById(id, {test: ""})
+    //   .then((res)=>{
+    //     setNext(10);
+    //   })
+    //   .catch(err => toast(getErrors(err)))
+    // }
+
+    // try {
+    //   const { image } = calArr.find(
+    //     (item) => item?.polygonsInd === polygonsInd
+    //   );
+    //   const data = await downloadFileFromDrive(image.split("/")[5], token);
+    //   const formData = new FormData();
+    //   formData.append("estimation_id", id);
+    //   formData.append("image", data?.fileData);
+    //   formData.append("wear_plate_area", object?.size.toFixed(2));
+    //   formData.append("wear_plate_weight", object?.weight.toFixed(2));
+    //   formData.append("plate_price", object?.platePrice.toFixed(2));
+    //   formData.append("fab_service", false);
+
+    //   const res = await createEstimationFromById(formData);
+    //   console.log(res?.data);
+    //   setNext(10);
+    // } catch (err) {
+    //   toast.error(getErrors(err));
+    // }
   } else {
     setNext(9);
   }

@@ -68,7 +68,7 @@ section.container1 {
 
 .text-input,
 .select-input {
-  width: 100%;
+  width: 350px;
 }
 
 .text-input input,

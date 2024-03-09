@@ -1,16 +1,19 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { downloadFileFromDrive, getImgSrc } from "../../algorithm";
+import Loader from "../loader/Loader";
 
 const Canvas = ({
   img,
   points,
   setPoints,
-  loading,
   cropImg,
   polygonArr,
   setPolygonArr,
+  token,
 }) => {
   const canvasRef = useRef(null);
-  console.log(points, "points");
+  const [src, setSrc] = useState("");
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
     if (polygonArr) {
       let arr = [];
@@ -29,13 +32,31 @@ const Canvas = ({
   }, [points]);
 
   useEffect(() => {
+    setLoader(true);
+    const fetchDataAndDrawImage = async () => {
+      try {
+        const data = await downloadFileFromDrive(img.split("/")[5], token);
+        if (src === "") {
+          setSrc(data?.url);
+        }
+        setLoader(false);
+      } catch (error) {
+        setLoader(false);
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchDataAndDrawImage();
+  }, [img]);
+
+  useEffect(() => {
     if (!img) {
       return;
     }
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     const image = new Image();
-    image.src = img;
+    image.src = src;
 
     image.onload = () => {
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -158,45 +179,44 @@ const Canvas = ({
     return () => {
       canvas.removeEventListener("mousedown", handleMouseDown);
     };
-  }, [points, img]);
+  }, [points, img, src]);
 
   return (
     <>
-      {loading ? (
-        <>loading</>
+      <div className="details">
+        <p className="details-heading">
+          {polygonArr ? "Select the object" : "Select the area"}
+        </p>
+        {polygonArr ? (
+          <p className="details-desc">
+            Click on the object to set the starting point of your polygon.
+            Continue clicking at each corner or key point to outline the object
+            you want to get estimated. Ensure precision by placing points
+            accurately. If you make a mistake click on the Revert button undo
+            the last step. However Reset button will clear all points, allowing
+            you to begin anew.
+          </p>
+        ) : (
+          <p className="details-desc">
+            Click on the image to set the starting point of your polygon. For
+            clipping out the area, continue clicking at each corner or key point
+            to outline the area of interest. Ensure precision by placing points
+            accurately. If you make a mistake click on the Revert button undo
+            the last step. However Reset button will clear all points, allowing
+            you to begin anew.
+          </p>
+        )}
+      </div>
+
+      {loader ? (
+        <Loader />
       ) : (
-        <>
-          <div className="details">
-            <p className="details-heading">
-              {polygonArr ? "Select the object" : "Select the area"}
-            </p>
-            {polygonArr ? (
-              <p className="details-desc">
-                Click on the object to set the starting point of your polygon.
-                Continue clicking at each corner or key point to outline the
-                object you want to get estimated. Ensure precision by placing
-                points accurately. If you make a mistake click on the Revert
-                button undo the last step. However Reset button will clear all
-                points, allowing you to begin anew.
-              </p>
-            ) : (
-              <p className="details-desc">
-                Click on the image to set the starting point of your polygon.
-                For clipping out the area, continue clicking at each corner or
-                key point to outline the area of interest. Ensure precision by
-                placing points accurately. If you make a mistake click on the
-                Revert button undo the last step. However Reset button will
-                clear all points, allowing you to begin anew.
-              </p>
-            )}
-          </div>
-          <canvas
-            ref={canvasRef}
-            width={cropImg.width}
-            height={cropImg.height}
-            style={{ cursor: "crosshair" }}
-          ></canvas>
-        </>
+        <canvas
+          ref={canvasRef}
+          width={cropImg.width}
+          height={cropImg.height}
+          style={{ cursor: "crosshair" }}
+        ></canvas>
       )}
     </>
   );
