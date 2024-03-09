@@ -6,6 +6,7 @@ import {
 } from "../../algorithm";
 
 const DashboardNextButtons = ({
+  apiPolygons,
   token,
   id,
   calArr,
@@ -32,7 +33,9 @@ const DashboardNextButtons = ({
   setPolygonInd,
   loader,
   setLoader,
+  setModal,
 }) => {
+  const authToken = window.localStorage.getItem("token")
   return (
     <div className="button-container right">
       {(next <= 10 || (form.fabricator && next === 9)) && (
@@ -71,6 +74,7 @@ const DashboardNextButtons = ({
               handleInsideCutout();
             } else if (next === 7) {
               handleCalculate(
+                apiPolygons,
                 token,
                 id,
                 calArr,
@@ -83,7 +87,8 @@ const DashboardNextButtons = ({
                 setCalArr,
                 setPolygonArr,
                 setPolygonInd,
-                setNext
+                setNext,
+                setLoader
               );
             } else if (next === 8) {
               if (!form.fabricator || form?.fabricator === "false") {
@@ -101,7 +106,14 @@ const DashboardNextButtons = ({
                   dropdowns,
                   setCalArr,
                   polygonsInd,
-                  setNext
+                  setNext,
+                  apiPolygons,
+                  token,
+                  id,
+                  calArr,
+                  polygonArr,
+                  form,
+                  setLoader
                 );
               }
             } else {
@@ -137,7 +149,7 @@ const DashboardNextButtons = ({
           )}
         </button>
       )}
-      {next > 9 && <button>Share via email</button>}
+      {next > 9 && <button onClick={() => setModal(authToken ? "auth" : "unAuth")}>Share via email</button>}
     </div>
   );
 };

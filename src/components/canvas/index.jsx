@@ -3,6 +3,7 @@ import { downloadFileFromDrive, getImgSrc } from "../../algorithm";
 import Loader from "../loader/Loader";
 
 const Canvas = ({
+  apiPolygons,
   img,
   points,
   setPoints,
@@ -42,12 +43,17 @@ const Canvas = ({
         setLoader(false);
       } catch (error) {
         setLoader(false);
-        console.error("Error fetching data:", error);
       }
     };
 
     fetchDataAndDrawImage();
   }, [img]);
+
+  const apiPolarr = apiPolygons && apiPolygons.length > 0 && Object.keys(apiPolygons).map((key) => ({
+    points: apiPolygons[key].map((val) => {
+      return { x: val.x1, y: val.y1 };
+    }),
+  }));
 
   useEffect(() => {
     if (!img) {
@@ -63,12 +69,21 @@ const Canvas = ({
       drawGraph();
     };
 
-    const drawPolygons = () =>
+    const drawPolygonsApi = () => {
+      apiPolarr && apiPolarr.length > 0
+        ? apiPolarr?.forEach(({ points }) => {
+            redrawCanvasLoop(points);
+          })
+        : null;
+    };
+
+    const drawPolygons = () => {
       polygonArr && polygonArr.length > 0
         ? polygonArr?.forEach(({ new: newArr, points }) => {
             if (!newArr) redrawCanvasLoop(points);
           })
         : null;
+    };
 
     const redrawCanvasLoop = (points) => {
       if (points.length > 1) {
@@ -103,6 +118,7 @@ const Canvas = ({
 
     function drawGraph() {
       drawPolygons();
+      drawPolygonsApi();
     }
 
     const animate = () => {

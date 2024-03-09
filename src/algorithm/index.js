@@ -29,7 +29,6 @@ export async function downloadFileFromDrive(fileId, token) {
     const url = URL.createObjectURL(fileData);
     return { url, fileData };
   } catch (error) {
-    console.error("Error downloading file:", error);
     throw error; // Re-throw the error for handling at higher levels
   }
 }
@@ -335,6 +334,7 @@ export function hasNoFalsyValue(obj) {
 
 //calculate area and weight
 export const handleCalculate = async (
+  apiPolygons,
   token,
   id,
   calArr,
@@ -347,8 +347,21 @@ export const handleCalculate = async (
   setCalArr,
   setPolygonArr,
   setPolygonInd,
-  setNext
+  setNext,
+  setLoader
 ) => {
+  const apiPolName = Object.keys(apiPolygons).map((key) => key);
+  const curLastPol = apiPolName[apiPolName.length - 1]
+    .split("")
+    .map((val) => val[apiPolName.length - 1]);
+  const newPol = parseInt(curLastPol[curLastPol.length - 1]) + 1;
+  const polygons = {
+    ...apiPolygons,
+    [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
+      x1: item.x,
+      y1: item.y,
+    })),
+  };
   const object = calculateChildArea(
     form,
     cropImg.width,
@@ -376,47 +389,85 @@ export const handleCalculate = async (
   });
   setPolygonInd(polygonsInd + 1);
   if (!form.fabricator || form?.fabricator === "false") {
-    // if (!form.fabricator || form?.fabricator === "false") {
-    //   updateEstimationById(id, {test: ""})
-    //   .then((res)=>{
-    //     setNext(10);
-    //   })
-    //   .catch(err => toast(getErrors(err)))
-    // }
-
-    // try {
-    //   const { image } = calArr.find(
-    //     (item) => item?.polygonsInd === polygonsInd
-    //   );
-    //   const data = await downloadFileFromDrive(image.split("/")[5], token);
-    //   const formData = new FormData();
-    //   formData.append("estimation_id", id);
-    //   formData.append("image", data?.fileData);
-    //   formData.append("wear_plate_area", object?.size.toFixed(2));
-    //   formData.append("wear_plate_weight", object?.weight.toFixed(2));
-    //   formData.append("plate_price", object?.platePrice.toFixed(2));
-    //   formData.append("fab_service", false);
-
-    //   const res = await createEstimationFromById(formData);
-    //   console.log(res?.data);
-    //   setNext(10);
-    // } catch (err) {
-    //   toast.error(getErrors(err));
-    // }
+    try {
+      const { image } = calArr.find(
+        (item) => item?.polygonsInd === polygonsInd
+      );
+      const data = await downloadFileFromDrive(image.split("/")[5], token);
+      const formData = new FormData();
+      formData.append("estimation_id", id);
+      formData.append("image", data?.fileData);
+      formData.append("wear_plate_area", object?.size.toFixed(2));
+      formData.append("wear_plate_weight", object?.weight.toFixed(2));
+      formData.append("plate_price", object?.platePrice.toFixed(2));
+      formData.append("fab_service", "False");
+      formData.append("wear_plate_type_est", "");
+      formData.append("wear_plate_type_curr", "");
+      formData.append("stich_welding", "False");
+      formData.append("press_break_bends", 0);
+      formData.append("bolt_holes", 0);
+      formData.append("impact_type", "");
+      formData.append("zip_code", "");
+      formData.append("est_delivery_date", "");
+      formData.append("perimeter_welding", "False");
+      formData.append("fasten_use_studs", 0);
+      formData.append("roll_bends", 0);
+      formData.append("abrasion_type", "");
+      formData.append("deliver_site_date", "2000-10-10");
+      formData.append("total_price", 0);
+      if (id) {
+        setLoader(true);
+        const data = {
+          polygons: JSON.stringify(polygons),
+        };
+        try {
+          await updateEstimationById(id, data);
+          await createEstimationFromById(formData);
+          setNext(10);
+          setLoader(false);
+        } catch (err) {
+          toast(getErrors(err));
+          setLoader(false);
+        }
+      } else {
+        setNext(10);
+      }
+    } catch (err) {
+      toast.error(getErrors(err));
+    }
   } else {
     setNext(9);
   }
 };
 
 //calculate fabrication
-export const calculateFabrication = (
+export const calculateFabrication = async (
   calculation,
   setCalculation,
   dropdowns,
   setCalArr,
   polygonsInd,
-  setNext
+  setNext,
+  apiPolygons,
+  token,
+  id,
+  calArr,
+  polygonArr,
+  form,
+  setLoader,
 ) => {
+  const apiPolName = Object.keys(apiPolygons).map((key) => key);
+  const curLastPol = apiPolName[apiPolName.length - 1]
+    .split("")
+    .map((val) => val[apiPolName.length - 1]);
+  const newPol = parseInt(curLastPol[curLastPol.length - 1]) + 1;
+  const polygons = {
+    ...apiPolygons,
+    [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
+      x1: item.x,
+      y1: item.y,
+    })),
+  };
   setCalculation((prev) => ({
     ...prev,
     perimeterWelding: dropdowns.perimeterWelding
@@ -472,7 +523,76 @@ export const calculateFabrication = (
       return item;
     });
   });
-  setNext(10);
+  try {
+    const calDetail = calArr.find(
+      (item) => item?.polygonsInd === polygonsInd - 1
+    );
+    const data = await downloadFileFromDrive(
+      calDetail?.image.split("/")[5],
+      token
+    );
+    const formData = new FormData();
+    formData.append("estimation_id", id);
+    formData.append("image", data?.fileData);
+    formData.append("wear_plate_area", calDetail?.calculation?.size.toFixed(2));
+    formData.append(
+      "wear_plate_weight",
+      calDetail?.calculation?.weight.toFixed(2)
+    );
+    formData.append(
+      "plate_price",
+      calDetail?.calculation?.platePrice.toFixed(2)
+    );
+    formData.append("fab_service", form.fabricator ? "True" : "False");
+    formData.append("wear_plate_type_est", dropdowns.plateTypeUsed);
+    formData.append("wear_plate_type_curr", dropdowns.plateType);
+    formData.append(
+      "stich_welding",
+      dropdowns.stitchWelding ? "True" : "False"
+    );
+    formData.append("press_break_bends", dropdowns.brakeBends);
+    formData.append("bolt_holes", dropdowns.sunkBoltsHoles);
+    formData.append("impact_type", dropdowns.impactType);
+    formData.append("zip_code", dropdowns.zipCode);
+    formData.append("est_delivery_date", dropdowns.deliveryDate);
+    formData.append(
+      "perimeter_welding",
+      dropdowns.perimeterWelding ? "True" : "False"
+    );
+    formData.append("fasten_use_studs", dropdowns.fastening);
+    formData.append("roll_bends", dropdowns.rolledBends);
+    formData.append("abrasion_type", dropdowns.abrasionType);
+    formData.append("deliver_site_date", dropdowns.dtsDate);
+    formData.append(
+      "total_price",
+      Number(calculation.platePrice) +
+        (dropdowns.perimeterWelding ? Number(calculation.weight) * 0.2 : 0) +
+        (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
+        Number(dropdowns.fastening) * 1.5 +
+        Number(dropdowns.brakeBends) * 0.6 +
+        Number(dropdowns.rolledBends) * 0.6 +
+        Number(dropdowns.sunkBoltsHoles) * 0.35
+    );
+    if (id) {
+      setLoader(true);
+      const data = {
+        polygons: JSON.stringify(polygons),
+      };
+      try {
+        await updateEstimationById(id, data);
+        await createEstimationFromById(formData);
+        setNext(10);
+        setLoader(false);
+      } catch (err) {
+        toast(getErrors(err));
+        setLoader(false);
+      }
+    } else {
+      setNext(10);
+    }
+  } catch (err) {
+    toast.error(getErrors(err));
+  }
 };
 
 export const validateEmail = (email) => {
@@ -497,15 +617,27 @@ export const formatDate = (dateString) => {
   const date = new Date(dateString);
 
   const months = [
-    "January", "February", "March", "April", "May", "June", "July",
-    "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const day = date.getDate();
   const monthIndex = date.getMonth();
   const year = date.getFullYear();
 
-  const formattedDate = `${day} ${months[monthIndex]},${year.toString().slice(-2)}`;
+  const formattedDate = `${day} ${months[monthIndex]},${year
+    .toString()
+    .slice(-2)}`;
 
   return formattedDate;
 };

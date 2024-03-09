@@ -22,7 +22,6 @@ const http = (url, type, body, token) => {
           reject(err);
         });
     } catch (err) {
-      console.log(err);
       reject(err);
     }
   });

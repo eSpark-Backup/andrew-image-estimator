@@ -42,6 +42,8 @@ function Elementor() {
   const [polygonsInd, setPolygonInd] = useState(0);
   const [polygonArr, setPolygonArr] = useState([]);
   const [calArr, setCalArr] = useState([]);
+  const [apiPolygons, setApiPolygons] = useState([]);
+  const [modal, setModal] = useState(false);
   const [cutImg, setCutImg] = useState({
     width: "",
     height: "",
@@ -121,6 +123,7 @@ function Elementor() {
               height: res?.data?.px_height,
             });
             setChildCroppedImage(res?.data?.image);
+            setApiPolygons(JSON.parse(res?.data?.polygons));
           }
           setToken(res?.data?.g_api);
           setScreenLoader(false);
@@ -334,9 +337,8 @@ function Elementor() {
       />
       <div className="canvas-container">
         {/* canvas card */}
-        {console.log(next)}
         <div
-          className={`${canvasImage && (next < 5 || next > 9) && "auto"} ${
+          className={`${(canvasImage || next === 1) && (next < 5 || next > 8) && "auto"} ${
             canvasImage && "top"
           }  ${next > 9 && "py-0"}
            card`}
@@ -430,6 +432,7 @@ function Elementor() {
                 />
               ) : next === 6 ? (
                 <Canvas
+                  apiPolygons={apiPolygons}
                   gridWidth={cropImg}
                   cropImg={cutImg}
                   form={form}
@@ -495,13 +498,14 @@ function Elementor() {
                   handleChange={handleChange}
                 />
               ) : (
-                <Result calArr={calArr} form={form} />
+                <Result modal={modal} setModal={setModal} id={id} calArr={calArr} form={form} />
               )}
             </>
           )}
         </div>
         {/* bottom buttons */}
         <DashboardNextButtons
+          apiPolygons={apiPolygons}
           token={token}
           id={id}
           cutImg={cutImg}
@@ -528,6 +532,7 @@ function Elementor() {
           setPolygonInd={setPolygonInd}
           loader={loader}
           setLoader={setLoader}
+          setModal={setModal}
         />
         {/* image for getting it's actual width and height */}
         {imagetoShow && (
