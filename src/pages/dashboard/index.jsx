@@ -5,7 +5,7 @@ import Header from "../../components/header/Header"
 import ModalComponent from '../../components/modal/Modal'
 
 const DashboardLayout = () => {
-  const [loginModal, setLoginModal] = useState(true)
+  const [loginModal, setLoginModal] = useState(false)
   const cookie = window?.localStorage.getItem("token")
   useEffect(() => {
     cookie ? setLoginModal(false) : setLoginModal(true)
