@@ -9,8 +9,8 @@ export const handleCropApi = (crop, imgRef, form) => {
     imgRef?.current?.height
   );
   const tempCrop = {
-    x: crop.x - centerShift_x,
-    y: crop.y - centerShift_y,
+    x: crop.x,
+    y: crop.y,
     width: crop.width,
     height: crop.height,
   };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NormalTable from "../tables/normalTable";
 import FabricationTable from "../tables/fabricationTable";
-import { getErrors, getImgSrc } from "../../algorithm";
+import { downloadFileFromDrive, getErrors, getImgSrc } from "../../algorithm";
 import { getEstimationFromById } from "../../services/estimationsApi";
 import { toast } from "react-toastify";
 import Loader from "../loader/Loader";
@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { sendEmailApi } from "../../services/emailApi";
 import { usernameExtractfromEmail } from "../../utils";
 
-const Result = ({ modal, setModal, id, calArr, form }) => {
+const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const navigate = useNavigate();
   const [successModal, setSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,11 +26,18 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
     if (id) {
       setLoading(true);
       getEstimationFromById(id)
-        .then((res) => {
+        .then(async (res) => {
           setData(res?.data);
+          const promises = res.data.map(async (item) => {
+            const { url } = await downloadFileFromDrive(item.image.split("/")[5], imageToken);
+            return { ...item, imageUrl: url }; // Assuming you want to add imageUrl to each object
+          });
+          const updatedData = await Promise.all(promises);
+          setData(updatedData);
           setLoading(false);
         })
         .catch((err) => {
+          console.log(err, "errerrerr")
           setLoading(false);
           toast.error(getErrors(err));
         });
@@ -109,7 +116,7 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
                         //   height: `${item?.dimention?.height}px`,
                         //   zIndex: -9,
                         // }}
-                        src={getImgSrc(item?.image)}
+                        src={item?.imageUrl}
                       />
                     </div>
                   </div>
@@ -173,7 +180,7 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
                       //   height: `${item?.dimention?.height}px`,
                       //   zIndex: -9,
                       // }}
-                      src={getImgSrc(item?.image)}
+                      src={item?.imageToShow}
                     />
                   </div>
                 </div>

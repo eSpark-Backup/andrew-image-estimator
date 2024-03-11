@@ -19,7 +19,7 @@ const Login = () => {
             <div className='signin-left-container-head'>
               <h2 className='center'>Welcome to  Image Estimator. Please Login</h2>
             </div>
-            <img src={signupPic} alt="Signup" style={{ width: "100%", height: "100%" }} />
+            <img src={signupPic} alt="Signup" style={{ width: "100%", height: "400px" }} />
           </div>
 
           <div className="signin-right-container">

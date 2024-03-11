@@ -24,8 +24,8 @@ section.container1 {
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100vh;
-  overflow-y: auto;
+  height: calc(100vh - 62px);
+  
 }
 
 .card {
@@ -34,12 +34,13 @@ section.container1 {
   box-shadow: 0px 0px 15px 0px #00000033;
   border-radius: 10px;
   width: calc(100% - 50px);
-  height: calc(100% - 140px);
+  height: calc(100% - 90px);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 50px;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .button-container {
@@ -151,6 +152,7 @@ button:disabled {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+  height: 100%;
 }
 
 .image-dropdown .img {
@@ -249,10 +251,10 @@ th {
 /* DASHBOARD  */
 
 .dashboard-card {
-    margin-top: 20px;
+    margin: 20px 0px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     width: calc(100% - 50px);
-    height: calc(100% - 100px);
+    height: calc(100% - 40px);
     display: flex;
     border-radius: 10px;
 }
@@ -455,9 +457,10 @@ th {
 .main-conatiner{
     width: 100vw;
     display: flex;
-    min-height: 95vh;
+    min-height: 92vh;
     justify-content: start;
     align-items: center;
+    margin-top: 10px;
 }
 .container{
     width:100vw;
@@ -495,6 +498,7 @@ th {
     row-gap: 50px;
     flex-direction: column;
     padding: 125px 0px;
+    overflow-y: auto;
 }
 .signin-right-container{
     row-gap: 90px;
@@ -549,8 +553,9 @@ th {
 }
 .header{
     background-color: #303032;
-    height: 60px;
-    padding: 15px 40px;
+    height: 6vh;
+    padding: 0px 40px;
+    align-items: center;
     display: flex;
     justify-content: space-between;
 }
@@ -660,7 +665,7 @@ body.modal-open {
     }
     .container{
         width: 85vw;
-        height: 90vh;
+        height: calc(100% - 40px);
         padding: 0px 20px;
         flex-direction: row;
     }
@@ -704,9 +709,9 @@ body.modal-open {
         width: 100%;
     }
 
-    .dashboard-card  {
+    /* .dashboard-card  {
     height: auto;
-    }
+    } */
 
     .sidebar-container {
         display: none;
@@ -1033,4 +1038,18 @@ select:disabled {
    stroke-dashoffset: -125px;
   }
  }
+ 
+ /* .signin-inputs>div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} */
+
+ @media screen and (max-width:768px) {
+
+  .signup-inputs>div>.text-input,
+  .signin-inputs>div>.text-input {
+    width: 90% !important;
+  }
+}
  
