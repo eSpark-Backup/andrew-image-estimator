@@ -1,16 +1,20 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { downloadFileFromDrive, getImgSrc } from "../../algorithm";
+import Loader from "../loader/Loader";
 
 const Canvas = ({
+  apiPolygons,
   img,
   points,
   setPoints,
-  loading,
   cropImg,
   polygonArr,
   setPolygonArr,
+  token,
 }) => {
   const canvasRef = useRef(null);
-  console.log(points, "points");
+  const [src, setSrc] = useState("");
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
     if (polygonArr) {
       let arr = [];
@@ -29,25 +33,63 @@ const Canvas = ({
   }, [points]);
 
   useEffect(() => {
+    setLoader(true);
+    const fetchDataAndDrawImage = async () => {
+      try {
+        if (token !== "") {
+          const data = await downloadFileFromDrive(img.split("/")[5], token);
+            setSrc(data?.url);
+          setLoader(false);
+        }
+      } catch (error) {
+        setLoader(false);
+      }
+    };
+
+    fetchDataAndDrawImage();
+  }, [img, token]);
+
+  const apiPolarr =
+    apiPolygons &&
+    Object.keys(apiPolygons).length > 0 &&
+    Object.keys(apiPolygons).map((key) => ({
+      points: apiPolygons[key].map((val) => {
+        return { x: val.x1, y: val.y1 };
+      }),
+    }));
+
+  useEffect(() => {
     if (!img) {
       return;
     }
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
+    const canvas = canvasRef?.current;
+    if (!canvas) {
+      return
+    }
+    const context = canvas?.getContext("2d");
     const image = new Image();
-    image.src = img;
+    image.src = src;
 
     image.onload = () => {
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
       drawGraph();
     };
 
-    const drawPolygons = () =>
+    const drawPolygonsApi = () => {
+      apiPolarr && apiPolarr.length > 0
+        ? apiPolarr?.forEach(({ points }) => {
+            redrawCanvasLoop(points);
+          })
+        : null;
+    };
+
+    const drawPolygons = () => {
       polygonArr && polygonArr.length > 0
         ? polygonArr?.forEach(({ new: newArr, points }) => {
             if (!newArr) redrawCanvasLoop(points);
           })
         : null;
+    };
 
     const redrawCanvasLoop = (points) => {
       if (points.length > 1) {
@@ -66,13 +108,13 @@ const Canvas = ({
           context.lineWidth = 3;
           context.stroke();
         } else {
-          context.strokeStyle = "#BABABA";
+          context.strokeStyle = "#39FF14";
           context.lineWidth = 3;
           context.stroke();
         }
       }
 
-      context.fillStyle = "#BABABA";
+      context.fillStyle = "#39FF14";
       for (let i = 0; i < points.length; i++) {
         context.beginPath();
         context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
@@ -82,6 +124,7 @@ const Canvas = ({
 
     function drawGraph() {
       drawPolygons();
+      drawPolygonsApi();
     }
 
     const animate = () => {
@@ -138,13 +181,13 @@ const Canvas = ({
           context.lineWidth = 3;
           context.stroke();
         } else {
-          context.strokeStyle = "#BABABA";
+          context.strokeStyle = "#39FF14";
           context.lineWidth = 3;
           context.stroke();
         }
       }
 
-      context.fillStyle = "#BABABA";
+      context.fillStyle = "#39FF14";
       for (let i = 0; i < points.length; i++) {
         context.beginPath();
         context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
@@ -152,51 +195,50 @@ const Canvas = ({
       }
     };
 
-    canvas.addEventListener("mousedown", handleMouseDown);
+    canvas?.addEventListener("mousedown", handleMouseDown);
     animate();
 
     return () => {
-      canvas.removeEventListener("mousedown", handleMouseDown);
+      canvas?.removeEventListener("mousedown", handleMouseDown);
     };
-  }, [points, img]);
+  }, [points, img, src]);
 
   return (
     <>
-      {loading ? (
-        <>loading</>
+      <div className="details">
+        <p className="details-heading">
+          {polygonArr ? "Select the object" : "Select the area"}
+        </p>
+        {polygonArr ? (
+          <p className="details-desc">
+            Click on the object to set the starting point of your polygon.
+            Continue clicking at each corner or key point to outline the object
+            you want to get estimated. Ensure precision by placing points
+            accurately. If you make a mistake click on the Revert button undo
+            the last step. However Reset button will clear all points, allowing
+            you to begin anew.
+          </p>
+        ) : (
+          <p className="details-desc">
+            Click on the image to set the starting point of your polygon. For
+            clipping out the area, continue clicking at each corner or key point
+            to outline the area of interest. Ensure precision by placing points
+            accurately. If you make a mistake click on the Revert button undo
+            the last step. However Reset button will clear all points, allowing
+            you to begin anew.
+          </p>
+        )}
+      </div>
+
+      {loader ? (
+        <Loader />
       ) : (
-        <>
-          <div className="details">
-            <p className="details-heading">
-              {polygonArr ? "Select the object" : "Select the area"}
-            </p>
-            {polygonArr ? (
-              <p className="details-desc">
-                Click on the object to set the starting point of your polygon.
-                Continue clicking at each corner or key point to outline the
-                object you want to get estimated. Ensure precision by placing
-                points accurately. If you make a mistake click on the Revert
-                button undo the last step. However Reset button will clear all
-                points, allowing you to begin anew.
-              </p>
-            ) : (
-              <p className="details-desc">
-                Click on the image to set the starting point of your polygon.
-                For clipping out the area, continue clicking at each corner or
-                key point to outline the area of interest. Ensure precision by
-                placing points accurately. If you make a mistake click on the
-                Revert button undo the last step. However Reset button will
-                clear all points, allowing you to begin anew.
-              </p>
-            )}
-          </div>
-          <canvas
-            ref={canvasRef}
-            width={cropImg.width}
-            height={cropImg.height}
-            style={{ cursor: "crosshair" }}
-          ></canvas>
-        </>
+        <canvas
+          ref={canvasRef}
+          width={cropImg.width}
+          height={cropImg.height}
+          style={{ cursor: "crosshair" }}
+        ></canvas>
       )}
     </>
   );

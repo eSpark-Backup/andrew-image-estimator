@@ -10,8 +10,8 @@ export const ImageCropper = ({
   setCrop,
   image,
 }) => {
-  const [xColor, setXColor] = useState("#BFBFBF");
-  const [yColor, setYColor] = useState("#BFBFBF");
+  const [xColor, setXColor] = useState("#39FF14");
+  const [yColor, setYColor] = useState("#39FF14");
   const [isDrawing, setIsDrawing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
@@ -20,14 +20,14 @@ export const ImageCropper = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (focus === "height") {
-        setXColor(xColor === "#ff0000" ? "#BFBFBF" : "#ff0000");
-        setYColor("#BFBFBF");
+        setXColor(xColor === "#ff0000" ? "#39FF14" : "#ff0000");
+        setYColor("#39FF14");
       } else if (focus === "length") {
-        setYColor(yColor === "#ff0000" ? "#BFBFBF" : "#ff0000");
-        setXColor("#BFBFBF");
+        setYColor(yColor === "#ff0000" ? "#39FF14" : "#ff0000");
+        setXColor("#39FF14");
       } else {
-        setXColor("#BFBFBF");
-        setYColor("#BFBFBF");
+        setXColor("#39FF14");
+        setYColor("#39FF14");
       }
     }, 300); // Delay of 1000 milliseconds (1 second)
 
@@ -137,7 +137,7 @@ export const ImageCropper = ({
     ];
 
     handles.forEach((handle) => {
-      context.fillStyle = "#BFBFBF";
+      context.fillStyle = "#39FF14";
       context.fillRect(
         handle.x - handleSize / 2,
         handle.y - handleSize / 2,
@@ -184,7 +184,7 @@ export const ImageCropper = ({
   const drawCropRectangle = (context) => {
     const originalStrokeStyle = context.strokeStyle;
 
-    context.strokeStyle = "#BFBFBF";
+    context.strokeStyle = "#39FF14";
     context.lineWidth = 1;
     context.strokeRect(crop.x, crop.y, crop.width, crop.height);
 

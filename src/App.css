@@ -69,7 +69,7 @@ section.container1 {
 
 .text-input,
 .select-input {
-  width: 100%;
+  width: 350px;
 }
 
 .text-input input,
@@ -213,9 +213,9 @@ button:disabled {
   align-items: center;
 }
 
-.dropdown div {
+/* .dropdown div {
   width: 350px;
-}
+} */
 
 table {
   /* font-family: arial, sans-serif; */
@@ -648,6 +648,9 @@ body.modal-open {
   font-size: 16px;
   font-weight: 600;
 }
+.css-11az8si-Input2{
+  padding: 0px 0px !important;
+}
 
 
 @media screen and (min-width:900px){
@@ -985,3 +988,49 @@ select:disabled {
   /* top: 2px; */
   left: 0px;
 }
+
+.button-loader{
+  /* width: 100vw; */
+  /* height: 50vh; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button-loader svg {
+  width: 1.8em;
+  transform-origin: center;
+  animation: rotate4 2s linear infinite;
+ }
+ 
+ .button-loader circle {
+  fill: none;
+  stroke: hsl(0, 0%, 100%);
+  stroke-width: 2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 1.5s ease-in-out infinite;
+ }
+ 
+ @keyframes rotate4 {
+  100% {
+   transform: rotate(360deg);
+  }
+ }
+ 
+ @keyframes dash4 {
+  0% {
+   stroke-dasharray: 1, 200;
+   stroke-dashoffset: 0;
+  }
+ 
+  50% {
+   stroke-dasharray: 90, 200;
+   stroke-dashoffset: -35px;
+  }
+ 
+  100% {
+   stroke-dashoffset: -125px;
+  }
+ }
+ 

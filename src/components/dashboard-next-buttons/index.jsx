@@ -6,6 +6,11 @@ import {
 } from "../../algorithm";
 
 const DashboardNextButtons = ({
+  fetchCurrentEstimation,
+  apiPolygons,
+  token,
+  id,
+  calArr,
   cutImg,
   next,
   setNext,
@@ -27,12 +32,17 @@ const DashboardNextButtons = ({
   setCalArr,
   setPolygonArr,
   setPolygonInd,
+  loader,
+  setLoader,
+  setModal,
 }) => {
+  const authToken = window.localStorage.getItem("token")
   return (
     <div className="button-container right">
       {(next <= 10 || (form.fabricator && next === 9)) && (
         <button
           disabled={
+            loader ||
             (next === 0 && !canvasImage) ||
             (next === 1 && form.unit === "") ||
             (next === 2 && crop.width === 0) ||
@@ -65,6 +75,10 @@ const DashboardNextButtons = ({
               handleInsideCutout();
             } else if (next === 7) {
               handleCalculate(
+                apiPolygons,
+                token,
+                id,
+                calArr,
                 form,
                 cutImg,
                 polygonArr,
@@ -74,7 +88,8 @@ const DashboardNextButtons = ({
                 setCalArr,
                 setPolygonArr,
                 setPolygonInd,
-                setNext
+                setNext,
+                setLoader
               );
             } else if (next === 8) {
               if (!form.fabricator || form?.fabricator === "false") {
@@ -83,7 +98,7 @@ const DashboardNextButtons = ({
                 setNext(9);
               }
             } else if (next === 9) {
-              if (form?.fabricator === "false") {
+              if (form?.fabricator === "false" && !authToken) {
                 setNext(10);
               } else {
                 calculateFabrication(
@@ -92,10 +107,18 @@ const DashboardNextButtons = ({
                   dropdowns,
                   setCalArr,
                   polygonsInd,
-                  setNext
+                  setNext,
+                  apiPolygons,
+                  token,
+                  id,
+                  calArr,
+                  polygonArr,
+                  form,
+                  setLoader
                 );
               }
             } else {
+              fetchCurrentEstimation()
               setNext(6);
               setDropdowns({
                 perimeterWelding: false,
@@ -115,10 +138,20 @@ const DashboardNextButtons = ({
             }
           }}
         >
-          {next > 9 ? "Need more polygons" : "Next"}
+          {loader ? (
+            <div className="button-loader">
+              <svg viewBox="25 25 50 50">
+                <circle r="20" cy="50" cx="50"></circle>
+              </svg>
+            </div>
+          ) : next > 9 ? (
+            "Need more polygons"
+          ) : (
+            "Next"
+          )}
         </button>
       )}
-      {next > 9 && <button>Share via email</button>}
+      {next > 9 && <button onClick={() => setModal(authToken ? "auth" : "unAuth")}>Share via email</button>}
     </div>
   );
 };

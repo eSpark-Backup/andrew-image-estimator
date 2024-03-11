@@ -19,6 +19,7 @@ const ModalComponent = ({
   name,
   dashboard,
   onSuccess,
+  loading2
 }) => {
   const customStyles = {
     width: "452px",
@@ -26,6 +27,8 @@ const ModalComponent = ({
     padding: dashboard ? "20px 0px" : "20px",
   };
   const navigate = useNavigate();
+  const [value, setValue] = useState("");
+  const [loading,setLoading] = useState(false)
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -46,13 +49,16 @@ const ModalComponent = ({
       toast.error("Please provide valid email");
       return;
     }
+    setLoading(true)
 
     loginApi(userData)
       .then((res) => {
-        localStorage.setItem("token", res?.data?.token);
-        navigate("/");
+        setLoading(false)
+        navigate("/")
+        closeModal()
       })
       .catch((err) => {
+        setLoading(false)
         toast.error(getErrors(err));
       });
   };
@@ -120,7 +126,13 @@ const ModalComponent = ({
             <div className="signin-button-parents">
               <button onClick={closeModal}>Skip</button>
 
-              <button onClick={handleLogin}>Login</button>
+              <button onClick={handleLogin}>{loading ?
+                <div className='button-loader'>
+                  <svg viewBox="25 25 50 50">
+                    <circle r="20" cy="50" cx="50"></circle>
+                  </svg>
+                </div>
+                : "Login"}</button>
             </div>
           </div>
         ) : (
@@ -135,6 +147,8 @@ const ModalComponent = ({
                   style={{ height: "100%", width: "100%" }}
                   name={name}
                   label={label}
+                  value={value}
+                  handleChange={(_, value) => setValue(value)}
                   type={"text"}
                   placeholder={placeholder}
                 />
@@ -146,7 +160,13 @@ const ModalComponent = ({
             <div className="signin-button-parents">
               <button onClick={closeModal}>{btn1Text}</button>
 
-              <button onClick={onSuccess}>{btn2Text}</button>
+              <button onClick={() => onSuccess(value)}>{loading2 ?
+                        <div className='button-loader'>
+                            <svg viewBox="25 25 50 50">
+                                <circle r="20" cy="50" cx="50"></circle>
+                            </svg>
+                        </div>
+                        : btn2Text}</button>
             </div>
           </div>
         )}
