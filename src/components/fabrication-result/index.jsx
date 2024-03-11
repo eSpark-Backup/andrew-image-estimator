@@ -8,6 +8,8 @@ import Loader from "../loader/Loader";
 import ModalComponent from "../modal/Modal";
 import ConfirmModal from "../modal/ConfirmModal";
 import { useNavigate } from "react-router-dom";
+import { sendEmailApi } from "../../services/emailApi";
+import { usernameExtractfromEmail } from "../../utils";
 
 const Result = ({ modal, setModal, id, calArr, form }) => {
   const navigate = useNavigate();
@@ -15,6 +17,11 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const token = window.localStorage.getItem("token");
+  const loggedInUser = window.localStorage.getItem("user");
+  const { name, email } = JSON.parse(loggedInUser) || {};
+
+
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -34,9 +41,28 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
     navigate("/");
   };
 
-  const handleSendEmail = (email) => {
-    /// sending emails
-    setSuccessModal(true);
+  const handleSendEmail = (inputEmail) => {
+    if (loggedInUser) {
+      const data = []
+      sendEmailApi({ name, email, data }).then((res) => {
+        setSuccessModal(true)
+      }
+      ).catch((err) => {
+        toast.error(getErrors(err));
+      });
+
+    }
+    else {
+      const data = []
+      const name = usernameExtractfromEmail(inputEmail)
+      const email = inputEmail
+      sendEmailApi({ name, email, data }).then((res) => {
+        setSuccessModal(true)
+      }
+      ).catch((err) => {
+        toast.error(getErrors(err));
+      });
+    }
   };
 
   return (
@@ -59,16 +85,16 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
                         data.length === 1 && !item?.fab_service
                           ? "590px"
                           : item?.fab_service
-                          ? "1635px"
-                          : "590px",
+                            ? "1635px"
+                            : "590px",
                       borderRadius:
                         data.length === 1
                           ? "10px 0 0 10px"
                           : data.length > 1 && index === 0
-                          ? "10px 0 0 0"
-                          : data.length > 1 && index === data.length - 1
-                          ? "0 0 0 10px"
-                          : "0",
+                            ? "10px 0 0 0"
+                            : data.length > 1 && index === data.length - 1
+                              ? "0 0 0 10px"
+                              : "0",
                     }}
                     className="img"
                   >
@@ -120,19 +146,19 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
                   style={{
                     height:
                       calArr.length === 1 &&
-                      !Object.keys(item).includes("dropdowns")
+                        !Object.keys(item).includes("dropdowns")
                         ? "590px"
                         : Object.keys(item).includes("dropdowns")
-                        ? "1635px"
-                        : "590px",
+                          ? "1635px"
+                          : "590px",
                     borderRadius:
                       calArr.length === 1
                         ? "10px 0 0 10px"
                         : calArr.length > 1 && index === 0
-                        ? "10px 0 0 0"
-                        : calArr.length > 1 && index === calArr.length - 1
-                        ? "0 0 0 10px"
-                        : "0",
+                          ? "10px 0 0 0"
+                          : calArr.length > 1 && index === calArr.length - 1
+                            ? "0 0 0 10px"
+                            : "0",
                   }}
                   className="img"
                 >
@@ -183,7 +209,7 @@ const Result = ({ modal, setModal, id, calArr, form }) => {
       <ModalComponent
         heading={"Send Estimation to Email"}
         description={
-          "Image Estimator will send your estimation to the email: user@estimator.com"
+          `Image Estimator will send your estimation to the email: ${email}`
         }
         btn1Text={"Cancel"}
         btn2Text={"Send"}
