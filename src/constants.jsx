@@ -1,4 +1,4 @@
-import { DustbinIcon, EstimationsIcon, EstimationBlack, DustbinBlack } from "./assets";
+import { DustbinIcon, EstimationsIcon, EstimationBlack, DustbinBlack, cropGIF, areaGIF, objectGIF } from "./assets";
 
 export const menuList = [
     {
@@ -176,6 +176,52 @@ export const ImageTour = [
             },
         },
         target: '.image-selector',
+        disableBeacon: true
+    },
+]
+
+export const CropTour = [
+    {
+        content: <img src={cropGIF} width={300} alt="Crop GIF" />,
+        placement: 'right',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.image-crop-tour',
+        disableBeacon: true
+    },
+]
+
+export const ImageAreaTour = [
+    {
+        content: <img src={areaGIF} width={300} alt="Area GIF" />,
+        placement: 'right',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.image-area-tour',
+        disableBeacon: true
+    },
+]
+
+
+export const ObjectTour = [
+    {
+        content: <img src={objectGIF} width={300} alt="Object GIF" />,
+        placement: 'right',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.image-area-tour',
         disableBeacon: true
     },
 ]

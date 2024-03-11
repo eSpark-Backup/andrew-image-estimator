@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { getDimention } from "../../algorithm";
+import { CropTour } from "../../constants";
+import Joyride from 'react-joyride';
 
 export const ImageCropper = ({
   shapeDrawn,
@@ -14,8 +16,24 @@ export const ImageCropper = ({
   const [yColor, setYColor] = useState("#39FF14");
   const [isDrawing, setIsDrawing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [showCropTour] = useState(CropTour);
+  const [tour, setTour] = useState(false);
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
+
+
+  const callback = (data) => {
+    if (data.action === 'close' && data.type === 'step:after') {
+      setTour(false);
+    }
+  }
+
+  useEffect(() => {
+    if (image && !focus) {
+      setTour(true);
+    }
+  }, [!focus]);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -337,12 +355,28 @@ export const ImageCropper = ({
         ref={canvasRef}
         width={form.imageWidth}
         height={form.imageHeight}
+        className="image-crop-tour"
         style={{
           cursor: focus ? "pointer" : shapeDrawn ? "move" : "crosshair",
         }}
         onMouseDown={!focus && handleMouseDown}
         onMouseMove={!focus && handleMouseMove}
         onMouseUp={!focus && handleMouseUp}
+      />
+
+      <Joyride
+        run={tour}
+        showProgress={false}
+        showSkipButton={false}
+        callback={callback}
+        steps={showCropTour}
+        hideCloseButton={true}
+        styles={{
+          buttonNext: {
+            display: "none",
+          }
+
+        }}
       />
     </>
   );
