@@ -273,6 +273,10 @@ th {
     flex-direction: column;
 }
 
+/* .check {
+
+} */
+
 .dashboard-main-box {
     display: flex;
     flex-direction: column;
