@@ -49,7 +49,8 @@ const FabForm = ({
         <div
           style={{
             width: "100%",
-            height: "calc(100% - 100px)",
+            maxHeight: "calc(100% - 100px)",
+            // minhe: "200px",
             display: "flex",
             justifyContent: "center",
             overflowY: "auto"

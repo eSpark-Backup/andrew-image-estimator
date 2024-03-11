@@ -73,7 +73,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   };
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%",maxHeight:"80vh",overflowY:"scroll"}}>
       {loading ? (
         <Loader />
       ) : token ? (
@@ -121,7 +121,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                     </div>
                   </div>
                 }
-                <div style={{ width: "85%", padding: "20px 0" }}>
+                <div style={{ width: "85%", padding: "20px 0"}}>
                   {index === 0 && (
                     <div className="details">
                       <p className="details-heading">Estimations</p>
