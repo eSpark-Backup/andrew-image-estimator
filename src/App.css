@@ -273,6 +273,10 @@ th {
     flex-direction: column;
 }
 
+/* .check {
+
+} */
+
 .dashboard-main-box {
     display: flex;
     flex-direction: column;
@@ -1039,6 +1043,7 @@ select:disabled {
    stroke-dashoffset: -125px;
   }
  }
+ 
  /* .signin-inputs>div{
   display: flex;
   flex-direction: column;

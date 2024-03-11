@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { downloadFileFromDrive } from "../../algorithm";
 import Loader from "../loader/Loader";
+import Joyride from 'react-joyride';
+import { ImageAreaTour, ObjectTour } from "../../constants";
 
 const Canvas = ({
   apiPolygons,
@@ -15,6 +17,25 @@ const Canvas = ({
   const canvasRef = useRef(null);
   const [src, setSrc] = useState("");
   const [loader, setLoader] = useState(false);
+  const [showImageAreaTour] = useState(ImageAreaTour);
+  const [showObjectTour] = useState(ObjectTour);
+  const [tour, setTour] = useState(false);
+
+
+  const callback = (data) => {
+    if (data.action === 'close' && data.type === 'step:after') {
+      setTour(false);
+    }
+  }
+
+
+  useEffect(() => {
+    if (img) {
+      setTour(true);
+    }
+  }, [img]);
+
+
   useEffect(() => {
     if (polygonArr) {
       let arr = [];
@@ -38,7 +59,7 @@ const Canvas = ({
       try {
         if (token !== "") {
           const data = await downloadFileFromDrive(img.split("/")[5], token);
-            setSrc(data?.url);
+          setSrc(data?.url);
           setLoader(false);
         }
       } catch (error) {
@@ -78,16 +99,16 @@ const Canvas = ({
     const drawPolygonsApi = () => {
       apiPolarr && apiPolarr.length > 0
         ? apiPolarr?.forEach(({ points }) => {
-            redrawCanvasLoop(points);
-          })
+          redrawCanvasLoop(points);
+        })
         : null;
     };
 
     const drawPolygons = () => {
       polygonArr && polygonArr.length > 0
         ? polygonArr?.forEach(({ new: newArr, points }) => {
-            if (!newArr) redrawCanvasLoop(points);
-          })
+          if (!newArr) redrawCanvasLoop(points);
+        })
         : null;
     };
 
@@ -233,13 +254,32 @@ const Canvas = ({
       {loader ? (
         <Loader />
       ) : (
-        <canvas
-          ref={canvasRef}
-          width={cropImg.width}
-          height={cropImg.height}
-          style={{ cursor: "crosshair" }}
-        ></canvas>
+        <>
+          <canvas
+            className="image-area-tour"
+            ref={canvasRef}
+            width={cropImg.width}
+            height={cropImg.height}
+            style={{ cursor: "crosshair" }}
+          ></canvas>
+          <Joyride
+            run={tour}
+            showProgress={false}
+            showSkipButton={false}
+            callback={callback}
+            steps={polygonArr ? showObjectTour : showImageAreaTour}
+            hideCloseButton={true}
+            styles={{
+              buttonNext: {
+                display: "none",
+              }
+
+            }}
+          />
+        </>
       )}
+
+
     </>
   );
 };

@@ -16,6 +16,10 @@ import uploadImg from "./icons/Upload.svg"
 import resetImgWhite from "./icons/resetWhite.svg"
 import revertImgWhite from "./icons/revertWhite.svg"
 import changeImageWhite from "./icons/changeImgWhite.svg"
+import cropGIF from "./gifs/cropGIF.gif"
+import areaGIF from "./gifs/areaGIF.gif"
+import objectGIF from "./gifs/objectGIF.gif"
+
 
 export {
   squareIcon,
@@ -36,4 +40,7 @@ export {
   resetImgWhite,
   revertImgWhite,
   changeImageWhite,
+  cropGIF,
+  areaGIF,
+  objectGIF
 };
