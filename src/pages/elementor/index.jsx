@@ -42,7 +42,7 @@ function Elementor() {
   const [polygonsInd, setPolygonInd] = useState(0);
   const [polygonArr, setPolygonArr] = useState([]);
   const [calArr, setCalArr] = useState([]);
-  const [apiPolygons, setApiPolygons] = useState([]);
+  const [apiPolygons, setApiPolygons] = useState({});
   const [modal, setModal] = useState(false);
   const [cutImg, setCutImg] = useState({
     width: "",
@@ -105,7 +105,7 @@ function Elementor() {
   const id = searchParams.get("id");
 
   //fetching current estimation
-  useEffect(() => {
+  const fetchCurrentEstimation = () => {
     if (id) {
       setScreenLoader(true);
       getEstimationById(id)
@@ -123,7 +123,9 @@ function Elementor() {
               height: res?.data?.px_height,
             });
             setChildCroppedImage(res?.data?.image);
-            setApiPolygons(JSON.parse(res?.data?.polygons));
+            if (Object.keys(res?.data?.polygons)?.length > 0) {
+              setApiPolygons(JSON.parse(res?.data?.polygons));
+            }
           }
           setToken(res?.data?.g_api);
           setScreenLoader(false);
@@ -133,6 +135,9 @@ function Elementor() {
           toast.error(getErrors(err));
         });
     }
+  };
+  useEffect(() => {
+    fetchCurrentEstimation();
   }, [id]);
 
   //handle dropdowns function
@@ -323,6 +328,7 @@ function Elementor() {
   return (
     <section className="container1">
       <ToolHeader
+        next={next}
         active={
           next === 1
             ? "select"
@@ -338,9 +344,9 @@ function Elementor() {
       <div className="canvas-container">
         {/* canvas card */}
         <div
-          className={`${(canvasImage || next === 1) && (next < 5 || next > 8) && "auto"} ${
-            canvasImage && "top"
-          }  ${next > 9 && "py-0"}
+          className={`${
+            canvasImage || next === 1 || ((next < 5 || next > 7) && "auto")
+          } ${canvasImage && "top"}  ${next > 9 && "py-0"}
            card`}
         >
           {screenLoader ? (
@@ -368,6 +374,7 @@ function Elementor() {
                   handleChange={handleChange}
                   setCanvasImage={setCanvasImage}
                   setImagetoShow={setImagetoShow}
+                  next={next}
                 />
               ) : next === 1 ? (
                 <div>
@@ -377,6 +384,7 @@ function Elementor() {
                     handleChange={handleChange}
                     setCanvasImage={setCanvasImage}
                     setImagetoShow={setImagetoShow}
+                    next={next}
                   />
                 </div>
               ) : next === 2 ? (
@@ -498,13 +506,20 @@ function Elementor() {
                   handleChange={handleChange}
                 />
               ) : (
-                <Result modal={modal} setModal={setModal} id={id} calArr={calArr} form={form} />
+                <Result
+                  modal={modal}
+                  setModal={setModal}
+                  id={id}
+                  calArr={calArr}
+                  form={form}
+                />
               )}
             </>
           )}
         </div>
         {/* bottom buttons */}
         <DashboardNextButtons
+          fetchCurrentEstimation={fetchCurrentEstimation}
           apiPolygons={apiPolygons}
           token={token}
           id={id}

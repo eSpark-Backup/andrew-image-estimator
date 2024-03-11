@@ -164,3 +164,18 @@ export const SelectImageTour = [
         disableBeacon: true
     },
 ]
+
+export const ImageTour = [
+    {
+        content: 'select your image from here',
+        placement: 'bottom',
+        styles: {
+            options: {
+                width: 300,
+                height: 200,
+            },
+        },
+        target: '.image-selector',
+        disableBeacon: true
+    },
+]

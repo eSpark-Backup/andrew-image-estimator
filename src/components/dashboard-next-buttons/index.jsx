@@ -6,6 +6,7 @@ import {
 } from "../../algorithm";
 
 const DashboardNextButtons = ({
+  fetchCurrentEstimation,
   apiPolygons,
   token,
   id,
@@ -97,7 +98,7 @@ const DashboardNextButtons = ({
                 setNext(9);
               }
             } else if (next === 9) {
-              if (form?.fabricator === "false") {
+              if (form?.fabricator === "false" && !authToken) {
                 setNext(10);
               } else {
                 calculateFabrication(
@@ -117,6 +118,7 @@ const DashboardNextButtons = ({
                 );
               }
             } else {
+              fetchCurrentEstimation()
               setNext(6);
               setDropdowns({
                 perimeterWelding: false,

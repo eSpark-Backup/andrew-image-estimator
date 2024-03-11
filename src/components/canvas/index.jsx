@@ -36,31 +36,37 @@ const Canvas = ({
     setLoader(true);
     const fetchDataAndDrawImage = async () => {
       try {
-        const data = await downloadFileFromDrive(img.split("/")[5], token);
-        if (src === "") {
-          setSrc(data?.url);
+        if (token !== "") {
+          const data = await downloadFileFromDrive(img.split("/")[5], token);
+            setSrc(data?.url);
+          setLoader(false);
         }
-        setLoader(false);
       } catch (error) {
         setLoader(false);
       }
     };
 
     fetchDataAndDrawImage();
-  }, [img]);
+  }, [img, token]);
 
-  const apiPolarr = apiPolygons && apiPolygons.length > 0 && Object.keys(apiPolygons).map((key) => ({
-    points: apiPolygons[key].map((val) => {
-      return { x: val.x1, y: val.y1 };
-    }),
-  }));
+  const apiPolarr =
+    apiPolygons &&
+    Object.keys(apiPolygons).length > 0 &&
+    Object.keys(apiPolygons).map((key) => ({
+      points: apiPolygons[key].map((val) => {
+        return { x: val.x1, y: val.y1 };
+      }),
+    }));
 
   useEffect(() => {
     if (!img) {
       return;
     }
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
+    const canvas = canvasRef?.current;
+    if (!canvas) {
+      return
+    }
+    const context = canvas?.getContext("2d");
     const image = new Image();
     image.src = src;
 
@@ -102,13 +108,13 @@ const Canvas = ({
           context.lineWidth = 3;
           context.stroke();
         } else {
-          context.strokeStyle = "#BABABA";
+          context.strokeStyle = "#39FF14";
           context.lineWidth = 3;
           context.stroke();
         }
       }
 
-      context.fillStyle = "#BABABA";
+      context.fillStyle = "#39FF14";
       for (let i = 0; i < points.length; i++) {
         context.beginPath();
         context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
@@ -175,13 +181,13 @@ const Canvas = ({
           context.lineWidth = 3;
           context.stroke();
         } else {
-          context.strokeStyle = "#BABABA";
+          context.strokeStyle = "#39FF14";
           context.lineWidth = 3;
           context.stroke();
         }
       }
 
-      context.fillStyle = "#BABABA";
+      context.fillStyle = "#39FF14";
       for (let i = 0; i < points.length; i++) {
         context.beginPath();
         context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
@@ -189,11 +195,11 @@ const Canvas = ({
       }
     };
 
-    canvas.addEventListener("mousedown", handleMouseDown);
+    canvas?.addEventListener("mousedown", handleMouseDown);
     animate();
 
     return () => {
-      canvas.removeEventListener("mousedown", handleMouseDown);
+      canvas?.removeEventListener("mousedown", handleMouseDown);
     };
   }, [points, img, src]);
 

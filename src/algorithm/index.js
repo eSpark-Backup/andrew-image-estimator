@@ -350,11 +350,15 @@ export const handleCalculate = async (
   setNext,
   setLoader
 ) => {
-  const apiPolName = Object.keys(apiPolygons).map((key) => key);
-  const curLastPol = apiPolName[apiPolName.length - 1]
-    .split("")
-    .map((val) => val[apiPolName.length - 1]);
-  const newPol = parseInt(curLastPol[curLastPol.length - 1]) + 1;
+  let newPol;
+  if (Object.keys(apiPolygons).length > 0) {
+    let keys = Object.keys(apiPolygons);
+    let lastKey = keys[keys.length - 1];
+    const lastPol = lastKey.match(/\d+$/)[0];
+    newPol = parseInt(lastPol) + 1 
+  } else {
+    newPol = 1;
+  }
   const polygons = {
     ...apiPolygons,
     [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
@@ -454,13 +458,17 @@ export const calculateFabrication = async (
   calArr,
   polygonArr,
   form,
-  setLoader,
+  setLoader
 ) => {
-  const apiPolName = Object.keys(apiPolygons).map((key) => key);
-  const curLastPol = apiPolName[apiPolName.length - 1]
-    .split("")
-    .map((val) => val[apiPolName.length - 1]);
-  const newPol = parseInt(curLastPol[curLastPol.length - 1]) + 1;
+  let newPol;
+  if (Object.keys(apiPolygons).length > 0) {
+    let keys = Object.keys(apiPolygons);
+    let lastKey = keys[keys.length - 1];
+    const lastPol = lastKey.match(/\d+$/)[0];
+    newPol = parseInt(lastPol) + 1 
+  } else {
+    newPol = 1;
+  }
   const polygons = {
     ...apiPolygons,
     [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
@@ -550,8 +558,14 @@ export const calculateFabrication = async (
       "stich_welding",
       dropdowns.stitchWelding ? "True" : "False"
     );
-    formData.append("press_break_bends", dropdowns.brakeBends);
-    formData.append("bolt_holes", dropdowns.sunkBoltsHoles);
+    formData.append(
+      "press_break_bends",
+      dropdowns.brakeBends !== "" ? dropdowns.brakeBends : 0
+    );
+    formData.append(
+      "bolt_holes",
+      dropdowns.sunkBoltsHoles !== "" ? dropdowns.sunkBoltsHoles : 0
+    );
     formData.append("impact_type", dropdowns.impactType);
     formData.append("zip_code", dropdowns.zipCode);
     formData.append("est_delivery_date", dropdowns.deliveryDate);
@@ -559,19 +573,29 @@ export const calculateFabrication = async (
       "perimeter_welding",
       dropdowns.perimeterWelding ? "True" : "False"
     );
-    formData.append("fasten_use_studs", dropdowns.fastening);
-    formData.append("roll_bends", dropdowns.rolledBends);
+    formData.append(
+      "fasten_use_studs",
+      dropdowns.fastening !== "" ? dropdowns.fastening : 0
+    );
+    formData.append(
+      "roll_bends",
+      dropdowns.rolledBends !== "" ? dropdowns.rolledBends : 0
+    );
     formData.append("abrasion_type", dropdowns.abrasionType);
-    formData.append("deliver_site_date", dropdowns.dtsDate);
+    formData.append("deliver_site_date", dropdowns.dtsDate || "2000-12-12");
     formData.append(
       "total_price",
-      Number(calculation.platePrice) +
-        (dropdowns.perimeterWelding ? Number(calculation.weight) * 0.2 : 0) +
-        (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
-        Number(dropdowns.fastening) * 1.5 +
-        Number(dropdowns.brakeBends) * 0.6 +
-        Number(dropdowns.rolledBends) * 0.6 +
-        Number(dropdowns.sunkBoltsHoles) * 0.35
+      form.fabricator
+        ? Number(calculation.platePrice) +
+            (dropdowns.perimeterWelding
+              ? Number(calculation.weight) * 0.2
+              : 0) +
+            (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
+            Number(dropdowns.fastening) * 1.5 +
+            Number(dropdowns.brakeBends) * 0.6 +
+            Number(dropdowns.rolledBends) * 0.6 +
+            Number(dropdowns.sunkBoltsHoles) * 0.35
+        : 0
     );
     if (id) {
       setLoader(true);

@@ -6,7 +6,7 @@ import Joyride from 'react-joyride';
 import { SelectorTour, heightTour, widthTour } from "../../constants";
 import ModalComponent from "../modal/Modal";
 
-const ToolHeader = ({ active, form, handleChange }) => {
+const ToolHeader = ({ next, active, form, handleChange }) => {
   const navigate = useNavigate();
   const [tour, setTour] = useState(false);
   const [selectTaker] = useState(SelectorTour);
@@ -78,7 +78,7 @@ const ToolHeader = ({ active, form, handleChange }) => {
             gap: 24,
           }}
         >
-          <div
+          {next >= 1 && <div
             className={`${active === "select" || form.unit !== "" ? "active-inputs" : ""
               } tool-inputs-container`}
           >
@@ -99,8 +99,8 @@ const ToolHeader = ({ active, form, handleChange }) => {
               handleChange={handleChange}
               header={true}
             />
-          </div>
-          <div
+          </div>}
+          {next >= 3 && <div
             className={`${active === "height" || form.length ? "active-inputs" : ""
               } tool-inputs-container`}
           >
@@ -114,8 +114,8 @@ const ToolHeader = ({ active, form, handleChange }) => {
               placeholder="Enter"
               handleChange={handleChange}
             />
-          </div>
-          <div
+          </div>}
+          {next >= 4 && <div
             className={`${active === "length" || form.width ? "active-inputs" : ""
               } tool-inputs-container`}
           >
@@ -129,7 +129,7 @@ const ToolHeader = ({ active, form, handleChange }) => {
               placeholder="Enter"
               handleChange={handleChange}
             />
-          </div>
+          </div>}
         </div>
       </div>
       <Joyride

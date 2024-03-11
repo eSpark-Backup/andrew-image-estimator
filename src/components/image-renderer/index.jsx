@@ -1,6 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { getDimention } from "../../algorithm";
 import { uploadImg } from "../../assets";
+import { ImageTour } from "../../constants";
+import Joyride from 'react-joyride';
 
 export const ImageRenderer = ({
   form,
@@ -8,8 +10,25 @@ export const ImageRenderer = ({
   handleChange,
   setCanvasImage,
   setImagetoShow,
+  next
 }) => {
   const canvasRef = useRef(null);
+  const [tour, setTour] = useState(false);
+  const [imageTour] = useState(ImageTour);
+
+  const callback = (data) => {
+    if (data.action === 'close' && data.type === 'step:after') {
+      setTour(false);
+    }
+  }
+
+
+  useEffect(() => {
+    if (!image && next === 0) {
+      setTour(true);
+    }
+  }
+    , [image, next]);
 
   useEffect(() => {
     if (image) {
@@ -67,7 +86,7 @@ export const ImageRenderer = ({
           <diV className="btn-center">
             <p className="upload-heading">Upload Image</p>
             <p className="upload-desc">Image should be with .img, .png, .jpeg & .jpg extension</p>
-          <label htmlFor="imageInput" className="button btn-upload">
+          <label htmlFor="imageInput" className="button btn-upload image-selector">
             Upload Image
             <input
               id="imageInput"
@@ -78,6 +97,20 @@ export const ImageRenderer = ({
               />
           </label>
               </diV>
+              <Joyride
+        run={tour}
+        showProgress={false}
+        showSkipButton={false}
+        callback={callback}
+        steps={imageTour}
+        hideCloseButton={true}
+        styles={{
+          buttonNext: {
+            display: "none",
+          }
+
+        }}
+      />
         </div>
       )}
     </>
