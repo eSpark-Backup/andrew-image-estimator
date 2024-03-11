@@ -12,9 +12,7 @@ import {
 } from "../../components";
 import {
   downloadFileFromDrive,
-  getDimention,
   getErrors,
-  getImgSrc,
 } from "../../algorithm";
 import axios from "axios";
 import { handleCropApi, handleCutoutApi } from "../../services/cropingApi";
@@ -30,6 +28,7 @@ function Elementor() {
   const [screenLoader, setScreenLoader] = useState(false);
   const [loader, setLoader] = useState(false);
   const [imagetoShow, setImagetoShow] = useState(null);
+  const [polygonImgToShow, setPolygonImgToShow] = useState(null);
   const [canvasImage, setCanvasImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [childCroppedImage, setChildCroppedImage] = useState(null);
@@ -242,40 +241,82 @@ function Elementor() {
   //Crop smaller object
   const handleInsideCutout = async () => {
     setLoader(true);
-    handleCutoutApi(
-      polygonArr[polygonsInd].points,
-      childCroppedImage,
-      cutImg,
-      `cutout${polygonsInd}.png`,
-      token
-    )
-      .then((res) => {
-        setToken(res?.data?.g_api);
-        setChildPoints([]);
-        setInsideCutImg({
+    try {
+      const res = await handleCutoutApi(
+        polygonArr[polygonsInd].points,
+        childCroppedImage,
+        cutImg,
+        `cutout${polygonsInd}.png`,
+        token
+      );
+      setToken(res?.data?.g_api);
+      setChildPoints([]);
+      setInsideCutImg({
+        width: res?.data?.image_width / 2,
+        height: res?.data?.image_height / 2,
+      });
+      const { url } = await downloadFileFromDrive(res?.data?.image_url.split("/")[5], token);
+      setInsideChildCroppedImage(res?.data?.image_url);
+      setPolygonImgToShow(url);
+  
+      //arr
+      const tempObj = {
+        polygonsInd,
+        image: res?.data?.image_url,
+        imageToShow: url,
+        dimention: {
           width: res?.data?.image_width / 2,
           height: res?.data?.image_height / 2,
-        });
-        setInsideChildCroppedImage(res?.data?.image_url);
-
-        //arr
-        const tempObj = {
-          polygonsInd,
-          image: res?.data?.image_url,
-          dimention: {
-            width: res?.data?.image_width / 2,
-            height: res?.data?.image_height / 2,
-          },
-        };
-        setCalArr((prevArr) => [...prevArr, tempObj]);
-        setNext(7);
-        setLoader(false);
-      })
-      .catch((err) => {
-        setLoader(false);
-        toast.error("Something went wrong!");
-      });
+        },
+      };
+      setCalArr((prevArr) => [...prevArr, tempObj]);
+      setNext(7);
+      setLoader(false);
+    } catch (err) {
+      setLoader(false);
+      toast.error("Something went wrong!");
+    }
   };
+  
+  // const handleInsideCutout = async () => {
+  //   setLoader(true);
+  //   handleCutoutApi(
+  //     polygonArr[polygonsInd].points,
+  //     childCroppedImage,
+  //     cutImg,
+  //     `cutout${polygonsInd}.png`,
+  //     token
+  //   )
+  //     .then((res) => {
+  //       setToken(res?.data?.g_api);
+  //       setChildPoints([]);
+  //       setInsideCutImg({
+  //         width: res?.data?.image_width / 2,
+  //         height: res?.data?.image_height / 2,
+  //       });
+  //       const { url } = await downloadFileFromDrive(res?.data?.image_url.split("/")[5], token)
+  //       setInsideChildCroppedImage(res?.data?.image_url);
+  //       setPolygonImgToShow(url);
+
+  //       //arr
+  //       const tempObj = {
+  //         polygonsInd,
+  //         image: res?.data?.image_url,
+  //         imageToShow: url,
+  //         dimention: {
+  //           width: res?.data?.image_width / 2,
+  //           height: res?.data?.image_height / 2,
+  //         },
+  //       };
+  //       setCalArr((prevArr) => [...prevArr, tempObj]);
+  //       setNext(7);
+  //       setLoader(false);
+  //     })
+  //     .catch((err) => {
+  //       setLoader(false);
+  //       toast.error("Something went wrong!");
+  //     });
+  // };
 
   //reset shape
   const resetShape = () => {
@@ -344,9 +385,9 @@ function Elementor() {
       <div className="canvas-container">
         {/* canvas card */}
         <div
-          className={`${
-            canvasImage || next === 1 || ((next < 5 || next > 7) && "auto")
-          } ${canvasImage && "top"}  ${next > 9 && "py-0"}
+          className={`
+         
+           ${(next > 4 || next === 2) && "top"}  ${next > 9 && "py-0"}
            card`}
         >
           {screenLoader ? (
@@ -370,7 +411,7 @@ function Elementor() {
               {next === 0 ? (
                 <ImageRenderer
                   form={form}
-                  image={canvasImage}
+                  image={imagetoShow}
                   handleChange={handleChange}
                   setCanvasImage={setCanvasImage}
                   setImagetoShow={setImagetoShow}
@@ -380,7 +421,7 @@ function Elementor() {
                 <div>
                   <ImageRenderer
                     form={form}
-                    image={canvasImage}
+                    image={imagetoShow}
                     handleChange={handleChange}
                     setCanvasImage={setCanvasImage}
                     setImagetoShow={setImagetoShow}
@@ -477,7 +518,7 @@ function Elementor() {
                           height: `${insideCutImg.height}px`,
                           zIndex: -9,
                         }}
-                        src={getImgSrc(insideChildCroppedImage)}
+                        src={polygonImgToShow}
                       />
                     </div>
                   )}
@@ -499,7 +540,7 @@ function Elementor() {
               ) : next === 9 ? (
                 <FabForm
                   insideCutImg={insideCutImg}
-                  insideChildCroppedImage={insideChildCroppedImage}
+                  insideChildCroppedImage={polygonImgToShow}
                   dropdowns={dropdowns}
                   handleDropdowns={handleDropdowns}
                   form={form}
@@ -512,6 +553,7 @@ function Elementor() {
                   id={id}
                   calArr={calArr}
                   form={form}
+                  imageToken={token}
                 />
               )}
             </>

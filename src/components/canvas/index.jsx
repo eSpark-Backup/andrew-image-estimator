@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { downloadFileFromDrive, getImgSrc } from "../../algorithm";
+import { downloadFileFromDrive } from "../../algorithm";
 import Loader from "../loader/Loader";
 
 const Canvas = ({
