@@ -24,7 +24,8 @@ section.container1 {
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  height: calc(100vh - 62px);
+  height: 90vh;
+  /* height: calc(100vh - 62px); */
   
 }
 
@@ -156,7 +157,7 @@ button:disabled {
 }
 
 .image-dropdown .img {
-  width: 300px;
+  width: 30%;
   display: flex;
   justify-content: center;
   background: #303032;
