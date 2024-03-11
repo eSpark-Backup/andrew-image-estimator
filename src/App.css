@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Exo 2", sans-serif;
 }
 
 section.container1 {
@@ -23,8 +24,9 @@ section.container1 {
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100vh;
-  overflow-y: auto;
+  height: 90vh;
+  /* height: calc(100vh - 62px); */
+  
 }
 
 .card {
@@ -33,12 +35,13 @@ section.container1 {
   box-shadow: 0px 0px 15px 0px #00000033;
   border-radius: 10px;
   width: calc(100% - 50px);
-  height: calc(100% - 140px);
+  height: calc(100% - 90px);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 50px;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .button-container {
@@ -68,7 +71,7 @@ section.container1 {
 
 .text-input,
 .select-input {
-  width: 100%;
+  width: 350px;
 }
 
 .text-input input,
@@ -84,7 +87,7 @@ section.container1 {
 }
 
 p.label {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 14px;
   font-weight: 400;
   line-height: 17px;
@@ -150,10 +153,11 @@ button:disabled {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+  height: 100%;
 }
 
 .image-dropdown .img {
-  width: 300px;
+  width: 30%;
   display: flex;
   justify-content: center;
   background: #303032;
@@ -168,7 +172,7 @@ button:disabled {
 }
 
 .image-dropdown .head::after {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 26px;
   font-weight: 600;
   line-height: 31px;
@@ -182,7 +186,7 @@ button:disabled {
 }
 
 .image-dropdown .img > .head::after {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 26px;
   font-weight: 600;
   line-height: 31px;
@@ -212,12 +216,12 @@ button:disabled {
   align-items: center;
 }
 
-.dropdown div {
+/* .dropdown div {
   width: 350px;
-}
+} */
 
 table {
-  font-family: arial, sans-serif;
+  /* font-family: arial, sans-serif; */
   border-collapse: collapse;
   width: 600px;
 }
@@ -248,10 +252,10 @@ th {
 /* DASHBOARD  */
 
 .dashboard-card {
-    margin-top: 20px;
+    margin: 20px 0px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     width: calc(100% - 50px);
-    height: calc(100% - 100px);
+    height: calc(100% - 40px);
     display: flex;
     border-radius: 10px;
 }
@@ -454,9 +458,10 @@ th {
 .main-conatiner{
     width: 100vw;
     display: flex;
-    min-height: 95vh;
+    min-height: 92vh;
     justify-content: start;
     align-items: center;
+    margin-top: 10px;
 }
 .container{
     width:100vw;
@@ -494,6 +499,7 @@ th {
     row-gap: 50px;
     flex-direction: column;
     padding: 125px 0px;
+    overflow-y: auto;
 }
 .signin-right-container{
     row-gap: 90px;
@@ -548,8 +554,9 @@ th {
 }
 .header{
     background-color: #303032;
-    height: 60px;
-    padding: 15px 40px;
+    height: 6vh;
+    padding: 0px 40px;
+    align-items: center;
     display: flex;
     justify-content: space-between;
 }
@@ -572,14 +579,23 @@ th {
 .active-choice{
     background-color: #030303;
 }
+.rodal-dialog .rodal-zoom-enter{
+  min-height: 320px !important;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
 .modal{
-    height: 100%;
+    /* height: 100%; */
     width: 100%;
     display: flex;
     justify-content: center;
     flex-direction: column;
     background-color: #FFFFFF;
     align-items: center;
+    padding-bottom: 20px;
     /* row-gap: 40px; */
 }
 .modal-heading{
@@ -638,6 +654,9 @@ th {
   font-size: 16px;
   font-weight: 600;
 }
+.css-11az8si-Input2{
+  padding: 0px 0px !important;
+}
 
 
 @media screen and (min-width:900px){
@@ -647,7 +666,7 @@ th {
     }
     .container{
         width: 85vw;
-        height: 90vh;
+        height: calc(100% - 40px);
         padding: 0px 20px;
         flex-direction: row;
     }
@@ -691,9 +710,9 @@ th {
         width: 100%;
     }
 
-    .dashboard-card  {
+    /* .dashboard-card  {
     height: auto;
-    }
+    } */
 
     .sidebar-container {
         display: none;
@@ -764,7 +783,7 @@ select:disabled {
 }
 
 .upload-heading {
-  font-family: Inter;
+  /* font-family: Inter; */
   width: 100%;
   font-size: 18px;
   font-weight: 400;
@@ -779,7 +798,7 @@ select:disabled {
   margin-bottom: 30px;
   color: #303032;
   width: 320px;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 16px;
   font-weight: 400;
   line-height: 19px;
@@ -815,7 +834,7 @@ select:disabled {
 }
 
 .details-heading {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 20px;
   font-weight: 600;
   line-height: 24px;
@@ -827,7 +846,7 @@ select:disabled {
 .details-desc {
   text-align: center;
   width: 82%;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 16px;
   font-weight: 400;
   line-height: 19px;
@@ -975,3 +994,62 @@ select:disabled {
   /* top: 2px; */
   left: 0px;
 }
+
+.button-loader{
+  /* width: 100vw; */
+  /* height: 50vh; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button-loader svg {
+  width: 1.8em;
+  transform-origin: center;
+  animation: rotate4 2s linear infinite;
+ }
+ 
+ .button-loader circle {
+  fill: none;
+  stroke: hsl(0, 0%, 100%);
+  stroke-width: 2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 1.5s ease-in-out infinite;
+ }
+ 
+ @keyframes rotate4 {
+  100% {
+   transform: rotate(360deg);
+  }
+ }
+ 
+ @keyframes dash4 {
+  0% {
+   stroke-dasharray: 1, 200;
+   stroke-dashoffset: 0;
+  }
+ 
+  50% {
+   stroke-dasharray: 90, 200;
+   stroke-dashoffset: -35px;
+  }
+ 
+  100% {
+   stroke-dashoffset: -125px;
+  }
+ }
+ /* .signin-inputs>div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} */
+
+ @media screen and (max-width:768px) {
+
+  .signup-inputs>div>.text-input,
+  .signin-inputs>div>.text-input {
+    width: 90% !important;
+  }
+}
+ 

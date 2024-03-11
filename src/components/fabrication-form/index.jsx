@@ -38,7 +38,7 @@ const FabForm = ({
           />
         </div>
       }
-      <div style={{ width: "100%" }}>
+      <div style={{ width: "100%", height: "100%" }}>
         <div className="details">
           <p className="details-heading">Details</p>
           <p style={{ width: "auto" }} className="details-desc">
@@ -49,8 +49,11 @@ const FabForm = ({
         <div
           style={{
             width: "100%",
+            maxHeight: "calc(100% - 100px)",
+            // minhe: "200px",
             display: "flex",
             justifyContent: "center",
+            overflowY: "auto"
           }}
         >
           <div style={{ width: "80%" }} className="dropdown">

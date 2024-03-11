@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { signUpApi } from "../../services/authApi";
 import { getErrors, validateEmail } from "../../algorithm";
 import { useNavigate } from "react-router";
+import Loader from '../loader/Loader';
 
 const SignupForm = () => {
   const navigate = useNavigate()
@@ -15,6 +16,7 @@ const SignupForm = () => {
     password: "",
     confirmPassword: ""
   })
+  const [loading, setLoading] = useState(false)
   const InputChangeHandler = (name, value) => {
     setUserData(prevState => ({
       ...prevState,
@@ -47,39 +49,48 @@ const SignupForm = () => {
       first_name: userData.fName,
       last_name: userData.lName,
     };
+    setLoading(true)
     signUpApi(payload)
       .then((res) => {
         toast.success(res?.data?.message);
+        setLoading(false)
         navigate("/login")
       })
       .catch((err) => {
+        setLoading(false)
         toast.error(getErrors(err));
       });
   };
 
-    return (
-        <>
-            <div className='signup-inputs'>
-                {signupItems.map((item, index) => (
-                    <div style={{ width: "75.5%" }}>
-                        <TextInput handleChange={InputChangeHandler} style={{ height: "40px" }} key={index} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
-                    </div>
-                ))}
-            </div>
-            <div className='signup-button-parents'>
-                <button>
-                    Cancel
-                </button>
+  return (
+    <>
+      <div className='signup-inputs'>
+        {signupItems.map((item, index) => (
+          <div style={{ width: "75.5%" }}>
+            <TextInput handleChange={InputChangeHandler} style={{ height: "40px" }} key={index} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
+          </div>
+        ))}
+      </div>
+      <div className='signup-button-parents'>
+        <button>
+          Cancel
+        </button>
 
-                <button
-                    onClick={SubmitHandler}
-                >
-                    Sign Up
-                </button>
+        <button
+          onClick={SubmitHandler}
+        >
+          {loading ? 
+           <div className='button-loader'>
+            <svg viewBox="25 25 50 50">
+              <circle r="20" cy="50" cx="50"></circle>
+            </svg>
+          </div> 
+           : "Sign Up"}
+        </button>
 
-            </div>
-        </>
-    );
+      </div>
+    </>
+  );
 };
 
 export default SignupForm;

@@ -10,8 +10,8 @@ export const ImageCropper = ({
   setCrop,
   image,
 }) => {
-  const [xColor, setXColor] = useState("#BFBFBF");
-  const [yColor, setYColor] = useState("#BFBFBF");
+  const [xColor, setXColor] = useState("#39FF14");
+  const [yColor, setYColor] = useState("#39FF14");
   const [isDrawing, setIsDrawing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
@@ -20,14 +20,14 @@ export const ImageCropper = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (focus === "height") {
-        setXColor(xColor === "#ff0000" ? "#BFBFBF" : "#ff0000");
-        setYColor("#BFBFBF");
+        setXColor(xColor === "#ff0000" ? "#39FF14" : "#ff0000");
+        setYColor("#39FF14");
       } else if (focus === "length") {
-        setYColor(yColor === "#ff0000" ? "#BFBFBF" : "#ff0000");
-        setXColor("#BFBFBF");
+        setYColor(yColor === "#ff0000" ? "#39FF14" : "#ff0000");
+        setXColor("#39FF14");
       } else {
-        setXColor("#BFBFBF");
-        setYColor("#BFBFBF");
+        setXColor("#39FF14");
+        setYColor("#39FF14");
       }
     }, 300); // Delay of 1000 milliseconds (1 second)
 
@@ -38,24 +38,47 @@ export const ImageCropper = ({
     if (image) {
       const context = canvasRef.current.getContext("2d");
       var canvas = context.canvas;
+      const scaleFactor = canvas.width / image.width; // Scale factor to fit image width to 700 pixels
+      const newHeight = image.height * scaleFactor; // Calculate new canvas height based on image aspect ratio
+
+      canvas.height = newHeight;
       const { centerShift_x, centerShift_y, w, h } = getDimention(
         canvas.width,
         canvas.height,
         image.width,
         image.height
       );
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(
-        image,
-        0,
-        0,
-        image.width,
-        image.height,
-        centerShift_x,
-        centerShift_y,
-        w,
-        h
-      );
+      // context.clearRect(0, 0, canvas.width, canvas.height);
+      // context.drawImage(
+      //   image,
+      //   0,
+      //   0,
+      //   image.width,
+      //   image.height,
+      //   centerShift_x,
+      //   centerShift_y,
+      //   w,
+      //   h
+      // );
+      const aspectRatio = image.width / image.height;
+
+    // Calculate new canvas dimensions to fit within a 700x700 area
+    let canvasWidth, canvasHeight;
+    if (aspectRatio >= 1) { // Landscape or square image
+      canvasWidth = 700;
+      canvasHeight = canvasWidth / aspectRatio;
+    } else { // Portrait image
+      canvasHeight = 700;
+      canvasWidth = canvasHeight * aspectRatio;
+    }
+
+    // Set canvas dimensions
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the image onto the canvas
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
       if (focus) {
         drawCropRectangle(context);
       } else {
@@ -137,7 +160,7 @@ export const ImageCropper = ({
     ];
 
     handles.forEach((handle) => {
-      context.fillStyle = "#BFBFBF";
+      context.fillStyle = "#39FF14";
       context.fillRect(
         handle.x - handleSize / 2,
         handle.y - handleSize / 2,
@@ -153,6 +176,12 @@ export const ImageCropper = ({
 
     const x = clientX - left;
     const y = clientY - top;
+    // const rect = canvasRef.current.getBoundingClientRect();
+    // const scaleX = canvasRef.current.width / rect.width;
+    // const scaleY = canvasRef.current.height / rect.height;
+
+    // const x = (clientX - rect.left) * scaleX;
+    // const y = (clientY - rect.top) * scaleY;
 
     const handle = getHandleAtPosition(x, y);
 
@@ -184,7 +213,7 @@ export const ImageCropper = ({
   const drawCropRectangle = (context) => {
     const originalStrokeStyle = context.strokeStyle;
 
-    context.strokeStyle = "#BFBFBF";
+    context.strokeStyle = "#39FF14";
     context.lineWidth = 1;
     context.strokeRect(crop.x, crop.y, crop.width, crop.height);
 
@@ -244,7 +273,12 @@ export const ImageCropper = ({
           const { left, top } = canvasRef.current.getBoundingClientRect();
           const x = clientX - left;
           const y = clientY - top;
-
+          // const rect = canvasRef.current.getBoundingClientRect();
+          // const scaleX = canvasRef.current.width / rect.width;
+          // const scaleY = canvasRef.current.height / rect.height;
+      
+          // const x = (clientX - rect.left) * scaleX;
+          // const y = (clientY - rect.top) * scaleY;
           setCrop((prevCrop) => ({
             ...prevCrop,
             x: x - dragStart.x + prevCrop.x,

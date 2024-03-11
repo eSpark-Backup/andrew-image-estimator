@@ -1,4 +1,4 @@
-import { getCanvasPoints, getDimention } from "../algorithm";
+import { downloadFileFromDrive, getCanvasPoints, getDimention } from "../algorithm";
 import http from "../http";
 
 export const handleCropApi = (crop, imgRef, form) => {
@@ -9,8 +9,8 @@ export const handleCropApi = (crop, imgRef, form) => {
     imgRef?.current?.height
   );
   const tempCrop = {
-    x: crop.x - centerShift_x,
-    y: crop.y - centerShift_y,
+    x: crop.x,
+    y: crop.y,
     width: crop.width,
     height: crop.height,
   };
@@ -32,13 +32,10 @@ export const handleCropApi = (crop, imgRef, form) => {
   });
 }
 
-export const handleCutoutApi = async (points, croppedImage, cropImg, name) => {
+export const handleCutoutApi = async (points, croppedImage, cropImg, name, token) => {
     const formData = new FormData();
-    formData.append(
-      "image",
-      await fetch(croppedImage).then((res) => res.blob()),
-      "image.png"
-    );
+    const { url, fileData } = await downloadFileFromDrive(croppedImage.split("/")[5], token)
+    formData.append("image", fileData)
     const newArr = points.map((item) => ({
       x1: item.x,
       y1: item.y,

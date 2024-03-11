@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 import Routes from './routes';
 import '@fontsource/inter';
@@ -9,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => {
   return (
     <BrowserRouter>
-      <div style={{ fontFamily: 'Inter, sans-serif' }}>
+      <div>
         <Routes />
         <ToastContainer />
       </div>
