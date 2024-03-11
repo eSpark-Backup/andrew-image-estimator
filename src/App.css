@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Exo 2", sans-serif;
 }
 
 section.container1 {
@@ -84,7 +85,7 @@ section.container1 {
 }
 
 p.label {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 14px;
   font-weight: 400;
   line-height: 17px;
@@ -168,7 +169,7 @@ button:disabled {
 }
 
 .image-dropdown .head::after {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 26px;
   font-weight: 600;
   line-height: 31px;
@@ -182,7 +183,7 @@ button:disabled {
 }
 
 .image-dropdown .img > .head::after {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 26px;
   font-weight: 600;
   line-height: 31px;
@@ -217,7 +218,7 @@ button:disabled {
 } */
 
 table {
-  font-family: arial, sans-serif;
+  /* font-family: arial, sans-serif; */
   border-collapse: collapse;
   width: 600px;
 }
@@ -572,14 +573,23 @@ th {
 .active-choice{
     background-color: #030303;
 }
+.rodal-dialog .rodal-zoom-enter{
+  min-height: 320px !important;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
 .modal{
-    height: 100%;
+    /* height: 100%; */
     width: 100%;
     display: flex;
     justify-content: center;
     flex-direction: column;
     background-color: #FFFFFF;
     align-items: center;
+    padding-bottom: 20px;
     /* row-gap: 40px; */
 }
 .modal-heading{
@@ -767,7 +777,7 @@ select:disabled {
 }
 
 .upload-heading {
-  font-family: Inter;
+  /* font-family: Inter; */
   width: 100%;
   font-size: 18px;
   font-weight: 400;
@@ -782,7 +792,7 @@ select:disabled {
   margin-bottom: 30px;
   color: #303032;
   width: 320px;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 16px;
   font-weight: 400;
   line-height: 19px;
@@ -818,7 +828,7 @@ select:disabled {
 }
 
 .details-heading {
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 20px;
   font-weight: 600;
   line-height: 24px;
@@ -830,7 +840,7 @@ select:disabled {
 .details-desc {
   text-align: center;
   width: 82%;
-  font-family: Inter;
+  /* font-family: Inter; */
   font-size: 16px;
   font-weight: 400;
   line-height: 19px;

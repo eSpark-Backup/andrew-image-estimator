@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => {
   return (
     <BrowserRouter>
-      <div style={{ fontFamily: 'Inter, sans-serif' }}>
+      <div>
         <Routes />
         <ToastContainer />
       </div>

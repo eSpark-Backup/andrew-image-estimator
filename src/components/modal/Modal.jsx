@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import Modal from "react-modal";
+import React, { useEffect, useState } from "react";
+import Rodal from "rodal";
+import "rodal/lib/rodal.css";
 import TextInput from "../inputs/text-input";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -21,17 +22,9 @@ const ModalComponent = ({
   loading2
 }) => {
   const customStyles = {
-    content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      width: "452px",
-      height: dashboard ? "auto" : "252px",
-      padding: dashboard ? "20px 0px" : "0px",
-    },
+    width: "452px",
+    // height: dashboard ? "auto" : "22px",
+    padding: dashboard ? "20px 0px" : "20px",
   };
   const navigate = useNavigate();
   const [value, setValue] = useState("");
@@ -70,14 +63,28 @@ const ModalComponent = ({
       });
   };
 
+  useEffect(() => {
+    if (modalIsOpen) {
+        document.body.classList.add('modal-open');
+    } else {
+        document.body.classList.remove('modal-open');
+    }
+
+    return () => {
+        document.body.classList.remove('modal-open');
+    };
+}, [modalIsOpen]);
+
   return (
     <div>
-      {/* <button onClick={openModal}>{buttonLabel}</button> */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-        shouldCloseOnOverlayClick={dashboard ? false : true}
+      <Rodal
+        visible={modalIsOpen}
+        onClose={closeModal}
+        customStyles={customStyles}
+        closeMaskOnClick={dashboard || heading === "Continue as a Guest"?false:true}
+        animation="slideUp"
+        showCloseButton={false}
+        
       >
         {dashboard ? (
           <div className="modal" style={{ rowGap: "20px" }}>
@@ -86,7 +93,7 @@ const ModalComponent = ({
               <TextInput
                 handleChange={InputChangeHandler}
                 value={userData.email}
-                style={{ height: "100%", width: "100%" }}
+                style={{ height: "80%", width: "100%" }}
                 name={"email"}
                 label={"Email:"}
                 type={"email"}
@@ -95,7 +102,7 @@ const ModalComponent = ({
               <TextInput
                 handleChange={InputChangeHandler}
                 value={userData.password}
-                style={{ height: "100%", width: "100%" }}
+                style={{ height: "80%", width: "100%" }}
                 name={"password"}
                 label={"Password"}
                 type={"password"}
@@ -135,7 +142,7 @@ const ModalComponent = ({
           >
             <h2 className="modal-heading">{heading}</h2>
             {label && placeholder && (
-              <div style={{ width: "70%", marginBottom: "10px" }}>
+              <div style={{ width: "70%", marginBottom: "10px", display:"flex", justifyContent:"center", alignItems:"center" }}>
                 <TextInput
                   style={{ height: "100%", width: "100%" }}
                   name={name}
@@ -163,7 +170,7 @@ const ModalComponent = ({
             </div>
           </div>
         )}
-      </Modal>
+      </Rodal>
     </div>
   );
 };
