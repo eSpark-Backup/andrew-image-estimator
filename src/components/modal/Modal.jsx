@@ -142,7 +142,7 @@ const ModalComponent = ({
           >
             <h2 className="modal-heading">{heading}</h2>
             {label && placeholder && (
-              <div style={{ width: "70%", marginBottom: "10px" }}>
+              <div style={{ width: "70%", marginBottom: "10px", display:"flex", justifyContent:"center", alignItems:"center" }}>
                 <TextInput
                   style={{ height: "100%", width: "100%" }}
                   name={name}
