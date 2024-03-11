@@ -1,7 +1,7 @@
 const NormalTable = ({ item, form, calculation, token }) => {
   return (
     <>
-      {/* {token ? (
+      {token ? (
         <>
           <br />
           <div className="table-box">
@@ -61,9 +61,7 @@ const NormalTable = ({ item, form, calculation, token }) => {
             </ul>
           </div>
         </>
-      )} */}
-
-      ""
+      )}
     </>
   );
 };
