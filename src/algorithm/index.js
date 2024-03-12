@@ -665,3 +665,17 @@ export const formatDate = (dateString) => {
 
   return formattedDate;
 };
+
+export const getImgDim = (imageSize, form) => {
+  const aspectRatio = imageSize.width / imageSize.height;
+
+  let width, height;
+  if (aspectRatio >= 1) {
+    width = form.imageWidth;
+    height = Math.min(width / aspectRatio, form.imageHeight);
+  } else {
+    height = form.imageHeight;
+    width = Math.min(height * aspectRatio, form.imageWidth);
+  }
+  return { width, height }
+}

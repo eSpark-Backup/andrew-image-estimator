@@ -134,9 +134,9 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                   )}
                   <motion.div {...slideAnimation("up")}>
                   {item?.fab_service ? (
-                    <FabricationTable item={item} form={form} />
+                    <FabricationTable item={item} form={form} token={token} />
                   ) : (
-                    <NormalTable item={item} form={form} />
+                    <NormalTable item={item} form={form} token={token} />
                   )}
                   </motion.div>
                 </div>

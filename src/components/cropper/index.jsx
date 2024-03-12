@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { getDimention } from "../../algorithm";
+import { getImgDim } from "../../algorithm";
 import { CropTour, fadeAnimation, slideAnimation } from "../../constants";
 import Joyride from 'react-joyride';
 import { motion } from "framer-motion"
@@ -56,48 +56,14 @@ export const ImageCropper = ({
   useEffect(() => {
     if (image) {
       const context = canvasRef.current.getContext("2d");
-      var canvas = context.canvas;
-      const scaleFactor = canvas.width / image.width; // Scale factor to fit image width to 700 pixels
-      const newHeight = image.height * scaleFactor; // Calculate new canvas height based on image aspect ratio
+      var canvas = context.canvas;      
+      const { width, height } = getImgDim({width: image.width, height: image.height}, form)
+      canvas.width = width;
+      canvas.height = height;
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
-      canvas.height = newHeight;
-      const { centerShift_x, centerShift_y, w, h } = getDimention(
-        canvas.width,
-        canvas.height,
-        image.width,
-        image.height
-      );
-      // context.clearRect(0, 0, canvas.width, canvas.height);
-      // context.drawImage(
-      //   image,
-      //   0,
-      //   0,
-      //   image.width,
-      //   image.height,
-      //   centerShift_x,
-      //   centerShift_y,
-      //   w,
-      //   h
-      // );
-      const aspectRatio = image.width / image.height;
-
-    // Calculate new canvas dimensions to fit within a 700x700 area
-    let canvasWidth, canvasHeight;
-    if (aspectRatio >= 1) { // Landscape or square image
-      canvasWidth = 700;
-      canvasHeight = canvasWidth / aspectRatio;
-    } else { // Portrait image
-      canvasHeight = 700;
-      canvasWidth = canvasHeight * aspectRatio;
-    }
-
-    // Set canvas dimensions
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the image onto the canvas
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      // Draw the image onto the canvas
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
       if (focus) {
         drawCropRectangle(context);
       } else {
