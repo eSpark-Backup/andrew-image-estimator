@@ -80,11 +80,11 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
         >
           {next >= 1 && <div
             className={`${active === "select" || form.unit !== "" ? "active-inputs" : ""
-              } tool-inputs-container`}
+              } tool-inputs-container select-taker`}
           >
             <p style={{ color: "#fff" }}>Measuring Unit:</p>
             <SelectInput
-              className="tool-inputs select-taker"
+              className="tool-inputs "
               name="unit"
               disabled={active !== "select"}
               value={form.unit}
@@ -102,12 +102,12 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
           </div>}
           {next >= 3 && <div
             className={`${active === "height" || form.length ? "active-inputs" : ""
-              } tool-inputs-container`}
+              } tool-inputs-container height-taker`}
           >
             <p style={{ color: "#fff" }}>Height:</p>
             <TextInput
               disabled={active !== "height"}
-              className="tool-inputs height-taker"
+              className="tool-inputs "
               name="length"
               value={form.length}
               type="number"
@@ -117,12 +117,12 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
           </div>}
           {next >= 4 && <div
             className={`${active === "length" || form.width ? "active-inputs" : ""
-              } tool-inputs-container`}
+              } tool-inputs-container width-taker`}
           >
             <p style={{ color: "#fff" }}>Length:</p>
             <TextInput
               disabled={active !== "length"}
-              className="tool-inputs width-taker"
+              className="tool-inputs "
               name="width"
               value={form.width}
               type="number"

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import TextInput from '../inputs/text-input';
-import { signupItems } from '../../constants';
+import { gestureAnimation, inputAnimation, signupItems } from '../../constants';
 import { toast } from "react-toastify";
 import { signUpApi } from "../../services/authApi";
 import { getErrors, validateEmail } from "../../algorithm";
 import { useNavigate } from "react-router";
-import Loader from '../loader/Loader';
+import { motion } from "framer-motion"
 
 const SignupForm = () => {
   const navigate = useNavigate()
@@ -66,17 +66,18 @@ const SignupForm = () => {
     <>
       <div className='signup-inputs'>
         {signupItems.map((item, index) => (
-          <div style={{ width: "75.5%" }}>
-            <TextInput handleChange={InputChangeHandler} style={{ height: "40px" }} key={index} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
-          </div>
+          <motion.div {...inputAnimation("input")} style={{ width: "100%" }} key={index}>
+            <TextInput className={"w-100"} handleChange={InputChangeHandler} style={{ height: "40px" }} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
+          </motion.div>
         ))}
       </div>
       <div className='signup-button-parents'>
-        <button>
+        <motion.button onClick={() => navigate("/")} {...gestureAnimation}>
           Cancel
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          {...gestureAnimation}
           onClick={SubmitHandler}
         >
           {loading ? 
@@ -86,7 +87,7 @@ const SignupForm = () => {
             </svg>
           </div> 
            : "Sign Up"}
-        </button>
+        </motion.button>
 
       </div>
     </>

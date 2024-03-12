@@ -10,6 +10,8 @@ import ConfirmModal from "../modal/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import { sendEmailApi } from "../../services/emailApi";
 import { usernameExtractfromEmail } from "../../utils";
+import { slideAnimation } from "../../constants";
+import { motion } from "framer-motion"
 
 const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const navigate = useNavigate();
@@ -73,7 +75,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   };
 
   return (
-    <div style={{ width: "100%",maxHeight:"80vh",overflowY:"scroll"}}>
+    <div style={{ width: "100%", height: "auto" }}>
       {loading ? (
         <Loader />
       ) : token ? (
@@ -81,7 +83,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
           data.map((item, index) => {
             return (
               <div
-                style={{ width: "100%" }}
+                style={{ width: "98%", height: "auto" }}
                 key={item.id}
                 className="image-dropdown"
               >
@@ -105,10 +107,10 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                     }}
                     className="img"
                   >
-                    <div className={index === 0 && "head"}>
+                    <motion.div {...slideAnimation("left")} className={index === 0 && "head"}>
                       <img
                         style={{
-                          width: "200px",
+                          width: "100%",
                           objectFit: "contain",
                         }}
                         // style={{
@@ -118,23 +120,25 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                         // }}
                         src={item?.imageUrl}
                       />
-                    </div>
+                    </motion.div>
                   </div>
                 }
-                <div style={{ width: "85%", padding: "20px 0"}}>
+                <div style={{ width: "85%", padding: "20px 0" }}>
                   {index === 0 && (
-                    <div className="details">
+                    <motion.div {...slideAnimation("down")} className="details">
                       <p className="details-heading">Estimations</p>
                       <p style={{ width: "auto" }} className="details-desc">
                         Here is the estimations of the object you have selected
                       </p>
-                    </div>
+                    </motion.div>
                   )}
+                  <motion.div {...slideAnimation("up")}>
                   {item?.fab_service ? (
                     <FabricationTable item={item} form={form} />
                   ) : (
                     <NormalTable item={item} form={form} />
                   )}
+                  </motion.div>
                 </div>
               </div>
             );
@@ -144,7 +148,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
         calArr.map((item, index) => {
           return (
             <div
-              style={{ width: "100%" }}
+              style={{ width: "100%", height: "auto" }}
               key={item.polygonsInd}
               className="image-dropdown"
             >
@@ -169,10 +173,10 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                   }}
                   className="img"
                 >
-                  <div className={index === 0 && "head"}>
+                  <motion.div {...slideAnimation("left")} className={index === 0 && "head"}>
                     <img
                       style={{
-                        width: "200px",
+                        width: "100%",
                         objectFit: "contain",
                       }}
                       // style={{
@@ -182,18 +186,19 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                       // }}
                       src={item?.imageToShow}
                     />
-                  </div>
+                  </motion.div>
                 </div>
               }
               <div style={{ width: "85%", padding: "20px 0" }}>
                 {index === 0 && (
-                  <div className="details">
+                  <motion.div {...slideAnimation("down")} className="details">
                     <p className="details-heading">Estimations</p>
                     <p style={{ width: "auto" }} className="details-desc">
                       Here is the estimations of the object you have selected
                     </p>
-                  </div>
+                  </motion.div>
                 )}
+                <motion.div {...slideAnimation("up")}>
                 {Object.keys(item).includes("dropdowns") ? (
                   <FabricationTable
                     calculation={item?.calculation}
@@ -208,6 +213,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                     token={token}
                   />
                 )}
+                </motion.div>
               </div>
             </div>
           );

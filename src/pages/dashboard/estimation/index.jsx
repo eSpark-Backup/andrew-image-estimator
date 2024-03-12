@@ -4,6 +4,8 @@ import { getAllEstimationsApi } from "../../../services/estimationsApi";
 import { getErrors } from "../../../algorithm";
 import { EstimatorList } from '../../../layout'
 import Loader from '../../../components/loader/Loader';
+import { motion } from 'framer-motion';
+import { slideAnimation } from '../../../constants';
 
 const Estimations = () => {
   const [search, setSearch] = useState("");
@@ -53,7 +55,9 @@ const Estimations = () => {
   return (
     <div className='dashboard-main-box'>
       {/* SEARCH BAR  */}
-      <SearchBar search={search} setSearch={setSearch} />
+      <motion.div {...slideAnimation("down")}>
+        <SearchBar search={search} setSearch={setSearch} />
+      </motion.div>
 
       {/* Estimation lists  */}
       <EstimatorList fetchAllEstimations={fetchAllEstimations} estimatorListData={filteredData} />

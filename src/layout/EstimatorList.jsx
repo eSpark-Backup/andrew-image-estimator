@@ -18,6 +18,8 @@ import {
   deleteEstimationsApi,
 } from "../services/estimationsApi";
 import { getErrors } from "../algorithm";
+import { motion } from "framer-motion"
+import { gridSlideAnimation, slideAnimation } from "../constants";
 
 const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   const [view, setView] = useState(2);
@@ -71,15 +73,15 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   return (
     <>
       <div className="estimator-header-container">
-        <div className={!hasData || isTrash ? "hidden" : ""}>
+        <motion.div {...slideAnimation("left")} className={!hasData || isTrash ? "hidden" : ""}>
           <GeneralButton
             style={{ width: "200px", height: "40px" }}
             text="Create Estimation"
             onClick={() => setCreateModalOpen(true)}
           />
-        </div>
+        </motion.div>
 
-        <div className="listing-view-container">
+        <motion.div {...slideAnimation("right")} className="listing-view-container">
           <img
             onClick={() => setView(2)}
             width={50}
@@ -94,7 +96,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
             src={view === 1 ? listIconWhite : listIcon}
             alt="icon"
           />
-        </div>
+        </motion.div >
       </div>
 
       <div className="overflow-y-auto">
@@ -106,12 +108,13 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
                 <div className="esmitimation-list-container">
                   {estimatorListData?.map((item, index) => {
                     return (
-                      <EstimatorBoxCard
-                        setDeleteModalOpen={setDeleteModalOpen}
-                        key={index}
-                        item={item}
-                        hideControls={isTrash}
-                      />
+                      <motion.div key={index + estimatorListData.length} style={{ width: "40%" }} {...gridSlideAnimation(index)}>
+                        <EstimatorBoxCard
+                          setDeleteModalOpen={setDeleteModalOpen}
+                          item={item}
+                          hideControls={isTrash}
+                        />
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -122,12 +125,13 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
                 <div className="esmitimation-list-table-container">
                   {estimatorListData?.map((item, index) => {
                     return (
-                      <EstimatorTableCard
-                        setDeleteModalOpen={setDeleteModalOpen}
-                        key={index}
-                        item={item}
-                        hideControls={isTrash}
-                      />
+                      <motion.div key={index} style={{ width: "100%" }} {...slideAnimation("up")}>
+                        <EstimatorTableCard
+                          setDeleteModalOpen={setDeleteModalOpen}
+                          item={item}
+                          hideControls={isTrash}
+                        />
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -135,7 +139,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
             )}
           </>
         ) : (
-          <div className="estimation-empty-data-container">
+          <motion.div {...slideAnimation("up")} className="estimation-empty-data-container">
             <p>You have not created any estimations yet!</p>
             <br />
             <GeneralButton
@@ -143,7 +147,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
               text="Create Estimation"
               onClick={() => setCreateModalOpen(true)}
             />
-          </div>
+          </motion.div>
         )}
         {window?.localStorage.getItem("token") ? (
           <ModalComponent
