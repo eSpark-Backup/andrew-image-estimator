@@ -56,8 +56,8 @@ export const ImageCropper = ({
   useEffect(() => {
     if (image) {
       const context = canvasRef.current.getContext("2d");
-      var canvas = context.canvas;      
-      const { width, height } = getImgDim({width: image.width, height: image.height}, form)
+      var canvas = context.canvas;
+      const { width, height } = getImgDim({ width: image.width, height: image.height }, form)
       canvas.width = width;
       canvas.height = height;
       context.clearRect(0, 0, canvas.width, canvas.height);
@@ -261,7 +261,7 @@ export const ImageCropper = ({
           // const rect = canvasRef.current.getBoundingClientRect();
           // const scaleX = canvasRef.current.width / rect.width;
           // const scaleY = canvasRef.current.height / rect.height;
-      
+
           // const x = (clientX - rect.left) * scaleX;
           // const y = (clientY - rect.top) * scaleY;
           setCrop((prevCrop) => ({
@@ -352,7 +352,7 @@ export const ImageCropper = ({
           reposition the box to cover the portion you want to keep.
         </p>
       </motion.div>}
-      <motion.div {...fadeAnimation}>
+      <div>
         <canvas
           ref={canvasRef}
           width={form.imageWidth}
@@ -365,7 +365,7 @@ export const ImageCropper = ({
           onMouseMove={!focus && handleMouseMove}
           onMouseUp={!focus && handleMouseUp}
         />
-      </motion.div>
+      </div>
 
       <Joyride
         run={tour}

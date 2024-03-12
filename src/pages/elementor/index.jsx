@@ -260,7 +260,7 @@ function Elementor() {
       });
       const { url } = await downloadFileFromDrive(res?.data?.image_url.split("/")[5], token);
       setPolygonImgToShow(url);
-  
+
       //arr
       const tempObj = {
         polygonsInd,
@@ -280,7 +280,7 @@ function Elementor() {
       toast.error("Something went wrong!");
     }
   };
-  
+
   // const handleInsideCutout = async () => {
   //   setLoader(true);
   //   handleCutoutApi(
@@ -377,10 +377,10 @@ function Elementor() {
           next === 1
             ? "select"
             : next === 3
-            ? "height"
-            : next === 4
-            ? "length"
-            : ""
+              ? "height"
+              : next === 4
+                ? "length"
+                : ""
         }
         form={form}
         handleChange={handleChange}
@@ -412,7 +412,7 @@ function Elementor() {
                 handleRevertChild={handleRevertChild}
               />
               {next === 0 ? (
-                <motion.div key={imagetoShow} {...fadeAnimation}>
+                <div>
                   <ImageRenderer
                     form={form}
                     imgRef={imgRef}
@@ -422,10 +422,10 @@ function Elementor() {
                     setImagetoShow={setImagetoShow}
                     next={next}
                   />
-                </motion.div>
+                </div>
               ) : next === 1 ? (
                 <div>
-                  <motion.div key={imagetoShow} {...fadeAnimation}>
+                  <div>
                     <ImageRenderer
                       form={form}
                       imgRef={imgRef}
@@ -435,7 +435,7 @@ function Elementor() {
                       setImagetoShow={setImagetoShow}
                       next={next}
                     />
-                  </motion.div>
+                  </div>
                 </div>
               ) : next === 2 ? (
                 <ImageCropper
