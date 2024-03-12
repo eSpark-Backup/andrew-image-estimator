@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { signinItems } from '../../constants'
+import { gestureAnimation, inputAnimation, signinItems, slideAnimation } from '../../constants'
 import TextInput from '../inputs/text-input'
 import { useNavigate } from 'react-router-dom'
 import { toast } from "react-toastify";
 import { loginApi } from "../../services/authApi";
 import { getErrors, validateEmail } from "../../algorithm";
 import Loader from '../loader/Loader';
+import { motion } from "framer-motion"
 
 const SigninForm = () => {
     const navigate = useNavigate()
@@ -47,17 +48,17 @@ const SigninForm = () => {
         <>
             <div className='signin-inputs'>
                 {signinItems.map((item, index) => (
-                    <div style={{ width: "75.5%" }}>
-                        <TextInput handleChange={InputChangeHandler} style={{ height: "40px" }} key={index} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
-                    </div>
+                    <motion.div {...inputAnimation("input")} key={index} style={{ width: "100%" }}>
+                        <TextInput className={"w-100"} handleChange={InputChangeHandler} style={{ height: "40px" }} name={item?.name} label={item?.label} type={item?.type} placeholder={item?.placeholder} />
+                    </motion.div>
                 ))}
             </div>
             <div className='signin-button-parents'>
-                <button>
+                <motion.button onClick={() => navigate("/")} {...gestureAnimation}>
                     Cancel
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button {...gestureAnimation}
                     onClick={SubmitHandler}
                 >
                     {loading ?
@@ -67,10 +68,10 @@ const SigninForm = () => {
                             </svg>
                         </div>
                         : "Login"}
-                </button>
+                </motion.button>
 
             </div>
-            <p style={{ fontSize: "14px" }}>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
+            <p className='typing-animation' style={{ fontSize: "14px", textAlign: "center" }}>New to Image Estimator? Please <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("/sign-up")}>Sign Up</span></p>
         </>
     )
 }

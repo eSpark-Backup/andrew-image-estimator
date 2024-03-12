@@ -2,7 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import { downloadFileFromDrive } from "../../algorithm";
 import Loader from "../loader/Loader";
 import Joyride from 'react-joyride';
-import { ImageAreaTour, ObjectTour } from "../../constants";
+import { ImageAreaTour, ObjectTour, fadeAnimation, slideAnimation } from "../../constants";
+import { motion } from "framer-motion"
 
 const Canvas = ({
   apiPolygons,
@@ -226,7 +227,7 @@ const Canvas = ({
 
   return (
     <>
-      <div className="details">
+      <motion.div {...slideAnimation("down")} className="details">
         <p className="details-heading">
           {polygonArr ? "Select the object" : "Select the area"}
         </p>
@@ -249,19 +250,21 @@ const Canvas = ({
             you to begin anew.
           </p>
         )}
-      </div>
+      </motion.div>
 
       {loader ? (
         <Loader />
       ) : (
         <>
-          <canvas
-            className="image-area-tour"
-            ref={canvasRef}
-            width={cropImg.width}
-            height={cropImg.height}
-            style={{ cursor: "crosshair" }}
-          ></canvas>
+          <motion.div {...fadeAnimation}>
+            <canvas
+              className="image-area-tour"
+              ref={canvasRef}
+              width={cropImg.width}
+              height={cropImg.height}
+              style={{ cursor: "crosshair" }}
+            ></canvas>
+          </motion.div>
           <Joyride
             run={tour}
             showProgress={false}

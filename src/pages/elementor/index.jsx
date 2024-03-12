@@ -23,6 +23,8 @@ import {
 } from "../../services/estimationsApi";
 import { useSearchParams } from "react-router-dom";
 import Loader from "../../components/loader/Loader";
+import { motion } from "framer-motion"
+import { fadeAnimation, slideAnimation } from "../../constants";
 
 function Elementor() {
   const [screenLoader, setScreenLoader] = useState(false);
@@ -173,6 +175,7 @@ function Elementor() {
       image: null,
     });
     setCanvasImage(null);
+    setImagetoShow(null);
   };
 
   //image ref to get image actual dimention
@@ -214,7 +217,6 @@ function Elementor() {
         width: res?.data?.image_width / 2,
         height: res?.data?.image_height / 2,
       });
-      setChildCroppedImage(res?.data?.image_url);
       // setNext(6);
       if (id) {
         const { url, fileData } = await downloadFileFromDrive(
@@ -230,6 +232,7 @@ function Elementor() {
         formData.append("px_length", res?.data?.image_width / 2);
         const updateRes = await updateEstimationById(id, formData);
       }
+      setChildCroppedImage(res?.data?.image_url);
       setNext(6);
       setLoader(false);
     } catch (err) {
@@ -256,7 +259,6 @@ function Elementor() {
         height: res?.data?.image_height / 2,
       });
       const { url } = await downloadFileFromDrive(res?.data?.image_url.split("/")[5], token);
-      setInsideChildCroppedImage(res?.data?.image_url);
       setPolygonImgToShow(url);
   
       //arr
@@ -270,6 +272,7 @@ function Elementor() {
         },
       };
       setCalArr((prevArr) => [...prevArr, tempObj]);
+      setInsideChildCroppedImage(res?.data?.image_url);
       setNext(7);
       setLoader(false);
     } catch (err) {
@@ -387,7 +390,7 @@ function Elementor() {
         <div
           className={`
          
-           ${(next > 4 || next === 2) && "top"}  ${next > 9 && "py-0"}
+           ${(next > 4 || next === 2) && "top"}  ${next > 9 && "p-0"}
            card`}
         >
           {screenLoader ? (
@@ -409,16 +412,7 @@ function Elementor() {
                 handleRevertChild={handleRevertChild}
               />
               {next === 0 ? (
-                <ImageRenderer
-                  form={form}
-                  image={imagetoShow}
-                  handleChange={handleChange}
-                  setCanvasImage={setCanvasImage}
-                  setImagetoShow={setImagetoShow}
-                  next={next}
-                />
-              ) : next === 1 ? (
-                <div>
+                <motion.div key={imagetoShow} {...fadeAnimation}>
                   <ImageRenderer
                     form={form}
                     image={imagetoShow}
@@ -427,6 +421,19 @@ function Elementor() {
                     setImagetoShow={setImagetoShow}
                     next={next}
                   />
+                </motion.div>
+              ) : next === 1 ? (
+                <div>
+                  <motion.div key={imagetoShow} {...fadeAnimation}>
+                    <ImageRenderer
+                      form={form}
+                      image={imagetoShow}
+                      handleChange={handleChange}
+                      setCanvasImage={setCanvasImage}
+                      setImagetoShow={setImagetoShow}
+                      next={next}
+                    />
+                  </motion.div>
                 </div>
               ) : next === 2 ? (
                 <ImageCropper
@@ -495,7 +502,7 @@ function Elementor() {
               ) : next === 7 ? (
                 <div>
                   {insideChildCroppedImage && (
-                    <div className="fab-container">
+                    <motion.div {...slideAnimation("down")} className="fab-container">
                       <p className="details-heading">For your object</p>
                       <p className="details-desc">
                         Do you want fabrication services?
@@ -520,7 +527,7 @@ function Elementor() {
                         }}
                         src={polygonImgToShow}
                       />
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               ) : next === 8 ? (

@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { getDimention } from "../../algorithm";
-import { CropTour } from "../../constants";
+import { CropTour, fadeAnimation, slideAnimation } from "../../constants";
 import Joyride from 'react-joyride';
+import { motion } from "framer-motion"
 
 export const ImageCropper = ({
   shapeDrawn,
@@ -378,25 +379,27 @@ export const ImageCropper = ({
 
   return (
     <>
-      {!focus && <div className="details">
+      {!focus && <motion.div {...slideAnimation("down")} className="details">
         <p className="details-heading">Crop</p>
         <p className="details-desc">
           Click and drag to create a crop box over your image. Resize and
           reposition the box to cover the portion you want to keep.
         </p>
-      </div>}
-      <canvas
-        ref={canvasRef}
-        width={form.imageWidth}
-        height={form.imageHeight}
-        className="image-crop-tour"
-        style={{
-          cursor: focus ? "pointer" : shapeDrawn ? "move" : "crosshair",
-        }}
-        onMouseDown={!focus && handleMouseDown}
-        onMouseMove={!focus && handleMouseMove}
-        onMouseUp={!focus && handleMouseUp}
-      />
+      </motion.div>}
+      <motion.div {...fadeAnimation}>
+        <canvas
+          ref={canvasRef}
+          width={form.imageWidth}
+          height={form.imageHeight}
+          className="image-crop-tour"
+          style={{
+            cursor: focus ? "pointer" : shapeDrawn ? "move" : "crosshair",
+          }}
+          onMouseDown={!focus && handleMouseDown}
+          onMouseMove={!focus && handleMouseMove}
+          onMouseUp={!focus && handleMouseUp}
+        />
+      </motion.div>
 
       <Joyride
         run={tour}

@@ -1,6 +1,8 @@
 import React from "react";
 import { SelectInput } from "../inputs/select-input";
 import TextInput from "../inputs/text-input";
+import { motion } from "framer-motion"
+import { slideAnimation } from "../../constants";
 
 const FabForm = ({
   insideCutImg,
@@ -27,7 +29,7 @@ const FabForm = ({
   return (
     <div className="image-dropdown">
       {
-        <div className="img head">
+        <motion.div {...slideAnimation("left")} className="img head">
           <img
             style={{
               width: `${insideCutImg.width}px`,
@@ -36,16 +38,16 @@ const FabForm = ({
             }}
             src={insideChildCroppedImage}
           />
-        </div>
+        </motion.div>
       }
       <div style={{ width: "100%", height: "100%" }}>
-        <div className="details">
+        <motion.div {...slideAnimation("down")} className="details">
           <p className="details-heading">Details</p>
           <p style={{ width: "auto" }} className="details-desc">
             Kindly provide the following details to get the estimation of your
             object.
           </p>
-        </div>
+        </motion.div>
         <div
           style={{
             width: "100%",
@@ -57,7 +59,7 @@ const FabForm = ({
           }}
         >
           <div style={{ width: "80%" }} className="dropdown">
-            <div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="plateType"
                 value={dropdowns.plateType}
@@ -69,8 +71,8 @@ const FabForm = ({
                 placeholder="Select Wear Plate Type for Estimate"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="deliveryDate"
                 value={dropdowns.deliveryDate}
@@ -79,8 +81,8 @@ const FabForm = ({
                 placeholder="Select Estimated Delivery Date"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="plateTypeUsed"
                 value={dropdowns.plateTypeUsed}
@@ -94,8 +96,8 @@ const FabForm = ({
                 placeholder="Select Type of wear Plate Used Currently"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="perimeterWelding"
                 value={dropdowns.perimeterWelding}
@@ -107,8 +109,8 @@ const FabForm = ({
                 placeholder="Select Perimeter Welding"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="stitchWelding"
                 value={dropdowns.stitchWelding}
@@ -120,8 +122,8 @@ const FabForm = ({
                 placeholder="Select Stitch Welding"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="fastening"
                 value={dropdowns.fastening}
@@ -130,8 +132,8 @@ const FabForm = ({
                 placeholder="Select Fastening"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="brakeBends"
                 value={dropdowns.brakeBends}
@@ -140,8 +142,8 @@ const FabForm = ({
                 placeholder="Select Brake Bends"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="rolledBends"
                 value={dropdowns.rolledBends}
@@ -150,8 +152,8 @@ const FabForm = ({
                 placeholder="Select Rolled Bends"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="sunkBoltsHoles"
                 value={dropdowns.sunkBoltsHoles}
@@ -160,8 +162,8 @@ const FabForm = ({
                 placeholder="Select Sunk Bolts Holes"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="abrasionType"
                 value={dropdowns.abrasionType}
@@ -174,8 +176,8 @@ const FabForm = ({
                 placeholder="Select Abrasion Type"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="impactType"
                 value={dropdowns.impactType}
@@ -188,8 +190,8 @@ const FabForm = ({
                 placeholder="Select Impact Type"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="fabricator"
                 value={form.fabricator}
@@ -201,8 +203,8 @@ const FabForm = ({
                 placeholder="Select"
                 handleChange={handleChange}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <TextInput
                 name="zipCode"
                 value={dropdowns.zipCode}
@@ -211,8 +213,8 @@ const FabForm = ({
                 placeholder="Enter Zip Code"
                 handleChange={handleDropdowns}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div {...slideAnimation("up")}>
               <TextInput
                 name="dtsDate"
                 value={dropdowns.dtsDate}
@@ -221,7 +223,7 @@ const FabForm = ({
                 placeholder="Enter Delivery to Site Date"
                 handleChange={handleDropdowns}
               />
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

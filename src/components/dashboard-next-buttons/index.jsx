@@ -4,6 +4,8 @@ import {
   handleCalculate,
   hasNoFalsyValue,
 } from "../../algorithm";
+import { motion } from "framer-motion";
+import { slideAnimation } from "../../constants";
 
 const DashboardNextButtons = ({
   fetchCurrentEstimation,
@@ -38,7 +40,7 @@ const DashboardNextButtons = ({
 }) => {
   const authToken = window.localStorage.getItem("token")
   return (
-    <div className="button-container right">
+    <motion.div key={next} {...slideAnimation("right")} className="button-container right">
       {(next <= 10 || (form.fabricator && next === 9)) && (
         <button
           disabled={
@@ -152,7 +154,7 @@ const DashboardNextButtons = ({
         </button>
       )}
       {next > 9 && <button onClick={() => setModal(authToken ? "auth" : "unAuth")}>Share via email</button>}
-    </div>
+    </motion.div>
   );
 };
 

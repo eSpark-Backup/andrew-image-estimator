@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { SearchBar } from '../../../components'
-import { estimatorListData } from '../../../constants'
+import { estimatorListData, slideAnimation } from '../../../constants'
 import { EstimatorList } from '../../../layout'
+import { motion } from 'framer-motion'
 
 const Trash = () => {
   const [search, setSearch] = useState('')
@@ -10,7 +11,9 @@ const Trash = () => {
     <div className='dashboard-main-box'>
 
       {/* SEARCH BAR  */}
-      <SearchBar search={search} setSearch={setSearch} />
+      <motion.div {...slideAnimation("down")}>
+        <SearchBar search={search} setSearch={setSearch} />
+      </motion.div>
 
 
       {/* Estimation lists  */}

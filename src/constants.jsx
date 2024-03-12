@@ -225,3 +225,104 @@ export const ObjectTour = [
         disableBeacon: true
     },
 ]
+
+export const transition = { type: "spring", duration: 0.8 };
+
+export const slideAnimation = (direction) => {
+    return {
+        initial: {
+            x: direction === "left" ? -100 : direction === "right" ? 100 : 0,
+            y: direction === "up" ? 100 : direction === "down" ? -100 : 0,
+            opacity: 0,
+            transition: { ...transition, delay: 0.5 },
+        },
+        animate: {
+            x: 0,
+            y: 0,
+            opacity: 1,
+            transition: { ...transition, delay: 0 },
+        },
+        exit: {
+            x: direction === "left" ? -100 : direction === "right" ? 100 : 0,
+            y: direction === "up" ? 100 : direction === "down" ? -100 : 0,
+            transition: { ...transition, delay: 0 },
+        },
+    };
+};
+
+export const gridSlideAnimation = (index) => {
+    const delay = index * 0.1; // Adjust the delay based on the index to stagger the animations
+
+    return {
+        initial: {
+            x: -100,
+            y: -100,
+            opacity: 0,
+            transition: { ...transition, delay: delay + 0.5 }, // Initial animation with delay
+        },
+        animate: {
+            x: 0,
+            y: 0,
+            opacity: 1,
+            transition: { ...transition, delay }, // Animation to final position with delay
+        },
+        exit: {
+            x: -100,
+            y: -100,
+            transition: { ...transition, delay }, // Exit animation with delay
+        },
+    };
+};
+
+export const fadeAnimation = {
+    initial: {
+        opacity: 0.01,
+        transition: { ...transition, delay: 0.5 },
+    },
+    animate: {
+        opacity: 1,
+        transition: { ...transition, delay: 0 },
+    },
+    exit: {
+        opacity: 0,
+        transition: { ...transition, delay: 0 },
+    },
+};
+
+export const gestureAnimation = {
+    initial: {
+        scale: 0.5,
+        opacity: 0,
+        transition: { type: "spring", stiffness: 400, damping: 17 },
+    },
+    animate: {
+        scale: 1,
+        opacity: 1,
+        transition: { type: "spring", stiffness: 400, damping: 17, delay: 1 },
+    },
+    exit: {
+        scale: 0.5,
+        opacity: 0,
+        transition: { type: "spring", stiffness: 400, damping: 17 },
+    },
+}
+
+export const inputAnimation = (type) => {
+    return {
+        initial: {
+            width: 0,
+            opacity: 0,
+            transition: { type: "spring", stiffness: 400, damping: 17, delay: 1 },
+        },
+        animate: {
+            width: type === "select" ? "350px" : "100%",
+            opacity: 1,
+            transition: { type: "spring", stiffness: 400, damping: 17, delay: 0.5 },
+        },
+        exit: {
+            width: 0,
+            opacity: 0,
+            transition: { type: "spring", stiffness: 400, damping: 17, delay: 1 },
+        },
+    }
+}
