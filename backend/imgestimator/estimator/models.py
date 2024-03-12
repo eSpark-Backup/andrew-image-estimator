@@ -67,6 +67,8 @@ class estimation(models.Model):
     measuring_unit=models.CharField(max_length=15)
     height=models.FloatField()
     length=models.FloatField()
+    px_height=models.FloatField()
+    px_length=models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

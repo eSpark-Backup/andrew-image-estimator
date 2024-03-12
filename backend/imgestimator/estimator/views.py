@@ -18,9 +18,13 @@ from django.contrib.auth import authenticate
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .drive_funcs import upload_file_to_google_drive
+from .drive_funcs import *
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+
+client_id = "207646957050-smcmm1qoindocqoeuhmpslnr36bm3fic.apps.googleusercontent.com"
+client_secret = "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"
+refresh_token = "1//04Z6HkUsMF6bhCgYIARAAGAQSNwF-L9Irr28ZskF0uelnghZG-gA-Q4-wmfnaFde2s9fr2QwPUKly0ZstxiUg5HtJENWYL8mEcag"
 
 class ExtractCutout(APIView):
     def post(self, request, *args, **kwargs):
@@ -38,12 +42,12 @@ class ExtractCutout(APIView):
         # Read the image from the uploaded file
         image_content = image_file.read()
         image = cv2.imdecode(np.frombuffer(image_content, np.uint8), cv2.IMREAD_COLOR)
-        image = cv2.resize(image, (round(image_width),round(image_height)), Image.LANCZOS)
-        sr = dnn_superres.DnnSuperResImpl_create()
-        path = 'EDSR_x2.pb'
-        sr.readModel(path)
-        sr.setModel('edsr', 2)
-        image = sr.upsample(image)
+        image = cv2.resize(image, (round(2*image_width),round(2*image_height)), Image.LANCZOS)
+        # sr = dnn_superres.DnnSuperResImpl_create()
+        # path = 'EDSR_x2.pb'
+        # sr.readModel(path)
+        # sr.setModel('edsr', 2)
+        # image = sr.upsample(image)
 
         # Create an empty binary mask
         mask = np.zeros_like(image[:, :, 0])
@@ -82,7 +86,8 @@ class ExtractCutout(APIView):
         if image_url:
             data= {"image_url": image_url,
                 "image_width": image_width,
-                "image_height": image_height}
+                "image_height": image_height,
+                "g_api": get_access_token(refresh_token, client_id, client_secret)}
 
             return Response(data, status=status.HTTP_200_OK)
         else:
@@ -97,8 +102,12 @@ class LoginView(APIView):
         if user:
             refresh = RefreshToken.for_user(user)
             token = str(refresh.access_token)
+            user_data = {
+                "name": user.username,
+                "email": user.email
+            }
             return Response(
-                {"token": token}, status=status.HTTP_200_OK
+                {"token": token, "user_data": user_data}, status=status.HTTP_200_OK
             )
         else:
             return Response(
@@ -143,7 +152,9 @@ class CreateEstimtion(APIView):
                 polygons=polygons,
                 measuring_unit = "",
                 height = 0,
-                length = 0
+                length = 0,
+                px_height = 0,
+                px_length = 0
             )
             id=est.id
             return Response(
@@ -222,11 +233,13 @@ class Dashboard(APIView):
         
 class EmailSend(APIView):
     def post(self, request, *args, **kwargs):
-        subject = 'Welcome to My Site'
+        subject = 'Image Estimation Results'
         from_email = 'test@esparkconsultants.com'
         recipient_list = [request.data.get("email")]
         recipient_name=request.data.get("recipient_name")
-        table_data=request.data.get("data")
+        if not recipient_name:
+            recipient_name = "Costumer"
+        table_data=request.data.get("table")
         html_content = render_to_string('emailformat.html', {
             'recipient_name': recipient_name,
             'estimation_results': table_data,
@@ -258,7 +271,10 @@ class EditView(APIView):
                 "polygons": estimation_data.polygons,
                 "unit": estimation_data.measuring_unit,
                 "height": estimation_data.height,
-                "length": estimation_data.length
+                "length": estimation_data.length,
+                "px_height": estimation_data.px_height,
+                "px_length": estimation_data.px_length,
+                "g_api": get_access_token(refresh_token, client_id, client_secret)
             }
             return Response(record, status=status.HTTP_200_OK)
         else:
@@ -350,6 +366,7 @@ class EstimationDetails(APIView):
                     "fab_service":rec.est_fabric_serv,
                     "deliver_site_date":rec.deliver_site_date,
                     "total_price":rec.total_price,
+                    "g_api": get_access_token(refresh_token, client_id, client_secret)
                 }
                 records.append(record)
             return Response(records, status=status.HTTP_200_OK)

@@ -1,9 +1,14 @@
 import json
 import requests
+
+client_id = "207646957050-smcmm1qoindocqoeuhmpslnr36bm3fic.apps.googleusercontent.com"
+client_secret = "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"
+refresh_token = "1//04Z6HkUsMF6bhCgYIARAAGAQSNwF-L9Irr28ZskF0uelnghZG-gA-Q4-wmfnaFde2s9fr2QwPUKly0ZstxiUg5HtJENWYL8mEcag"
 def upload_file_to_google_drive(file_name, file_content):
+    
     upload_url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart"
     folder_id = "1R1hNPYclYP-R8-_JKWPUcyTf9aROOJR4"
-    access_token = "ya29.a0Ad52N38g5D8IpV4TmWQiFHEunDhyw8p7MyuqvSka2Tyes5Ab_hVs0c15bcyKdXtuAlLH5Wa0OluBI46NbvT4FCQln1JP45N5ng5I7icsBCrsF3zisG1UZHK_l-QH_TRiEQS84KJIq5M0yQlfqD2OSuHyV5Fzywm23578aCgYKAdYSARASFQHGX2Mi9-l4Z4vE_iF8rn3AyqOigQ0171"
+    access_token = get_access_token(refresh_token, client_id, client_secret)
     headers = {
         "Authorization": "Bearer " + access_token
     }
@@ -55,4 +60,19 @@ def get_file_url(access_token, file_id):
     if response.status_code == 200:
         return response.json().get("webViewLink")
     else:
+        return None
+    
+def get_access_token(refresh_token, client_id, client_secret):
+    token_url = "https://oauth2.googleapis.com/token"
+    payload = {
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "client_id": client_id,
+        "client_secret": client_secret
+    }
+    response = requests.post(token_url, data=payload)
+    if response.status_code == 200:
+        return response.json()["access_token"]
+    else:
+        print("Error refreshing access token:", response.text)
         return None
