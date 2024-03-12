@@ -256,7 +256,7 @@ const Canvas = ({
         <Loader />
       ) : (
         <>
-          <motion.div {...fadeAnimation}>
+          <div>
             <canvas
               className="image-area-tour"
               ref={canvasRef}
@@ -264,7 +264,7 @@ const Canvas = ({
               height={cropImg.height}
               style={{ cursor: "crosshair" }}
             ></canvas>
-          </motion.div>
+          </div>
           <Joyride
             run={tour}
             showProgress={false}
