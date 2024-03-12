@@ -1,12 +1,13 @@
-import { downloadFileFromDrive, getCanvasPoints, getDimention } from "../algorithm";
+import { downloadFileFromDrive, getCanvasPoints, getImgDim } from "../algorithm";
 import http from "../http";
 
 export const handleCropApi = (crop, imgRef, form) => {
-  const { centerShift_x, centerShift_y, w, h } = getDimention(
-    form.imageWidth,
-    form.imageHeight,
-    imgRef?.current?.width,
-    imgRef?.current?.height
+  const { width, height } = getImgDim(
+    {
+      width: imgRef?.current?.width,
+      height: imgRef?.current?.height
+    },
+    form
   );
   const tempCrop = {
     x: crop.x,
@@ -18,8 +19,8 @@ export const handleCropApi = (crop, imgRef, form) => {
   formData.append("image", form.image);
   const jsonString = JSON.stringify(getCanvasPoints(tempCrop));
   formData.append("contour_data", jsonString);
-  formData.append("image_height", Math.abs(h));
-  formData.append("image_width", Math.abs(w));
+  formData.append("image_height", Math.abs(height));
+  formData.append("image_width", Math.abs(width));
   formData.append("file_name", "crop.png");
   return new Promise((resolve, reject) => {
     http(`/api/img_upload/`, "post", formData, null)

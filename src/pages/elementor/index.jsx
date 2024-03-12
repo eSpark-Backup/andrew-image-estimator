@@ -59,7 +59,7 @@ function Elementor() {
   });
   const [form, setForm] = useState({
     imageWidth: 700,
-    imageHeight: 700,
+    imageHeight: 350,
     image: null,
     unit: "",
     length: "",
@@ -415,6 +415,7 @@ function Elementor() {
                 <motion.div key={imagetoShow} {...fadeAnimation}>
                   <ImageRenderer
                     form={form}
+                    imgRef={imgRef}
                     image={imagetoShow}
                     handleChange={handleChange}
                     setCanvasImage={setCanvasImage}
@@ -427,6 +428,7 @@ function Elementor() {
                   <motion.div key={imagetoShow} {...fadeAnimation}>
                     <ImageRenderer
                       form={form}
+                      imgRef={imgRef}
                       image={imagetoShow}
                       handleChange={handleChange}
                       setCanvasImage={setCanvasImage}

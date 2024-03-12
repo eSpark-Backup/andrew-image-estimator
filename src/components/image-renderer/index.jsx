@@ -1,11 +1,12 @@
 import { useRef, useEffect, useState } from "react";
-import { getDimention } from "../../algorithm";
+import { getImgDim } from "../../algorithm";
 import { uploadImg } from "../../assets";
 import { ImageTour } from "../../constants";
 import Joyride from "react-joyride";
 
 export const ImageRenderer = ({
   form,
+  imgRef,
   image,
   handleChange,
   setCanvasImage,
@@ -67,11 +68,12 @@ export const ImageRenderer = ({
       setImagetoShow(imageUrl);
     }
   };
+  const { width, height } = getImgDim({width: imgRef?.current?.width, height: imgRef?.current?.height}, form)
   return (
     <>
       {image ? (
         <img
-          style={{ width: "700px", height: "auto" }}
+          style={{ width, height }}
           src={image}
           alt="canvas-image"
         />
