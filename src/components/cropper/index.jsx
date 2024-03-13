@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { getImgDim } from "../../algorithm";
-import { CropTour, fadeAnimation, slideAnimation } from "../../constants";
-import Joyride from 'react-joyride';
+import { slideAnimation } from "../../constants";
 import { motion } from "framer-motion"
+import GIFModal from "../modal/GIFModal";
+import { cropGIF } from "../../assets";
 
 export const ImageCropper = ({
   shapeDrawn,
@@ -17,21 +18,14 @@ export const ImageCropper = ({
   const [yColor, setYColor] = useState("#39FF14");
   const [isDrawing, setIsDrawing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [showCropTour] = useState(CropTour);
-  const [tour, setTour] = useState(false);
+  const [showGIFModal, setShowGIFModal] = useState(false);
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
 
 
-  const callback = (data) => {
-    if (data.action === 'close' && data.type === 'step:after') {
-      setTour(false);
-    }
-  }
-
   useEffect(() => {
     if (image && !focus) {
-      setTour(true);
+      setShowGIFModal(true);
     }
   }, [!focus]);
 
@@ -367,19 +361,11 @@ export const ImageCropper = ({
         />
       </div>
 
-      <Joyride
-        run={tour}
-        showProgress={false}
-        showSkipButton={false}
-        callback={callback}
-        steps={showCropTour}
-        hideCloseButton={true}
-        styles={{
-          buttonNext: {
-            display: "none",
-          }
-
-        }}
+      <GIFModal
+        GIF={cropGIF}
+        description={"Follow the steps to crop your image and create an estimation for your project."}
+        modalIsOpen={showGIFModal}
+        closeModal={() => setShowGIFModal(false)}
       />
     </>
   );

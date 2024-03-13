@@ -180,51 +180,6 @@ export const ImageTour = [
     },
 ]
 
-export const CropTour = [
-    {
-        content: <img src={cropGIF} width={300} alt="Crop GIF" />,
-        placement: 'right',
-        styles: {
-            options: {
-                width: 300,
-                height: 200,
-            },
-        },
-        target: '.image-crop-tour',
-        disableBeacon: true
-    },
-]
-
-export const ImageAreaTour = [
-    {
-        content: <img src={areaGIF} width={300} alt="Area GIF" />,
-        placement: 'right',
-        styles: {
-            options: {
-                width: 300,
-                height: 200,
-            },
-        },
-        target: '.image-area-tour',
-        disableBeacon: true
-    },
-]
-
-
-export const ObjectTour = [
-    {
-        content: <img src={objectGIF} width={300} alt="Object GIF" />,
-        placement: 'right',
-        styles: {
-            options: {
-                width: 300,
-                height: 200,
-            },
-        },
-        target: '.image-area-tour',
-        disableBeacon: true
-    },
-]
 
 export const transition = { type: "spring", duration: 0.8 };
 
@@ -325,4 +280,10 @@ export const inputAnimation = (type) => {
             transition: { type: "spring", stiffness: 400, damping: 17, delay: 1 },
         },
     }
+}
+
+export const GIFModalStyle = {
+    width: '450px',
+    height: '350px',
+    padding: '20px',
 }

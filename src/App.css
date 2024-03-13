@@ -177,7 +177,7 @@ button:disabled {
   line-height: 31px;
   letter-spacing: 0em;
   text-align: center;
-  content: "Your Object";
+  content: "Selected Polygon";
   color: #fff;
   position: absolute;
   top: 50px;
@@ -191,7 +191,7 @@ button:disabled {
   line-height: 31px;
   letter-spacing: 0em;
   text-align: center;
-  content: "Your Object";
+  content: "Selected Polygon";
   color: #fff;
   position: absolute;
   top: -700px;
@@ -1075,3 +1075,28 @@ select:disabled {
   width: 100% !important;
 }
 
+/* GIF MODAL CSS  */
+
+.GIF-modal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  gap: 10px;
+}
+
+.GIF-modal-description {
+  text-align: center;
+}
+
+.GIF-modal-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+}
+
+.modal-GIF {
+  margin-bottom: 3px;
+}
