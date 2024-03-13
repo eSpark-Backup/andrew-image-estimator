@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import { downloadFileFromDrive } from "../../algorithm";
 import Loader from "../loader/Loader";
-import Joyride from 'react-joyride';
-import { ImageAreaTour, ObjectTour, fadeAnimation, slideAnimation } from "../../constants";
+import { slideAnimation } from "../../constants";
 import { motion } from "framer-motion"
+import GIFModal from "../modal/GIFModal";
+import { areaGIF, objectGIF } from "../../assets";
 
 const Canvas = ({
   apiPolygons,
@@ -18,21 +19,13 @@ const Canvas = ({
   const canvasRef = useRef(null);
   const [src, setSrc] = useState("");
   const [loader, setLoader] = useState(false);
-  const [showImageAreaTour] = useState(ImageAreaTour);
-  const [showObjectTour] = useState(ObjectTour);
-  const [tour, setTour] = useState(false);
+  const [showGIFModal, setShowGIFModal] = useState(false);
 
-
-  const callback = (data) => {
-    if (data.action === 'close' && data.type === 'step:after') {
-      setTour(false);
-    }
-  }
 
 
   useEffect(() => {
     if (img) {
-      setTour(true);
+      setShowGIFModal(true);
     }
   }, [img]);
 
@@ -265,19 +258,13 @@ const Canvas = ({
               style={{ cursor: "crosshair" }}
             ></canvas>
           </div>
-          <Joyride
-            run={tour}
-            showProgress={false}
-            showSkipButton={false}
-            callback={callback}
-            steps={polygonArr ? showObjectTour : showImageAreaTour}
-            hideCloseButton={true}
-            styles={{
-              buttonNext: {
-                display: "none",
-              }
-
-            }}
+          <GIFModal
+            GIF={polygonArr ? objectGIF : areaGIF}
+            description={polygonArr
+              ? "Now Select the object you want to clip for your project."
+              : "Now Select the area of the image you want to clip for your project."}
+            modalIsOpen={showGIFModal}
+            closeModal={() => setShowGIFModal(false)}
           />
         </>
       )}
