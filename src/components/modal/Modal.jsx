@@ -19,7 +19,8 @@ const ModalComponent = ({
   name,
   dashboard,
   onSuccess,
-  loading2
+  loading2,
+  navigatorHandler
 }) => {
   const customStyles = {
     width: "452px",
@@ -78,10 +79,10 @@ const ModalComponent = ({
   return (
     <div>
       <Rodal
-        visible={modalIsOpen}
+        visible={modalIsOpen}        
         onClose={closeModal}
         customStyles={customStyles}
-        closeMaskOnClick={dashboard || heading === "Continue as a Guest"?false:true}
+        closeMaskOnClick={true}
         animation="slideUp"
         showCloseButton={false}
         
@@ -158,7 +159,7 @@ const ModalComponent = ({
             {description && <p className="modal-description">{description}</p>}
 
             <div className="signin-button-parents">
-              <button onClick={closeModal}>{btn1Text}</button>
+              <button onClick={navigatorHandler?navigatorHandler:closeModal}>{btn1Text}</button>
 
               <button onClick={() => onSuccess(value)}>{loading2 ?
                         <div className='button-loader'>

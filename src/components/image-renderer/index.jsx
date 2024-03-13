@@ -87,7 +87,7 @@ export const ImageRenderer = ({
           <div className="upload-img">
             <img src={uploadImg} alt="upload" />
           </div>
-          <diV className="btn-center">
+          <div className="btn-center">
             <p className="upload-heading">Upload Image</p>
             <p className="upload-desc">
               Image should be with .img, .png, .jpeg & .jpg extension
@@ -105,7 +105,7 @@ export const ImageRenderer = ({
                 className="hidden-input"
               />
             </label>
-          </diV>
+          </div>
           <Joyride
             run={tour}
             showProgress={false}
