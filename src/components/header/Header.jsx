@@ -12,13 +12,11 @@ const Header = () => {
     return (
         <>
             <div className='header'>
-                <h2 style={{ color: "white" }}>Logo</h2>
+                <h2 style={{ color: "white" }} onClick={() => setIsSuccessModalOpen(true)}>Logo</h2>
                 {!token ? <div className='header-links'>
-                    {/* <h2 style={{ color: "white" }}><span onClick={() => navigate("/sign-up")} style={{ cursor: "pointer" }}>Signup</span> | <span onClick={() => navigate("/login")} style={{ cursor: "pointer" }}>Login</span></h2> */}
-                    <button onClick={() => navigate("/sign-up")}>Signup</button>
-                    <button onClick={() => navigate("/login")}>Login</button>
+                    <h2 style={{ color: "white" }}><span onClick={() => navigate("/sign-up")} style={{ cursor: "pointer" }}>Signup</span> | <span onClick={() => navigate("/login")} style={{ cursor: "pointer" }}>Login</span></h2>
                 </div> : <div className='header-links'>
-                    <button onClick={() => setLogoutModalOpen(true)}>Logout</button>
+                    <h2 style={{ color: "white" }}><span style={{ cursor: "pointer" }} onClick={() => setLogoutModalOpen(true)}>Logout</span></h2>
                 </div>}
 
             </div>
