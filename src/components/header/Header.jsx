@@ -29,6 +29,7 @@ const Header = () => {
                 closeModal={() => setLogoutModalOpen(false)}
                 modalIsOpen={isLogoutModalOpen}
                 onSuccess={() => {
+                    navigate("/")
                     logout()
                     setLogoutModalOpen(false)
                 }}
