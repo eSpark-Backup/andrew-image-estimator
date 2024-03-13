@@ -18,8 +18,9 @@ import {
   deleteEstimationsApi,
 } from "../services/estimationsApi";
 import { getErrors } from "../algorithm";
-import { motion } from "framer-motion"
+import { motion, useIsPresent } from "framer-motion"
 import { gridSlideAnimation, slideAnimation } from "../constants";
+import Loader from "../components/loader/Loader";
 
 const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   const [view, setView] = useState(2);
@@ -30,7 +31,8 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   const isTrash = location.pathname.includes("trash");
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false)
-  const [deleteLoading,setDeleteLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const isPresent = useIsPresent();
   const Navigator = () => {
     navigate("/tool");
     setCreateModalOpen(false);
@@ -67,8 +69,15 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
       .catch((err) => {
         setDeleteLoading(false)
         toast.error(getErrors(err)
-      )});
+        )
+      });
   };
+
+  // if (!isPresent) {
+  //   return (
+  //     <Loader />
+  //   )
+  // }
 
   return (
     <>
