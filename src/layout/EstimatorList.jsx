@@ -31,7 +31,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false)
   const [deleteLoading,setDeleteLoading] = useState(false)
-  const CloseHandler = () => {
+  const Navigator = () => {
     navigate("/tool");
     setCreateModalOpen(false);
   };
@@ -169,7 +169,8 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
             }
             btn1Text={"Continue"}
             btn2Text={"Sign Up"}
-            closeModal={CloseHandler}
+            closeModal={() => setCreateModalOpen(false)}
+            navigatorHandler={Navigator}
             onSuccess={() => navigate("/sign-up")}
             modalIsOpen={isCreateModalOpen}
           />
