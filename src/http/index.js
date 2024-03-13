@@ -16,7 +16,7 @@ const http = (url, type, body, token) => {
           resolve(res);
         })
         .catch((err) => {
-          if (err?.response?.status === 401) {
+          if (err?.response?.data?.detail === "Authentication credentials were not provided." || err?.response?.data?.code === "token_not_valid") {
             logout();
           }
           reject(err);

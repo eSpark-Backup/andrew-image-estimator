@@ -27,7 +27,7 @@ const FabForm = ({
   weakOptions.push({ label: `upto 25 Weeks`, value: "25+" });
 
   return (
-    <div className="image-dropdown">
+    <div style={{height: "100%"}} className="image-dropdown">
       {
         <motion.div {...slideAnimation("left")} className="img head">
           <img
