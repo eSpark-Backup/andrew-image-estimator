@@ -13,9 +13,9 @@ const App = () => {
     <BrowserRouter>
       <AnimatePresence mode='wait'>
         <div>
-          {/* <motion.main key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}> */}
+          <motion.main key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Routes />
-          {/* </motion.main> */}
+          </motion.main>
           <ToastContainer key="toast" />
         </div>
       </AnimatePresence>

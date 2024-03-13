@@ -73,11 +73,11 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
       });
   };
 
-  // if (!isPresent) {
-  //   return (
-  //     <Loader />
-  //   )
-  // }
+  if (!isPresent) {
+    return (
+      <Loader />
+    )
+  }
 
   return (
     <>
