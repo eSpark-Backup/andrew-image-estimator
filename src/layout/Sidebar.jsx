@@ -6,6 +6,10 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const token = window.localStorage.getItem("token");
+    const [login, setLogin] = useState(false)
+    useEffect(() => {
+        token ? setLogin(true) : setLogin(false)
+    }, [token])
 
     return (
         <div className='sidebar-container'>
@@ -15,7 +19,7 @@ const Sidebar = () => {
                 </div>
                 <div className='sidebar-menu'>
                     {/* MENU SECTION  */}
-                    {token && (
+                    {login && (
                         <>
                             {menuList.map((item, index) => (
                                 <div key={index} onClick={() => navigate(item.path)} className={`sidebar-menu-item ${location.pathname === item?.path ? "active-item" : ""}`}>
@@ -29,7 +33,7 @@ const Sidebar = () => {
                             ))}
                         </>
                     )}
-                    {!token && (
+                    {!login && (
                         <div key={0} onClick={() => navigate(menuList[0].path)} className={`sidebar-menu-item ${location.pathname === menuList[0]?.path ? "active-item" : ""}`}>
                             <div className='sidebar-menu-icon'>
                                 <img width={25} src={location.pathname === menuList[0]?.path ? menuList[0]?.activeIcon : menuList[0]?.icon} alt='icon' />

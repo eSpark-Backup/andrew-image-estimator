@@ -45,5 +45,5 @@ export const logout = () => {
   window.localStorage.removeItem("token");
   window.localStorage.removeItem("user");
   delete axios.defaults.headers.common.Authorization;
-  // window.location.reload();
+  window.location.reload();
 };
