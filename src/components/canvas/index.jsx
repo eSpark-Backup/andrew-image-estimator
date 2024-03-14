@@ -20,8 +20,10 @@ const Canvas = ({
   const [src, setSrc] = useState("");
   const [loader, setLoader] = useState(false);
   const [showGIFModal, setShowGIFModal] = useState(false);
-
-
+  const [scale, setScale] = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (img) {
@@ -73,6 +75,115 @@ const Canvas = ({
       }),
     }));
 
+  const handleWheel = (event) => {
+    event.preventDefault();
+
+    const delta = Math.max(-1, Math.min(1, event.deltaY));
+    const prevScale = scale;
+    let newScale;
+
+    if (delta < 0) {
+      newScale = Math.min(prevScale + 0.1, 5);
+    } else {
+      newScale = Math.max(prevScale - 0.1, 1);
+    }
+    setScale(newScale);
+    const scaleDifference = newScale - prevScale;
+    setImagePosition((prevPosition) => {
+      const canvas = canvasRef.current;
+      const canvasRect = canvas.getBoundingClientRect();
+      const offsetX = (canvasRect.width - canvas.width * newScale) / 2;
+      const offsetY = (canvasRect.height - canvas.height * newScale) / 2;
+
+      const newX = prevPosition.x - offsetX * (scaleDifference / newScale);
+      const newY = prevPosition.y - offsetY * (scaleDifference / newScale);
+
+      return {
+        x: newX,
+        y: newY,
+      };
+    });
+  };
+
+  const handleMouseDown = (event) => {
+    if (event.ctrlKey) {
+      setIsDragging(true);
+      setDragStart({ x: event.clientX, y: event.clientY });
+    } else {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      if (points.length > 1) {
+        const firstPoint = points[0];
+        const distance = Math.sqrt(
+          (x - firstPoint.x) ** 2 + (y - firstPoint.y) ** 2
+        );
+        if (distance < 5) {
+          setPoints((prevDots) => [
+            ...prevDots,
+            { x: firstPoint.x, y: firstPoint.y },
+          ]);
+          return;
+        }
+      }
+      if (
+        points.length > 1 &&
+        points[0]?.x === points[points.length - 1]?.x &&
+        points[0]?.y === points[points.length - 1]?.y
+      ) {
+        setPoints((prevDots) => [...prevDots]);
+      } else {
+        setPoints((prevDots) => [...prevDots, { x, y }]);
+      }
+    }
+  };
+
+  const handleMouseMove = (event) => {
+    if (isDragging) {
+      const dx = event.clientX - dragStart.x;
+      const dy = event.clientY - dragStart.y;
+      const canvas = canvasRef.current;
+      const canvasRect = canvas?.getBoundingClientRect();
+
+      const maxX = (canvas.width * scale - canvasRect.width) / (2 * scale);
+      const maxY = (canvas.height * scale - canvasRect.height) / (2 * scale);
+
+      let newX = imagePosition.x + dx / scale;
+      let newY = imagePosition.y + dy / scale;
+
+      const imageWidth = canvas.width * scale;
+      const imageHeight = canvas.height * scale;
+      const halfImageWidth = imageWidth / 2;
+      const halfImageHeight = imageHeight / 2;
+
+      const leftBoundary = Math.min((canvasRect.width / (2 * scale)) - halfImageWidth, maxX);
+      const rightBoundary = Math.max(halfImageWidth - (canvasRect.width / (2 * scale)), -maxX);
+      const topBoundary = Math.min((canvasRect.height / (2 * scale)) - halfImageHeight, maxY);
+      const bottomBoundary = Math.max(halfImageHeight - (canvasRect.height / (2 * scale)), -maxY);
+
+      newX = Math.max(leftBoundary, Math.min(rightBoundary, newX));
+      newY = Math.max(topBoundary, Math.min(bottomBoundary, newY));
+
+      setImagePosition({ x: newX, y: newY });
+      setDragStart({ x: event.clientX, y: event.clientY });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
   useEffect(() => {
     if (!img) {
       return;
@@ -86,7 +197,12 @@ const Canvas = ({
     image.src = src;
 
     image.onload = () => {
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      const sw = canvas.width * scale;
+      const sh = canvas.height * scale;
+      const sx = Math.min(Math.max(0, canvas.width / 2 - sw / 2 + imagePosition.x), canvas.width - sw);
+      const sy = Math.min(Math.max(0, canvas.height / 2 - sh / 2 + imagePosition.y), canvas.height - sh);
+      context.drawImage(image, sx, sy, sw, sh);
       drawGraph();
     };
 
@@ -147,50 +263,35 @@ const Canvas = ({
       requestAnimationFrame(animate);
     };
 
-    const handleMouseDown = (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      if (points.length > 1) {
-        const firstPoint = points[0];
-        const distance = Math.sqrt(
-          (x - firstPoint.x) ** 2 + (y - firstPoint.y) ** 2
-        );
-        if (distance < 5) {
-          setPoints((prevDots) => [
-            ...prevDots,
-            { x: firstPoint.x, y: firstPoint.y },
-          ]);
-          return;
-        }
-      }
-      if (
-        points.length > 1 &&
-        points[0]?.x === points[points.length - 1]?.x &&
-        points[0]?.y === points[points.length - 1]?.y
-      ) {
-        setPoints((prevDots) => [...prevDots]);
-      } else {
-        setPoints((prevDots) => [...prevDots, { x, y }]);
-      }
-    };
-
     const redrawCanvas = () => {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
       context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const sw = canvas.width * scale;
+      const sh = canvas.height * scale;
+      let sx = (canvas.width - sw) / 2 + imagePosition.x;
+      let sy = (canvas.height - sh) / 2 + imagePosition.y;
+      sx = Math.max(Math.min(sx, 0), canvas.width - sw);
+      sy = Math.max(Math.min(sy, 0), canvas.height - sh);
+      context.drawImage(image, sx, sy, sw, sh);
       drawGraph();
-
-      if (points.length > 1) {
+    
+      const scaledPoints = points.map(({ x, y }) => ({
+        x: (x * scale) + sx,
+        y: (y * scale) + sy
+      }));
+    
+      if (scaledPoints.length > 1) {
         context.beginPath();
-        context.moveTo(points[0].x, points[0].y);
+        context.moveTo(scaledPoints[0].x, scaledPoints[0].y);
 
-        for (let i = 1; i < points.length; i++) {
-          context.lineTo(points[i].x, points[i].y);
+        for (let i = 1; i < scaledPoints.length; i++) {
+          context.lineTo(scaledPoints[i].x, scaledPoints[i].y);
         }
 
         if (
-          points[0]?.x === points[points.length - 1]?.x &&
-          points[0]?.y === points[points.length - 1]?.y
+          scaledPoints[0].x === scaledPoints[scaledPoints.length - 1].x &&
+          scaledPoints[0].y === scaledPoints[scaledPoints.length - 1].y
         ) {
           context.strokeStyle = "#FF0000";
           context.lineWidth = 3;
@@ -201,13 +302,12 @@ const Canvas = ({
           context.stroke();
         }
       }
-
       context.fillStyle = "#39FF14";
-      for (let i = 0; i < points.length; i++) {
+      scaledPoints.forEach(({ x, y }) => {
         context.beginPath();
-        context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
+        context.arc(x, y, 4, 0, 2 * Math.PI);
         context.fill();
-      }
+      });
     };
 
     canvas?.addEventListener("mousedown", handleMouseDown);
@@ -216,7 +316,7 @@ const Canvas = ({
     return () => {
       canvas?.removeEventListener("mousedown", handleMouseDown);
     };
-  }, [points, img, src]);
+  }, [points, img, src, scale, imagePosition]);
 
   return (
     <>
@@ -255,7 +355,8 @@ const Canvas = ({
               ref={canvasRef}
               width={cropImg.width}
               height={cropImg.height}
-              style={{ cursor: "crosshair" }}
+              style={{ cursor: isDragging ? "grab" : "crosshair" }}
+              onWheel={handleWheel}
             ></canvas>
           </div>
           <GIFModal
