@@ -6,35 +6,38 @@ import { EstimatorList } from '../../../layout'
 import Loader from '../../../components/loader/Loader';
 import { motion } from 'framer-motion';
 import { slideAnimation } from '../../../constants';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '../../../features/AppSlice';
 
 const Estimations = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   const token = window?.localStorage?.getItem("token");
 
   const fetchAllEstimations = () => {
     if (token) {
-      setLoading(true);
+      dispatch(setLoading(true));
       getAllEstimationsApi()
         .then((res) => {
-          setLoading(false);
           setData(res?.data);
           setFilteredData(res?.data);
         })
         .catch((err) => {
-          setLoading(false);
           getErrors(err);
+        })
+        .finally(() => {
+          dispatch(setLoading(false));
         });
     }
   };
-  
+
 
   useEffect(() => {
     if (token) {
-            fetchAllEstimations()
+      fetchAllEstimations()
     }
   }, [token]);
 
