@@ -7,12 +7,23 @@ import '@fontsource/inter';
 import './App.css'
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { useSelector } from 'react-redux';
 import Loader2 from './components/loader2/Loader2';
+import { StateCall } from './ContextApi.jsx';
 
 const App = () => {
-  const isLoading = useSelector((state) => state?.app?.isLoading);
-  console.log(isLoading)
+  const { isLoading } = StateCall()
+  useEffect(() => {
+    if (isLoading) {
+        document.body.classList.add('modal-open');
+    } else {
+        document.body.classList.remove('modal-open');
+    }
+
+    return () => {
+        document.body.classList.remove('modal-open');
+    };
+}, [isLoading]);
+
 
   return (
     <BrowserRouter>

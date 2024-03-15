@@ -1,21 +1,25 @@
 .loader2-parent{
     width: 100vw;
     height: 100vh;
-    z-index: 1;
     display: flex;
     /* justify-content: center; */
     /* align-items: center; */
     flex-direction: column;
+    row-gap: 10px;
 }
 .loader2{
-    width:90vw;
-    height: 75vh;
+    width:98vw;
+    height: 85vh;
     display: flex;
     border-radius: 10px;
     box-shadow: 0px 0px 15px 0px #00000033;
+    margin: 0 auto;
+}
+.loader-main{
+    width: 80%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    margin: auto auto;
 }
 .loader2 svg {
     width: 2.25em;

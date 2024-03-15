@@ -19,7 +19,7 @@ const Sidebar = () => {
                 </div>
                 <div className='sidebar-menu'>
                     {/* MENU SECTION  */}
-                    {login && (
+                    {window.localStorage.getItem("token") && (
                         <>
                             {menuList.map((item, index) => (
                                 <div key={index} onClick={() => navigate(item.path)} className={`sidebar-menu-item ${location.pathname === item?.path ? "active-item" : ""}`}>
@@ -33,7 +33,7 @@ const Sidebar = () => {
                             ))}
                         </>
                     )}
-                    {!login && (
+                    {!window.localStorage.getItem("token") && (
                         <div key={0} onClick={() => navigate(menuList[0].path)} className={`sidebar-menu-item ${location.pathname === menuList[0]?.path ? "active-item" : ""}`}>
                             <div className='sidebar-menu-icon'>
                                 <img width={25} src={location.pathname === menuList[0]?.path ? menuList[0]?.activeIcon : menuList[0]?.icon} alt='icon' />

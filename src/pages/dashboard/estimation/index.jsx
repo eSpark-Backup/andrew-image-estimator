@@ -3,23 +3,22 @@ import { SearchBar } from '../../../components'
 import { getAllEstimationsApi } from "../../../services/estimationsApi";
 import { getErrors } from "../../../algorithm";
 import { EstimatorList } from '../../../layout'
-import Loader from '../../../components/loader/Loader';
 import { motion } from 'framer-motion';
 import { slideAnimation } from '../../../constants';
-import { useDispatch } from 'react-redux';
-import { setLoading } from '../../../features/AppSlice';
+import { StateCall } from '../../../ContextApi.jsx';
 
 const Estimations = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const dispatch = useDispatch()
 
   const token = window?.localStorage?.getItem("token");
+  const { setisLoading } = StateCall()
+
 
   const fetchAllEstimations = () => {
     if (token) {
-      dispatch(setLoading(true));
+      setisLoading(true)
       getAllEstimationsApi()
         .then((res) => {
           setData(res?.data);
@@ -29,7 +28,7 @@ const Estimations = () => {
           getErrors(err);
         })
         .finally(() => {
-          dispatch(setLoading(false));
+          setisLoading(false)
         });
     }
   };
