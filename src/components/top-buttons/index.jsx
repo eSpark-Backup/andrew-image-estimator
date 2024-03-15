@@ -77,7 +77,10 @@ const TopButtons = ({
               className="cursor-pointer undo"
               src={showTooltip === "reset" ? resetImgWhite : resetImg}
               alt="change"
-              onClick={resetShape}
+              onClick={() => {
+                setShowTooltip(false)
+                resetShape()
+              }}
             />
           </div>
         ) : next === 5 && points.length > 0 ? (
@@ -91,7 +94,10 @@ const TopButtons = ({
                 className="cursor-pointer undo"
                 src={showTooltip === "reset" ? resetImgWhite : resetImg}
                 alt="change"
-                onClick={handleReset}
+                onClick={() => {
+                  setShowTooltip(false)
+                  handleReset()
+                }}
               />
             </div>
             <div
@@ -118,7 +124,10 @@ const TopButtons = ({
                 className="cursor-pointer undo"
                 src={showTooltip === "reset" ? resetImgWhite : resetImg}
                 alt="change"
-                onClick={handleResetChild}
+                onClick={() => {
+                  setShowTooltip(false)
+                  handleResetChild()
+                }}
               />
             </div>
             <div

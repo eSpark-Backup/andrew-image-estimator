@@ -88,21 +88,21 @@ const Canvas = ({
       newScale = Math.max(prevScale - 0.1, 1);
     }
     setScale(newScale);
-    const scaleDifference = newScale - prevScale;
-    setImagePosition((prevPosition) => {
-      const canvas = canvasRef.current;
-      const canvasRect = canvas.getBoundingClientRect();
-      const offsetX = (canvasRect.width - canvas.width * newScale) / 2;
-      const offsetY = (canvasRect.height - canvas.height * newScale) / 2;
+    const canvas = canvasRef.current;
+    const canvasRect = canvas.getBoundingClientRect();
+    const centerX = canvasRect.width / 2;
+    const centerY = canvasRect.height / 2;
 
-      const newX = prevPosition.x - offsetX * (scaleDifference / newScale);
-      const newY = prevPosition.y - offsetY * (scaleDifference / newScale);
+    const scaleRatio = newScale / scale;
 
-      return {
-        x: newX,
-        y: newY,
-      };
-    });
+    const newPoints = points.map(({ x, y }) => ({
+      x: centerX + (x - centerX) * scaleRatio,
+      y: centerY + (y - centerY) * scaleRatio,
+    }));
+
+    setPoints(newPoints);
+
+    setScale(newScale);
   };
 
   const handleMouseDown = (event) => {
@@ -166,6 +166,16 @@ const Canvas = ({
       newY = Math.max(topBoundary, Math.min(bottomBoundary, newY));
 
       setImagePosition({ x: newX, y: newY });
+
+      const deltaX = newX - imagePosition.x;
+      const deltaY = newY - imagePosition.y;
+
+      const newPoints = points.map(({ x, y }) => ({
+        x: x + deltaX,
+        y: y + deltaY,
+      }));
+      setPoints(newPoints);
+
       setDragStart({ x: event.clientX, y: event.clientY });
     }
   };
@@ -200,8 +210,8 @@ const Canvas = ({
       context.clearRect(0, 0, canvas.width, canvas.height);
       const sw = canvas.width * scale;
       const sh = canvas.height * scale;
-      const sx = Math.min(Math.max(0, canvas.width / 2 - sw / 2 + imagePosition.x), canvas.width - sw);
-      const sy = Math.min(Math.max(0, canvas.height / 2 - sh / 2 + imagePosition.y), canvas.height - sh);
+      const sx = Math.min(Math.max(0, canvas.width / 2 - sw / 2), canvas.width - sw);
+      const sy = Math.min(Math.max(0, canvas.height / 2 - sh / 2), canvas.height - sh);
       context.drawImage(image, sx, sy, sw, sh);
       drawGraph();
     };
@@ -275,12 +285,12 @@ const Canvas = ({
       sy = Math.max(Math.min(sy, 0), canvas.height - sh);
       context.drawImage(image, sx, sy, sw, sh);
       drawGraph();
-    
+
       const scaledPoints = points.map(({ x, y }) => ({
-        x: (x * scale) + sx,
-        y: (y * scale) + sy
+        x,
+        y
       }));
-    
+
       if (scaledPoints.length > 1) {
         context.beginPath();
         context.moveTo(scaledPoints[0].x, scaledPoints[0].y);
