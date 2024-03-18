@@ -40,7 +40,7 @@ const DashboardNextButtons = ({
 }) => {
   const authToken = window.localStorage.getItem("token")
   return (
-    <motion.div key={next} {...slideAnimation("right")} className="button-container right">
+    <motion.div key={next} {...slideAnimation("right")} className="button-container2 right">
       {(next <= 10 || (form.fabricator && next === 9)) && (
         <button
           disabled={
@@ -139,6 +139,7 @@ const DashboardNextButtons = ({
               });
             }
           }}
+          className={`${!canvasImage?"hidden":""}`}
         >
           {loader ? (
             <div className="button-loader">
@@ -148,9 +149,11 @@ const DashboardNextButtons = ({
             </div>
           ) : next > 9 ? (
             "Need more polygons"
-          ) : (
-            "Next"
-          )}
+            ) : next === 0 || next === 1 || next === 4 || next === 6 || next === 7 || next === 9 ? (
+              "Submit"
+            ) : (
+              "Next"
+            )}
         </button>
       )}
       {next > 9 && <button onClick={() => setModal(authToken ? "auth" : "unAuth")}>Share via email</button>}

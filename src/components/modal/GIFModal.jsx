@@ -22,7 +22,7 @@ const GIFModal = ({ modalIsOpen, closeModal, GIF, description }) => {
 
                     <GeneralButton
                         style={{ width: "200px", height: "40px" }}
-                        text="Next"
+                        text="Close"
                         onClick={closeModal}
                     />
                 </div>

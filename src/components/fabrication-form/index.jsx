@@ -219,7 +219,7 @@ const FabForm = ({
                 name="dtsDate"
                 value={dropdowns.dtsDate}
                 label="Delivery to Site Date"
-                type="text"
+                type="date"
                 placeholder="Enter Delivery to Site Date"
                 handleChange={handleDropdowns}
               />

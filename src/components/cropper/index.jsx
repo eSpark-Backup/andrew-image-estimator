@@ -340,11 +340,11 @@ export const ImageCropper = ({
   return (
     <>
       {!focus && <motion.div {...slideAnimation("down")} className="details">
-        <p className="details-heading">Crop</p>
+        {/* <p className="details-heading">Crop</p>
         <p className="details-desc">
           Click and drag to create a crop box over your image. Resize and
           reposition the box to cover the portion you want to keep.
-        </p>
+        </p> */}
       </motion.div>}
       <div>
         <canvas

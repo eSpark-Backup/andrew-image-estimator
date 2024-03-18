@@ -221,28 +221,6 @@ const Canvas = ({
   return (
     <>
       <motion.div {...slideAnimation("down")} className="details">
-        <p className="details-heading">
-          {polygonArr ? "Select the object" : "Select the area"}
-        </p>
-        {polygonArr ? (
-          <p className="details-desc">
-            Click on the object to set the starting point of your polygon.
-            Continue clicking at each corner or key point to outline the object
-            you want to get estimated. Ensure precision by placing points
-            accurately. If you make a mistake click on the Revert button undo
-            the last step. However Reset button will clear all points, allowing
-            you to begin anew.
-          </p>
-        ) : (
-          <p className="details-desc">
-            Click on the image to set the starting point of your polygon. For
-            clipping out the area, continue clicking at each corner or key point
-            to outline the area of interest. Ensure precision by placing points
-            accurately. If you make a mistake click on the Revert button undo
-            the last step. However Reset button will clear all points, allowing
-            you to begin anew.
-          </p>
-        )}
       </motion.div>
 
       {loader ? (
