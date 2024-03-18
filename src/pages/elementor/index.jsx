@@ -362,12 +362,21 @@ function Elementor() {
           handleRevertChild();
         }
       }
+      if (event.ctrlKey && (event.key === "x" || event.key === "X")) {
+        if (next === 5) {
+          handleReset();
+        } else if (next === 6) {
+          handleResetChild();
+        } else if (next === 2) {
+          resetShape()
+        }
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [points, childPoints]);
+  }, [points, childPoints, crop]);
 
   return (
     <section className="container1">

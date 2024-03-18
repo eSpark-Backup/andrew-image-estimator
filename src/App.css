@@ -902,7 +902,7 @@ select:disabled {
 
 .topBtns {
   position: absolute;
-  left: 10px;
+  left: 20px;
   top: 10px;
 }
 
@@ -1040,7 +1040,7 @@ select:disabled {
   content: "Change Image";
   position: absolute;
   width: max-content;
-  bottom: -39px;
+  bottom: -60px;
   left: 50%;
   transform: translateX(-50%);
   background-color: black;
@@ -1050,14 +1050,17 @@ select:disabled {
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
+  text-align: center;
 }
 
 .tooltipReset::after {
-  content: "Reset";
+  content: "Reset \A shortcut (ctrl + x)";
+  white-space: pre-wrap;
 }
 
 .tooltipRevert::after {
-  content: "Undo";
+  content: "Undo \A shortcut (ctrl + z)";
+  white-space: pre-wrap;
 }
 
 .tooltip::before {
@@ -1204,4 +1207,187 @@ select:disabled {
   border: 1px solid #000;
   border-radius: 4px;
   width: 300px;
+}
+
+.tour {
+  position: relative;
+}
+
+.image-selector {
+  position: absolute;
+  bottom: -85px;
+  background: #fff;
+  color: #000;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 275px;
+  animation-name: bounceT;
+  -moz-animation-name: bounceT;
+}
+
+.image-selector::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  border-style: solid;
+  border-width: 15px 15px 15px 0;
+  border-color: #ffffff transparent transparent transparent;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+  transform: rotate(45deg) translateX(-50%);
+  left: 50%;
+}
+
+.change-image {
+  position: absolute;
+  top: 50%;
+  right: -360px;
+  background: #fff;
+  color: #000;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+  transform: translatey(-50%);
+  width: 325px;
+  animation-name: bounceL;
+  -moz-animation-name: bounceL;
+}
+
+.change-image::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  border-style: solid;
+  border-width: 15px 15px 15px 15px;
+  border-color: #ffffff transparent transparent transparent;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+  transform: rotate(90deg) translateX(-50%);
+  left: -32px;
+}
+
+.unit-selector {
+  position: absolute;
+  top: 50%;
+  background: #fff;
+  color: #000;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 14px;
+  text-align: center;
+  border-radius: 5px;
+  left: -400px;
+  transform: translateX(-50%);
+  width: 348px;
+  animation-name: bounceR;
+  -moz-animation-name: bounceR;
+  z-index: 999;
+}
+
+.unit-selector::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  border-style: solid;
+  border-width: 15px 15px 15px 15px;
+  border-color: transparent transparent #ffffff transparent;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+  transform: rotate(90deg) translateX(-50%);
+  right: -31px;
+}
+
+.dim-selector {
+  position: absolute;
+  bottom: -100px;
+  background: #fff;
+  color: #000;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 275px;
+  animation-name: bounceT;
+  -moz-animation-name: bounceT;
+  z-index: 999;
+}
+
+.dim-selector::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  border-style: solid;
+  border-width: 15px 15px 15px 0;
+  border-color: #ffffff transparent transparent transparent;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+  transform: rotate(45deg) translateX(-50%);
+  left: 50%;
+}
+
+.animation {
+  -webkit-animation-duration: 2s;
+  animation-duration: 2s;
+  -webkit-animation-fill-mode: backwards;
+  animation-fill-mode: backwards;
+  -webkit-animation-timing-function: ease;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@keyframes bounceT {
+  0%,
+  100%,
+  20%,
+  50%,
+  80% {
+    -webkit-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    -webkit-transform: translate(-50%, -10%);
+    -ms-transform: translate(-50%, -10%);
+    transform: translate(-50%, -10%);
+  }
+}
+
+@keyframes bounceL {
+  0%,
+  100%,
+  20%,
+  50%,
+  80% {
+    -webkit-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+  }
+
+  50% {
+    -webkit-transform: translate(-5%, -50%);
+    -ms-transform: translate(-5%, -50%);
+    transform: translate(-5%, -50%);
+  }
+}
+
+@keyframes bounceR {
+  0%,
+  100%,
+  20%,
+  50%,
+  80% {
+    -webkit-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+  }
+
+  50% {
+    -webkit-transform: translate(5%, -50%);
+    -ms-transform: translate(5%, -50%);
+    transform: translate(5%, -50%);
+  }
 }
