@@ -3,38 +3,40 @@ import { SearchBar } from '../../../components'
 import { getAllEstimationsApi } from "../../../services/estimationsApi";
 import { getErrors } from "../../../algorithm";
 import { EstimatorList } from '../../../layout'
-import Loader from '../../../components/loader/Loader';
 import { motion } from 'framer-motion';
 import { slideAnimation } from '../../../constants';
+import { StateCall } from '../../../ContextApi.jsx';
 
 const Estimations = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(false)
 
   const token = window?.localStorage?.getItem("token");
+  const { setisLoading } = StateCall()
+
 
   const fetchAllEstimations = () => {
     if (token) {
-      setLoading(true);
+      setisLoading(true)
       getAllEstimationsApi()
         .then((res) => {
-          setLoading(false);
           setData(res?.data);
           setFilteredData(res?.data);
         })
         .catch((err) => {
-          setLoading(false);
           getErrors(err);
+        })
+        .finally(() => {
+          setisLoading(false)
         });
     }
   };
-  
+
 
   useEffect(() => {
     if (token) {
-            fetchAllEstimations()
+      fetchAllEstimations()
     }
   }, [token]);
 
