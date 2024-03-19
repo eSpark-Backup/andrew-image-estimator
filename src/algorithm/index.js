@@ -471,7 +471,7 @@ export const calculateFabrication = async (
   }
   const polygons = {
     ...apiPolygons,
-    [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
+    [`poly${newPol}`]: polygonArr[polygonsInd - 1]?.points?.map((item) => ({
       x1: item.x,
       y1: item.y,
     })),
