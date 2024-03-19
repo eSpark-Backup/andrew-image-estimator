@@ -32,22 +32,24 @@ const TopButtons = ({
   };
 
   return (
-
     <>
       <div className="button-container topBtns">
         {canvasImage && next === 0 ? (
-          <div
-            className="tooltip tour"
-            onMouseEnter={() => handleMouseEnter("change")}
-            onMouseLeave={handleMouseLeave}
-          >
+          <div className="tooltip">
             <img
+              onMouseEnter={() => handleMouseEnter("change")}
+              onMouseLeave={handleMouseLeave}
               className="cursor-pointer undo"
               src={showTooltip === "change" ? changeImageWhite : changeImage}
               alt="change"
-              onClick={handleRemoveImage}
+              onClick={() => {
+                setShowTooltip(false);
+                handleRemoveImage();
+              }}
             />
-            <div className="change-image animation">You can change your selected image</div>
+            <div className="change-image animation">
+              You can change your selected image
+            </div>
           </div>
         ) : next === 2 && crop.width !== 0 ? (
           <div
@@ -59,7 +61,10 @@ const TopButtons = ({
               className="cursor-pointer undo"
               src={showTooltip === "reset" ? resetImgWhite : resetImg}
               alt="change"
-              onClick={resetShape}
+              onClick={() => {
+                setShowTooltip(false);
+                resetShape();
+              }}
             />
           </div>
         ) : next === 5 && points.length > 0 ? (
@@ -73,7 +78,10 @@ const TopButtons = ({
                 className="cursor-pointer undo"
                 src={showTooltip === "reset" ? resetImgWhite : resetImg}
                 alt="change"
-                onClick={handleReset}
+                onClick={() => {
+                  setShowTooltip(false);
+                  handleReset();
+                }}
               />
             </div>
             <div
@@ -100,7 +108,10 @@ const TopButtons = ({
                 className="cursor-pointer undo"
                 src={showTooltip === "reset" ? resetImgWhite : resetImg}
                 alt="change"
-                onClick={handleResetChild}
+                onClick={() => {
+                  setShowTooltip(false);
+                  handleResetChild();
+                }}
               />
             </div>
             <div

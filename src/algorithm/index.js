@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import {
   createEstimationFromById,
@@ -679,3 +680,19 @@ export const getImgDim = (imageSize, form) => {
   }
   return { width, height }
 }
+
+export const useOutsideClick = (ref, callback) => {
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [ref, callback]);
+};

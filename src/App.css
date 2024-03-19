@@ -1040,7 +1040,7 @@ select:disabled {
   content: "Change Image";
   position: absolute;
   width: max-content;
-  bottom: -60px;
+  bottom: -39px;
   left: 50%;
   transform: translateX(-50%);
   background-color: black;
@@ -1056,11 +1056,13 @@ select:disabled {
 .tooltipReset::after {
   content: "Reset \A shortcut (ctrl + x)";
   white-space: pre-wrap;
+  bottom: -58px !important;
 }
 
 .tooltipRevert::after {
   content: "Undo \A shortcut (ctrl + z)";
   white-space: pre-wrap;
+  bottom: -58px !important;
 }
 
 .tooltip::before {
@@ -1390,4 +1392,46 @@ select:disabled {
     -ms-transform: translate(5%, -50%);
     transform: translate(5%, -50%);
   }
+}
+
+.autoOpenSelect {
+  background: #fff;
+  height: 30px;
+  padding: 7px;
+  border-radius: 5px;
+  line-height: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  gap: 10px;
+}
+
+.autoOpenSelect img {
+  width: 20px;
+  height: 12px;
+}
+
+.options {
+  position: absolute;
+  background: #fff;
+  width: 100px;
+  right: 0px;
+  z-index: 999999;
+  bottom: -105px;
+  border-radius: 5px;
+  border: 1px solid #000;
+}
+
+.options > div {
+  padding: 3px 10px;
+}
+
+.options > div:hover {
+  background-color: #e5e5e5;
+}
+
+.d-none {
+  display: none;
 }

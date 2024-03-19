@@ -59,6 +59,7 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
           >
             <p style={{ color: "#fff" }}>Measuring Unit:</p>
             <SelectInput
+              autoOpen
               className="tool-inputs "
               name="unit"
               disabled={active !== "select"}
