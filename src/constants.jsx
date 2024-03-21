@@ -1,4 +1,4 @@
-import { DustbinIcon, EstimationsIcon, EstimationBlack, DustbinBlack, cropGIF, areaGIF, objectGIF } from "./assets";
+import { DustbinIcon, EstimationsIcon, EstimationBlack, DustbinBlack, cropGIF, areaGIF, objectGIF, resetImgWhite, resetImg } from "./assets";
 
 export const menuList = [
     {
@@ -12,6 +12,12 @@ export const menuList = [
         icon: DustbinIcon,
         path: '/trash',
         activeIcon: DustbinBlack
+    },
+    {
+        name: 'Change Fields',
+        icon: resetImgWhite,
+        path: '/change-fields',
+        activeIcon: resetImg
     },
 ]
 

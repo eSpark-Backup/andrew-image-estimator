@@ -16,6 +16,11 @@ import uploadImg from "./icons/Upload.svg"
 import resetImgWhite from "./icons/resetWhite.svg"
 import revertImgWhite from "./icons/revertWhite.svg"
 import changeImageWhite from "./icons/changeImgWhite.svg"
+<<<<<<< Updated upstream
+=======
+import downArrow from "./icons/down-arrow.png"
+import add from "./icons/add.png"
+>>>>>>> Stashed changes
 import cropGIF from "./gifs/cropGIF.gif"
 import areaGIF from "./gifs/areaGIF.gif"
 import objectGIF from "./gifs/objectGIF.gif"
@@ -40,6 +45,11 @@ export {
   resetImgWhite,
   revertImgWhite,
   changeImageWhite,
+<<<<<<< Updated upstream
+=======
+  downArrow,
+  add,
+>>>>>>> Stashed changes
   cropGIF,
   areaGIF,
   objectGIF

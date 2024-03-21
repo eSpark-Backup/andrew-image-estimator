@@ -2,6 +2,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import {
     Estimations,
     Trash,
+    FieldCustomizer,
     Elementor,
     SignUp,
     Login,
@@ -16,6 +17,7 @@ const Routes = () => {
 
                 { path: "/", element: <Estimations /> },
                 { path: "/trash", element: <Trash /> },
+                { path: "/change-fields", element: <FieldCustomizer /> },
             ]
         },
         { path: "/tool", element: <Elementor /> },
