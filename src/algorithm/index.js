@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import {
   createEstimationFromById,
@@ -471,7 +472,7 @@ export const calculateFabrication = async (
   }
   const polygons = {
     ...apiPolygons,
-    [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
+    [`poly${newPol}`]: polygonArr[polygonsInd - 1]?.points?.map((item) => ({
       x1: item.x,
       y1: item.y,
     })),
@@ -679,3 +680,19 @@ export const getImgDim = (imageSize, form) => {
   }
   return { width, height }
 }
+
+export const useOutsideClick = (ref, callback) => {
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [ref, callback]);
+};

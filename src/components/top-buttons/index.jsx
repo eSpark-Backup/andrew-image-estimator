@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   changeImage,
   changeImageWhite,
@@ -7,8 +7,6 @@ import {
   revertImg,
   revertImgWhite,
 } from "../../assets";
-import Joyride from 'react-joyride';
-import { SelectImageTour } from "../../constants";
 
 const TopButtons = ({
   canvasImage,
@@ -23,8 +21,6 @@ const TopButtons = ({
   handleRevertChild,
   points,
 }) => {
-  const [tour, setTour] = useState(false);
-  const [imageTour] = useState(SelectImageTour);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleMouseEnter = (name) => {
@@ -35,37 +31,25 @@ const TopButtons = ({
     setShowTooltip(false);
   };
 
-
-  const callback = (data) => {
-    if (data.action === 'close' && data.type === 'step:after') {
-      setTour(false);
-    }
-  }
-
-
-  useEffect(() => {
-    if (canvasImage && next === 0) {
-      setTour(true);
-    }
-  }
-    , [canvasImage, next]);
-
   return (
-
     <>
       <div className="button-container topBtns">
         {canvasImage && next === 0 ? (
-          <div
-            className="tooltip"
-            onMouseEnter={() => handleMouseEnter("change")}
-            onMouseLeave={handleMouseLeave}
-          >
+          <div className="tooltip">
             <img
-              className="cursor-pointer undo select-image"
+              onMouseEnter={() => handleMouseEnter("change")}
+              onMouseLeave={handleMouseLeave}
+              className="cursor-pointer undo"
               src={showTooltip === "change" ? changeImageWhite : changeImage}
               alt="change"
-              onClick={handleRemoveImage}
+              onClick={() => {
+                setShowTooltip(false);
+                handleRemoveImage();
+              }}
             />
+            <div className="change-image animation">
+              You can change your selected image
+            </div>
           </div>
         ) : next === 2 && crop.width !== 0 ? (
           <div
@@ -77,7 +61,10 @@ const TopButtons = ({
               className="cursor-pointer undo"
               src={showTooltip === "reset" ? resetImgWhite : resetImg}
               alt="change"
-              onClick={resetShape}
+              onClick={() => {
+                setShowTooltip(false);
+                resetShape();
+              }}
             />
           </div>
         ) : next === 5 && points.length > 0 ? (
@@ -91,7 +78,10 @@ const TopButtons = ({
                 className="cursor-pointer undo"
                 src={showTooltip === "reset" ? resetImgWhite : resetImg}
                 alt="change"
-                onClick={handleReset}
+                onClick={() => {
+                  setShowTooltip(false);
+                  handleReset();
+                }}
               />
             </div>
             <div
@@ -118,7 +108,10 @@ const TopButtons = ({
                 className="cursor-pointer undo"
                 src={showTooltip === "reset" ? resetImgWhite : resetImg}
                 alt="change"
-                onClick={handleResetChild}
+                onClick={() => {
+                  setShowTooltip(false);
+                  handleResetChild();
+                }}
               />
             </div>
             <div
@@ -136,21 +129,6 @@ const TopButtons = ({
           </div>
         ) : null}
       </div>
-
-      <Joyride
-        run={tour}
-        showProgress={false}
-        showSkipButton={false}
-        callback={callback}
-        steps={imageTour}
-        hideCloseButton={true}
-        styles={{
-          buttonNext: {
-            display: "none",
-          }
-
-        }}
-      />
     </>
   );
 };

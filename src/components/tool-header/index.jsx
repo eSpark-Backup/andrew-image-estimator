@@ -1,37 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { SelectInput } from "../inputs/select-input";
 import TextInput from "../inputs/text-input";
 import { useNavigate } from "react-router";
-import Joyride from 'react-joyride';
-import { SelectorTour, heightTour, widthTour } from "../../constants";
 import ModalComponent from "../modal/Modal";
 
 const ToolHeader = ({ next, active, form, handleChange }) => {
   const navigate = useNavigate();
-  const [tour, setTour] = useState(false);
-  const [selectTaker] = useState(SelectorTour);
-  const [selectHeight] = useState(heightTour);
-  const [selectwidth] = useState(widthTour);
   const [isNavigatorModalOpen, setIsNavigatorModalOpen] = useState(false)
-
-  useEffect(() => {
-    if (active === "select" && form.unit === "") {
-      setTour(true);
-    }
-
-    if (active === "height" && form.length === "") {
-      setTour(true);
-    }
-
-    if (active === "length" && form.width === "") {
-      setTour(true);
-    }
-
-    return () => {
-      setTour(false);
-    };
-
-  }, [active, form.unit, form.length, form.width]);
 
   const NavigatorHandler = () => {
     if (window.localStorage.getItem("token")) {
@@ -80,10 +55,11 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
         >
           {next >= 1 && <div
             className={`${active === "select" || form.unit !== "" ? "active-inputs" : ""
-              } tool-inputs-container select-taker`}
+              } tool-inputs-container tour`}
           >
             <p style={{ color: "#fff" }}>Measuring Unit:</p>
             <SelectInput
+              autoOpen
               className="tool-inputs "
               name="unit"
               disabled={active !== "select"}
@@ -99,10 +75,11 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
               handleChange={handleChange}
               header={true}
             />
+            {active === "select" && <div className="unit-selector animation">You can select the unit for measurement</div>}
           </div>}
           {next >= 3 && <div
             className={`${active === "height" || form.length ? "active-inputs" : ""
-              } tool-inputs-container height-taker`}
+              } tool-inputs-container tour`}
           >
             <p style={{ color: "#fff" }}>Height:</p>
             <TextInput
@@ -114,10 +91,11 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
               placeholder="Enter"
               handleChange={handleChange}
             />
+            {active === "height" && <div className="dim-selector animation">Select the height of object to proceed</div>}
           </div>}
           {next >= 4 && <div
             className={`${active === "length" || form.width ? "active-inputs" : ""
-              } tool-inputs-container width-taker`}
+              } tool-inputs-container tour`}
           >
             <p style={{ color: "#fff" }}>Length:</p>
             <TextInput
@@ -129,22 +107,10 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
               placeholder="Enter"
               handleChange={handleChange}
             />
+            {active === "length" && <div className="dim-selector animation">Select the length of object to proceed</div>}
           </div>}
         </div>
       </div>
-      <Joyride
-        run={tour}
-        showProgress={false}
-        showSkipButton={false}
-        hideCloseButton={true}
-        steps={active === "select" ? selectTaker : active === "height" ? selectHeight : selectwidth}
-        styles={{
-          buttonNext: {
-            display: "none",
-          }
-        }
-        }
-      />
       <ModalComponent
         heading={"Confirm Navigation"}
         description={"As a guest account your estimation will not be saved if you decide to continue. Are  you sure you want to leave this page?"}

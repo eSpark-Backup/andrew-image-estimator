@@ -903,7 +903,7 @@ select:disabled {
 
 .topBtns {
   position: absolute;
-  left: 10px;
+  left: 20px;
   top: 10px;
 }
 
@@ -1051,14 +1051,19 @@ select:disabled {
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
+  text-align: center;
 }
 
 .tooltipReset::after {
-  content: "Reset";
+  content: "Reset \A shortcut (ctrl + x)";
+  white-space: pre-wrap;
+  bottom: -58px !important;
 }
 
 .tooltipRevert::after {
-  content: "Undo";
+  content: "Undo \A shortcut (ctrl + z)";
+  white-space: pre-wrap;
+  bottom: -58px !important;
 }
 
 .tooltip::before {

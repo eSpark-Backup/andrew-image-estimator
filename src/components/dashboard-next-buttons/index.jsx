@@ -40,7 +40,7 @@ const DashboardNextButtons = ({
 }) => {
   const authToken = window.localStorage.getItem("token")
   return (
-    <motion.div key={next} {...slideAnimation("right")} className="button-container2 right">
+    <motion.div key={next} {...slideAnimation("right")} className="button-container right">
       {(next <= 10 || (form.fabricator && next === 9)) && (
         <button
           disabled={
@@ -139,7 +139,7 @@ const DashboardNextButtons = ({
               });
             }
           }}
-          className={`${!canvasImage?"hidden":""}`}
+          className={`${(!canvasImage && next === 0)?"hidden":""}`}
         >
           {loader ? (
             <div className="button-loader">
