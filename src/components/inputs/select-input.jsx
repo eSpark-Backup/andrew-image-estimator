@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { DustbinBlack, downArrow } from "../../assets";
+import { DustbinBlack, EditIcon, downArrow } from "../../assets";
 import { useOutsideClick } from "../../algorithm";
 
 export const SelectInput = ({
@@ -14,6 +14,7 @@ export const SelectInput = ({
   handleChange,
   customizer,
   handleDelete,
+  handleEdit,
 }) => {
   const [open, setOpen] = useState(false);
   useEffect(()=>{
@@ -39,7 +40,10 @@ export const SelectInput = ({
             return (
               <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}} onClick={() => handleChange(name, option.value)} key={index}>
                 <div>{option.label}</div>
+                <div>
+                {customizer && <img onClick={() => handleEdit(option)} className="dropdown-trash" src={EditIcon} alt="add" />}
                 {customizer && <img onClick={() => handleDelete(option)} className="dropdown-trash" src={DustbinBlack} alt="add" />}
+                </div>
               </div>
             );
           })}

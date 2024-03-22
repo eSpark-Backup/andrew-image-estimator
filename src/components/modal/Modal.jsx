@@ -20,7 +20,8 @@ const ModalComponent = ({
   dashboard,
   onSuccess,
   loading2,
-  navigatorHandler
+  navigatorHandler,
+  currentValue
 }) => {
   const customStyles = {
     width: "452px",
@@ -63,6 +64,10 @@ const ModalComponent = ({
         toast.error(getErrors(err));
       });
   };
+
+  useEffect(()=>{
+     setValue(currentValue)
+  }, [currentValue])
 
   useEffect(() => {
     if (modalIsOpen) {

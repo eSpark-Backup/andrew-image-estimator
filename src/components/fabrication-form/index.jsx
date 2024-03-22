@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SelectInput } from "../inputs/select-input";
 import TextInput from "../inputs/text-input";
 import { motion } from "framer-motion"
 import { slideAnimation } from "../../constants";
+import {
+  collection,
+  onSnapshot,
+} from "firebase/firestore";
+import db from "../../firebase"
 
 const FabForm = ({
   insideCutImg,
@@ -12,6 +17,15 @@ const FabForm = ({
   form,
   handleChange,
 }) => {
+  const collectionRefPlateType = collection(db, "Wear Plate Type");
+  const collectionRefCurrentUsedPlateType = collection(db, "Current Used Wear Plate Type");
+  const collectionRefAbrasionType = collection(db, "Abrasion Type");
+  const collectionRefImpactType = collection(db, "Impact Type");
+  const [plateTypeOptions, setPlateTypeOptions] = useState([])
+  const [currentUsedPlateTypeOptions, setCurrentUsedPlateTypeOptions] = useState([])
+  const [abrasionTypeOptions, setAbrasionTypeOptions] = useState([])
+  const [ImpactTypeOptions, setImpactTypeOptions] = useState([])
+
   let options = [];
   for (let i = 0; i <= 50; i++) {
     options.push({ label: i.toString(), value: i });
@@ -25,6 +39,34 @@ const FabForm = ({
     });
   }
   weakOptions.push({ label: `upto 25 Weeks`, value: "25+" });
+
+  useEffect(() => {
+    const fetchDataAndUpdateFields = (collectionRef, setOptions) => {
+      return onSnapshot(collectionRef, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          _id: doc.id,
+          ...doc.data(),
+        }));
+      
+        setOptions(data)
+      });
+    };
+  
+    const unsubscribePlateType = fetchDataAndUpdateFields(collectionRefPlateType, setPlateTypeOptions);
+    const unsubscribeCurrentUsedPlateType = fetchDataAndUpdateFields(collectionRefCurrentUsedPlateType, setCurrentUsedPlateTypeOptions);
+    const unsubscribeAbrasionType = fetchDataAndUpdateFields(collectionRefAbrasionType, setAbrasionTypeOptions);
+    const unsubscribeImpactType = fetchDataAndUpdateFields(collectionRefImpactType, setImpactTypeOptions);
+  
+    return () => {
+      unsubscribePlateType();
+      unsubscribeCurrentUsedPlateType();
+      unsubscribeAbrasionType()
+      unsubscribeImpactType()
+    };
+  }, []);
+
+
+
 
   return (
     <div style={{height: "100%"}} className="image-dropdown">
@@ -64,10 +106,7 @@ const FabForm = ({
                 name="plateType"
                 value={dropdowns.plateType}
                 label="Wear Plate Type for Estimate"
-                options={[
-                  { label: "AR plate", value: "AR" },
-                  { label: "CCO plate", value: "CCO" },
-                ]}
+                options={plateTypeOptions}
                 placeholder="Select Wear Plate Type for Estimate"
                 handleChange={handleDropdowns}
               />
@@ -87,12 +126,7 @@ const FabForm = ({
                 name="plateTypeUsed"
                 value={dropdowns.plateTypeUsed}
                 label="Type of wear Plate Used Currently"
-                options={[
-                  { label: "QT plate", value: "QT" },
-                  { label: "AR plate", value: "AR" },
-                  { label: "Weld Overlay", value: "weld" },
-                  { label: "Others", value: "others" },
-                ]}
+                options={currentUsedPlateTypeOptions}
                 placeholder="Select Type of wear Plate Used Currently"
                 handleChange={handleDropdowns}
               />
@@ -168,11 +202,7 @@ const FabForm = ({
                 name="abrasionType"
                 value={dropdowns.abrasionType}
                 label="Abrasion Type"
-                options={[
-                  { label: "Low", value: "low" },
-                  { label: "Heavy", value: "heavy" },
-                  { label: "Medium", value: "medium" },
-                ]}
+                options={abrasionTypeOptions}
                 placeholder="Select Abrasion Type"
                 handleChange={handleDropdowns}
               />
@@ -182,11 +212,7 @@ const FabForm = ({
                 name="impactType"
                 value={dropdowns.impactType}
                 label="Impact Type"
-                options={[
-                  { label: "Low", value: "low" },
-                  { label: "Heavy", value: "heavy" },
-                  { label: "Medium", value: "medium" },
-                ]}
+                options={ImpactTypeOptions}
                 placeholder="Select Impact Type"
                 handleChange={handleDropdowns}
               />
