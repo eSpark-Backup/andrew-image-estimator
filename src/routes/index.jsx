@@ -20,6 +20,12 @@ const Routes = () => {
                 { path: "/change-fields", element: <FieldCustomizer /> },
             ]
         },
+        {
+            path: "/admin", element: <DashboardLayout />,
+            children: [
+                { path: "/admin", element: <FieldCustomizer /> },
+            ]
+        },
         { path: "/tool", element: <Elementor /> },
         { path: "404", element: <div>Not Found</div> },
         { path: "/sign-up", element: <SignUp /> },

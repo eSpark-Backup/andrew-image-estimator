@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ModalComponent from '../modal/Modal'
 import { logout } from '../../services/authApi'
@@ -9,6 +9,11 @@ const Header = () => {
     const token = window?.localStorage.getItem("token")
     const [isLogoutModalOpen, setLogoutModalOpen] = useState(false)
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+    const user = JSON.parse(localStorage.getItem("user")) || null;
+    const InAdmin = location.pathname === "/admin"
+
+
+
     return (
         <>
             <div className='header'>
@@ -17,6 +22,12 @@ const Header = () => {
                     <button onClick={() => navigate("/sign-up")}>Signup</button>
                     <button onClick={() => navigate("/login")}>Login</button>
                 </div> : <div className='header-links'>
+                    {
+                        user.role === "admin" &&
+                        <button style={{ width: "180px" }} onClick={() => navigate(!InAdmin ? "/admin" : "/")}>
+                            {!InAdmin ? "Go to Admin Panel" : "Back to Dashboard"}
+                        </button>
+                    }
                     <button onClick={() => setLogoutModalOpen(true)}>Logout</button>
                 </div>}
 

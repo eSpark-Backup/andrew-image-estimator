@@ -13,12 +13,16 @@ export const menuList = [
         path: '/trash',
         activeIcon: DustbinBlack
     },
+
+]
+export const AdminMenuList = [
     {
         name: 'Change Fields',
         icon: resetImgWhite,
-        path: '/change-fields',
+        path: '/admin',
         activeIcon: resetImg
     },
+
 ]
 
 

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { menuList } from '../constants';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { AdminMenuList, menuList } from '../constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [data, setData] = useState(menuList)
-    const token = window.localStorage.getItem("token");
-    useEffect(() => {
-        //set data according to auth
+    const [menu, setMenu] = useState(menuList)
+    const token = localStorage.getItem("token");
+    const menuToRender = location.pathname === "/admin" ? AdminMenuList : menu;
+  
+    useLayoutEffect(() => {
         if(token){
-          setData(menuList);
+            setMenu(menuList);
         } else {
-            setData(menuList);
-        //   setData(menuList.filter((val) => val.name === "Estimations"))
+            setMenu(menuList.filter((val) => val.name === "Estimations"))
         }
     }, [token])
 
@@ -21,13 +21,13 @@ const Sidebar = () => {
         <div className='sidebar-container'>
             <div className='sidebar-box'>
                 <div className='sidebar-header'>
-                    <h6>Dashboard</h6>
+                    <h6>{location.pathname !== "/admin" ? "Dashboard" : "Admin Panel" }</h6>
                 </div>
                 <div className='sidebar-menu'>
                     {/* MENU SECTION  */}
                     {/* {window.localStorage.getItem("token") && ( */}
                         <>
-                            {data.map((item, index) => (
+                            {menuToRender.map((item, index) => (
                                 <div key={index} onClick={() => navigate(item.path)} className={`sidebar-menu-item ${location.pathname === item?.path ? "active-item" : ""}`}>
                                     <div className='sidebar-menu-icon'>
                                         <img width={25} src={location.pathname === item?.path ? item?.activeIcon : item?.icon} alt='icon' />

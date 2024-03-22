@@ -1417,6 +1417,8 @@ select:disabled {
 .options {
   position: absolute;
   background: #fff;
+  max-height: 150px;
+  overflow-y: auto;
   width: 100%;
   right: 0px;
   z-index: 999999;
