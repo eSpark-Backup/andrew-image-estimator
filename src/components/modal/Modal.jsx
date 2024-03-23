@@ -82,11 +82,15 @@ const ModalComponent = ({
     };
 }, [modalIsOpen]);
 
+
   return (
     <div>
       <Rodal
         visible={modalIsOpen}
-        onClose={closeModal}
+        onClose={()=>{
+          closeModal()
+          setValue("")
+        }}
         customStyles={customStyles}
         closeMaskOnClick={true}
         animation="slideUp"
@@ -167,7 +171,7 @@ const ModalComponent = ({
             <div className="signin-button-parents">
             <button onClick={navigatorHandler?navigatorHandler:closeModal}>{btn1Text}</button>
 
-              <button disabled={!value} onClick={() => {
+              <button disabled={(label && placeholder && !value) ? true : false} onClick={() => {
                 onSuccess(value)
               setValue("")
             }}>{loading2 ?
