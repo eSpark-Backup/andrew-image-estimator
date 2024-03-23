@@ -21,7 +21,8 @@ const ModalComponent = ({
   onSuccess,
   loading2,
   navigatorHandler,
-  currentValue
+  currentValue,
+  inputType
 }) => {
   const customStyles = {
     width: "452px",
@@ -155,7 +156,7 @@ const ModalComponent = ({
                   label={label}
                   value={value}
                   handleChange={(_, value) => setValue(value)}
-                  type={"text"}
+                  type={inputType || "text"}
                   placeholder={placeholder}
                 />
               </div>

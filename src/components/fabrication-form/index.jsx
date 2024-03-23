@@ -8,6 +8,8 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import db from "../../firebase"
+import { collectionRefAbrasionType, collectionRefBrakeBends, collectionRefCurrentUsedPlateType, collectionRefFasteningusingStuds, collectionRefImpactType, collectionRefPlateType, collectionRefRolledBends, collectionRefSunkBolts } from "../../db";
+import { Sorting } from "../../utils";
 
 const FabForm = ({
   insideCutImg,
@@ -17,14 +19,14 @@ const FabForm = ({
   form,
   handleChange,
 }) => {
-  const collectionRefPlateType = collection(db, "Wear Plate Type");
-  const collectionRefCurrentUsedPlateType = collection(db, "Current Used Wear Plate Type");
-  const collectionRefAbrasionType = collection(db, "Abrasion Type");
-  const collectionRefImpactType = collection(db, "Impact Type");
   const [plateTypeOptions, setPlateTypeOptions] = useState([])
   const [currentUsedPlateTypeOptions, setCurrentUsedPlateTypeOptions] = useState([])
   const [abrasionTypeOptions, setAbrasionTypeOptions] = useState([])
   const [ImpactTypeOptions, setImpactTypeOptions] = useState([])
+  const [fasteningusingStudsOptions, setFasteningusingStudsOptions] = useState([])
+  const [brakeBendsOptions, setBrakeBendsOptions] = useState([])
+  const [rolledBendsOptions, setRolledBendsOptions] = useState([])
+  const [sunkBoltsOptions, setSunkBoltsOptions] = useState([])
 
   let options = [];
   for (let i = 0; i <= 50; i++) {
@@ -47,21 +49,25 @@ const FabForm = ({
           _id: doc.id,
           ...doc.data(),
         }));
-      
-        setOptions(data)
+        setOptions(data);
       });
     };
   
-    const unsubscribePlateType = fetchDataAndUpdateFields(collectionRefPlateType, setPlateTypeOptions);
-    const unsubscribeCurrentUsedPlateType = fetchDataAndUpdateFields(collectionRefCurrentUsedPlateType, setCurrentUsedPlateTypeOptions);
-    const unsubscribeAbrasionType = fetchDataAndUpdateFields(collectionRefAbrasionType, setAbrasionTypeOptions);
-    const unsubscribeImpactType = fetchDataAndUpdateFields(collectionRefImpactType, setImpactTypeOptions);
+    const subscriptions = [
+      [collectionRefPlateType, setPlateTypeOptions],
+      [collectionRefCurrentUsedPlateType, setCurrentUsedPlateTypeOptions],
+      [collectionRefAbrasionType, setAbrasionTypeOptions],
+      [collectionRefImpactType, setImpactTypeOptions],
+      [collectionRefFasteningusingStuds, setFasteningusingStudsOptions],
+      [collectionRefBrakeBends, setBrakeBendsOptions],
+      [collectionRefRolledBends, setRolledBendsOptions],
+      [collectionRefSunkBolts, setSunkBoltsOptions],
+    ];
+  
+    const unsubscribeFunctions = subscriptions.map(([ref, setter]) => fetchDataAndUpdateFields(ref, setter));
   
     return () => {
-      unsubscribePlateType();
-      unsubscribeCurrentUsedPlateType();
-      unsubscribeAbrasionType()
-      unsubscribeImpactType()
+      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
     };
   }, []);
 
@@ -162,7 +168,7 @@ const FabForm = ({
                 name="fastening"
                 value={dropdowns.fastening}
                 label="Fastening using Studs"
-                options={options}
+                options={Sorting(fasteningusingStudsOptions)}
                 placeholder="Select Fastening"
                 handleChange={handleDropdowns}
               />
@@ -172,7 +178,7 @@ const FabForm = ({
                 name="brakeBends"
                 value={dropdowns.brakeBends}
                 label="How many Press Brake Bends to bend the radius"
-                options={options}
+                options={Sorting(brakeBendsOptions)}
                 placeholder="Select Brake Bends"
                 handleChange={handleDropdowns}
               />
@@ -182,7 +188,7 @@ const FabForm = ({
                 name="rolledBends"
                 value={dropdowns.rolledBends}
                 label="How many Rolled Bends"
-                options={options}
+                options={Sorting(rolledBendsOptions)}
                 placeholder="Select Rolled Bends"
                 handleChange={handleDropdowns}
               />
@@ -192,7 +198,7 @@ const FabForm = ({
                 name="sunkBoltsHoles"
                 value={dropdowns.sunkBoltsHoles}
                 label="How Many Counter Sunk Bolts Holes"
-                options={options}
+                options={Sorting(sunkBoltsOptions)}
                 placeholder="Select Sunk Bolts Holes"
                 handleChange={handleDropdowns}
               />

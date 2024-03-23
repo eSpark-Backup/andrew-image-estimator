@@ -20,3 +20,5 @@ const app = initializeApp(firebaseConfig);
 
 export default getFirestore(app);
 export const storage = getStorage(app);
+
+

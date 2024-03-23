@@ -8,61 +8,29 @@ import {
   onSnapshot,
   deleteDoc,
   setDoc,
+  getDocs,
 } from "firebase/firestore";
 import db from "../../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
+import { AdminDetailsFields, dbRefCollections } from "../../../db";
+
 
 const FieldCustomizer = () => {
-  const collectionRefPlateType = collection(db, "Wear Plate Type");
-  const collectionRefCurrentUsedPlateType = collection(db, "Current Used Wear Plate Type");
-  const collectionRefAbrasionType = collection(db, "Abrasion Type");
-  const collectionRefImpactType = collection(db, "Impact Type");
+
   const [open, setOpen] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [row, setRow] = useState()
   const [currentCollectionRef, setCurrentCollectionRef] = useState()
-  const [fields, setFields] = useState([
-    {
-      id: 1,
-      label: "Wear Plate Type for Estimate",
-      options: [],
-      placeholder: "available options",
-      name: "plateType",
-      collectionRef: collectionRefPlateType
-    },
-    {
-      id: 2,
-      label: "Type of wear Plate Used Currently",
-      options: [],
-      placeholder: "available options",
-      name: "currentPlateType",
-      collectionRef: collectionRefCurrentUsedPlateType
-    },
-    {
-      id: 3,
-      label: "Abrasion Type",
-      options: [],
-      placeholder: "available options",
-      name: "abrasionType",
-      collectionRef: collectionRefAbrasionType
-    },
-    {
-      id: 4,
-      label: "Impact Type",
-      options: [],
-      placeholder: "available options",
-      name: "impactType",
-      collectionRef: collectionRefImpactType
-    },
-  ]);
+  const [inputType, setInputType] = useState("text")
+  const [ModalDescription, setModalDescription] = useState("add fields to your dropdown")
+  const [fields, setFields] = useState(AdminDetailsFields);
 
 
 
-  //Fetching all collection from firebase
   useEffect(() => {
-    const fetchDataAndUpdateFields = (collectionRef, fieldName) => {
+    const subscribeToCollection = (collectionRef, fieldName) => {
       return onSnapshot(collectionRef, (snapshot) => {
         const data = snapshot.docs.map((doc) => ({
           _id: doc.id,
@@ -74,37 +42,33 @@ const FieldCustomizer = () => {
           const fieldIndex = updatedFields.findIndex(field => field.name === fieldName);
           if (fieldIndex !== -1) {
             updatedFields[fieldIndex].options = data;
+            updatedFields[fieldIndex].options.sort((a, b) => a.value - b.value);
           }
           return updatedFields;
         });
       });
     };
   
-    const unsubscribePlateType = fetchDataAndUpdateFields(collectionRefPlateType, "plateType");
-    const unsubscribeCurrentUsedPlateType = fetchDataAndUpdateFields(collectionRefCurrentUsedPlateType, "currentPlateType");
-    const unsubscribeAbrasionType = fetchDataAndUpdateFields(collectionRefAbrasionType, "abrasionType");
-    const unsubscribeImpactType = fetchDataAndUpdateFields(collectionRefImpactType, "impactType");
+  
+    const unsubscribeFunctions = dbRefCollections.map(({ ref, name }) => subscribeToCollection(ref, name));
   
     return () => {
-      unsubscribePlateType();
-      unsubscribeCurrentUsedPlateType();
-      unsubscribeAbrasionType()
-      unsubscribeImpactType()
+      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
     };
   }, []);
 
 
-
   const handleDelete = (item, collectionRef) => {
-    deleteDoc(doc(collectionRef, item._id)).then(()=>{
+    deleteDoc(doc(collectionRef, item._id)).then(() => {
       toast.success("Option deleted Successfully")
-    }).catch(()=>{
+    }).catch(() => {
       toast.error("Option is not deleted")
     })
   };
 
   const handleAddField = async (value) => {
-    setLoading(true)
+    if(inputType === "text") {
+      setLoading(true)
     const clientRef = doc(currentCollectionRef, uuidv4());
     await setDoc(clientRef, {
       label: value,
@@ -118,7 +82,37 @@ const FieldCustomizer = () => {
         toast.error("Option is not added");
         setLoading(false)
       });
+    }
+    else if(inputType === "number") {
+      setLoading(true)
       
+    // delete all the previous options
+    const querySnapshot = await getDocs(currentCollectionRef);
+    querySnapshot.forEach((doc) => {
+      deleteDoc(doc.ref);
+    });
+     
+    // then add new options
+    for (let i = 1; i <= value; i++) {
+      const clientRef = doc(currentCollectionRef, uuidv4());
+      await setDoc(clientRef, {
+        label: i,
+        value: i,
+      }).then(() => {
+        if(i == value) {
+        toast.success("Option added Successfully");
+        setOpen(false)
+        setLoading(false)
+      }})
+        .catch((error) => {
+          if (i == value) {
+          toast.error("Option is not added");
+          setLoading(false)
+        }});
+      }
+
+    }
+
   }
 
 
@@ -155,6 +149,14 @@ const FieldCustomizer = () => {
             <div onClick={() => {
               setCurrentCollectionRef(item.collectionRef)
               setOpen(true)
+              if (item.id > 4) {
+                setInputType("number")
+                setModalDescription("Enter Maximum value for selected option")
+              }
+              else {
+                setModalDescription("add fields to your dropdown")
+                setInputType("text")
+              }
             }} className="add">
               <img src={add} alt="add" />
             </div>
@@ -163,6 +165,7 @@ const FieldCustomizer = () => {
               <SelectInput
                 autoOpen
                 customizer
+                showActions={item.id > 4 ? false : true}
                 name={item.name}
                 // value={form.unit}
                 options={item.options}
@@ -172,8 +175,9 @@ const FieldCustomizer = () => {
                   setRow(row)
                   setOpenEditModal(true)
                   setCurrentCollectionRef(item?.collectionRef)
+                  setInputType("text")
                 }}
-                handleChange={()=> console.log("changing")}
+                handleChange={() => console.log("changing")}
               />
             </div>
           </div>
@@ -181,9 +185,7 @@ const FieldCustomizer = () => {
       })}
       <ModalComponent
         heading={"Add"}
-        label={
-          `add fields to your dropdown`
-        }
+        label={ModalDescription}
         placeholder={"Enter value"}
         btn1Text={"Cancel"}
         btn2Text={"Add"}
@@ -191,6 +193,7 @@ const FieldCustomizer = () => {
         modalIsOpen={open}
         onSuccess={handleAddField}
         loading2={loading}
+        inputType={inputType}
       />
       <ModalComponent
         heading={"Edit"}
@@ -205,6 +208,7 @@ const FieldCustomizer = () => {
         onSuccess={handleEditField}
         currentValue={row?.label}
         loading2={loading}
+        inputType={inputType}
       />
     </div>
   );

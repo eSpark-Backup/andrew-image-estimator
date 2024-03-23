@@ -220,3 +220,15 @@ export const GIFModalStyle = {
     height: '350px',
     padding: '20px',
 }
+
+
+export const ADMIN_DETAILS_ENUMS  = {
+    PLATE_TYPE: "plateType",
+    CURRENT_PLATE_TYPE: "currentPlateType",
+    ABRASION_TYPE: "abrasionType",
+    IMPACT_TYPE: "impactType",
+    BRAKE_BENDS: "brakeBends",
+    FASTENING_USING_STUDS: "FasteningusingStuds",
+    ROLLED_BENDS: "rolledBends",
+    SUNK_BOLTS: "sunkBolts"
+}

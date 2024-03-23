@@ -15,6 +15,7 @@ export const SelectInput = ({
   customizer,
   handleDelete,
   handleEdit,
+  showActions
 }) => {
   const [open, setOpen] = useState(false);
   useEffect(()=>{
@@ -41,8 +42,8 @@ export const SelectInput = ({
               <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}} onClick={() => handleChange(name, option.value)} key={index}>
                 <div>{option.label}</div>
                 <div>
-                {customizer && <img onClick={() => handleEdit(option)} className="dropdown-trash" src={EditIcon} alt="add" />}
-                {customizer && <img onClick={() => handleDelete(option)} className="dropdown-trash" src={DustbinBlack} alt="add" />}
+                {showActions && <img onClick={() => handleEdit(option)} className="dropdown-trash" src={EditIcon} alt="add" />}
+                {showActions && <img onClick={() => handleDelete(option)} className="dropdown-trash" src={DustbinBlack} alt="add" />}
                 </div>
               </div>
             );
