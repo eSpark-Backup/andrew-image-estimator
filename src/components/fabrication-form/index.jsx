@@ -46,7 +46,7 @@ const FabForm = ({
       value: `${estimationDeliveryInWeeksOptions?.length}+` 
     });
 
-    setWeekOptions(updatedWeekOptions);
+    setWeekOptions(Sorting(updatedWeekOptions));
   }, [estimationDeliveryInWeeksOptions]);
 
 
