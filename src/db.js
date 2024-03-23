@@ -1,10 +1,5 @@
 import {
     collection,
-    doc,
-    onSnapshot,
-    deleteDoc,
-    setDoc,
-    getDocs,
 } from "firebase/firestore";
 import db from "./firebase";
 import { ADMIN_DETAILS_ENUMS } from "./constants";
@@ -18,6 +13,7 @@ export const collectionRefBrakeBends = collection(db, "Brake Bends");
 export const collectionRefFasteningusingStuds = collection(db, "Fastening using Studs");
 export const collectionRefRolledBends = collection(db, "Rolled Bends");
 export const collectionRefSunkBolts = collection(db, "Sunk Bolts");
+export const collectionRefEstimatedDeliveryDate = collection(db, "Estimated Delivery Date");
 
 
 
@@ -87,6 +83,14 @@ export const AdminDetailsFields = [
         name: ADMIN_DETAILS_ENUMS.SUNK_BOLTS,
         collectionRef: collectionRefSunkBolts
     },
+    {
+        id: 9,
+        label: "Estimated Delivery Date in Weeks",
+        options: [],
+        placeholder: "available options",
+        name: ADMIN_DETAILS_ENUMS.ESTIMATED_DELIVERY_DATE,
+        collectionRef: collectionRefEstimatedDeliveryDate
+    },
 ]
 
 
@@ -98,7 +102,8 @@ export const dbRefCollections = [
     { ref: collectionRefBrakeBends, name: ADMIN_DETAILS_ENUMS.BRAKE_BENDS },
     { ref: collectionRefFasteningusingStuds, name: ADMIN_DETAILS_ENUMS.FASTENING_USING_STUDS },
     { ref: collectionRefRolledBends, name: ADMIN_DETAILS_ENUMS.ROLLED_BENDS },
-    { ref: collectionRefSunkBolts, name: ADMIN_DETAILS_ENUMS.SUNK_BOLTS }
+    { ref: collectionRefSunkBolts, name: ADMIN_DETAILS_ENUMS.SUNK_BOLTS },
+    { ref: collectionRefEstimatedDeliveryDate, name: ADMIN_DETAILS_ENUMS.ESTIMATED_DELIVERY_DATE }
   ];
 
   

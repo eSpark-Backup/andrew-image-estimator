@@ -230,5 +230,6 @@ export const ADMIN_DETAILS_ENUMS  = {
     BRAKE_BENDS: "brakeBends",
     FASTENING_USING_STUDS: "FasteningusingStuds",
     ROLLED_BENDS: "rolledBends",
-    SUNK_BOLTS: "sunkBolts"
+    SUNK_BOLTS: "sunkBolts",
+    ESTIMATED_DELIVERY_DATE: "estimatedDeliveryDate"
 }

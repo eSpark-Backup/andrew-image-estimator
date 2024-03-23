@@ -8,7 +8,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import db from "../../firebase"
-import { collectionRefAbrasionType, collectionRefBrakeBends, collectionRefCurrentUsedPlateType, collectionRefFasteningusingStuds, collectionRefImpactType, collectionRefPlateType, collectionRefRolledBends, collectionRefSunkBolts } from "../../db";
+import { collectionRefAbrasionType, collectionRefBrakeBends, collectionRefCurrentUsedPlateType, collectionRefEstimatedDeliveryDate, collectionRefFasteningusingStuds, collectionRefImpactType, collectionRefPlateType, collectionRefRolledBends, collectionRefSunkBolts } from "../../db";
 import { Sorting } from "../../utils";
 
 const FabForm = ({
@@ -27,20 +27,29 @@ const FabForm = ({
   const [brakeBendsOptions, setBrakeBendsOptions] = useState([])
   const [rolledBendsOptions, setRolledBendsOptions] = useState([])
   const [sunkBoltsOptions, setSunkBoltsOptions] = useState([])
+  const [estimationDeliveryInWeeksOptions, setEstimationDeliveryInWeeksOptions] = useState([])
+  const [weekOptions, setWeekOptions] = useState([]);
 
   let options = [];
   for (let i = 0; i <= 50; i++) {
     options.push({ label: i.toString(), value: i });
   }
 
-  let weakOptions = [];
-  for (let i = 1; i <= 25; i++) {
-    weakOptions.push({
-      label: `${i} ${i === 1 ? "Week" : "Weeks"}`,
-      value: i.toString(),
+  useEffect(() => {
+    const updatedWeekOptions = estimationDeliveryInWeeksOptions.map((item) => ({
+      label: `${item.label} ${item.label === 1 ? "Week" : "Weeks"}`,
+      value: item.value.toString(),
+    }));
+
+    updatedWeekOptions.push({ 
+      label: `upto ${estimationDeliveryInWeeksOptions?.length} Weeks`, 
+      value: `${estimationDeliveryInWeeksOptions?.length}+` 
     });
-  }
-  weakOptions.push({ label: `upto 25 Weeks`, value: "25+" });
+
+    setWeekOptions(updatedWeekOptions);
+  }, [estimationDeliveryInWeeksOptions]);
+
+
 
   useEffect(() => {
     const fetchDataAndUpdateFields = (collectionRef, setOptions) => {
@@ -62,6 +71,7 @@ const FabForm = ({
       [collectionRefBrakeBends, setBrakeBendsOptions],
       [collectionRefRolledBends, setRolledBendsOptions],
       [collectionRefSunkBolts, setSunkBoltsOptions],
+      [collectionRefEstimatedDeliveryDate, setEstimationDeliveryInWeeksOptions],
     ];
   
     const unsubscribeFunctions = subscriptions.map(([ref, setter]) => fetchDataAndUpdateFields(ref, setter));
@@ -122,7 +132,7 @@ const FabForm = ({
                 name="deliveryDate"
                 value={dropdowns.deliveryDate}
                 label="Estimated Delivery Date"
-                options={weakOptions}
+                options={weekOptions}
                 placeholder="Select Estimated Delivery Date"
                 handleChange={handleDropdowns}
               />

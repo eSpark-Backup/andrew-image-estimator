@@ -10,6 +10,16 @@ import {
 } from '../pages';
 
 const Routes = () => {
+    const user = JSON.parse(localStorage.getItem("user")) || null;
+
+    const PrivateRoute = ({ element, roles }) => {
+        const userRole = user.role; 
+        if (!roles.includes(userRole)) {
+          return <Navigate to="/" />;
+        }
+        return element;
+      };
+
     return useRoutes([
         {
             path: "/", element: <DashboardLayout />,
@@ -21,11 +31,12 @@ const Routes = () => {
             ]
         },
         {
-            path: "/admin", element: <DashboardLayout />,
+            path: '/admin',
+            element: <PrivateRoute element={<DashboardLayout />} roles={['admin']}/>,
             children: [
-                { path: "/admin", element: <FieldCustomizer /> },
-            ]
-        },
+              { path: '/admin', element: <FieldCustomizer /> },
+            ],
+          },
         { path: "/tool", element: <Elementor /> },
         { path: "404", element: <div>Not Found</div> },
         { path: "/sign-up", element: <SignUp /> },

@@ -167,7 +167,7 @@ const ModalComponent = ({
             <div className="signin-button-parents">
             <button onClick={navigatorHandler?navigatorHandler:closeModal}>{btn1Text}</button>
 
-              <button onClick={() => {
+              <button disabled={!value} onClick={() => {
                 onSuccess(value)
               setValue("")
             }}>{loading2 ?
