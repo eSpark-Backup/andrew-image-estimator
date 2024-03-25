@@ -17,11 +17,14 @@ import { collectionRef, dbRefCollections } from "../../../db";
 import Loader from "../../../components/loader/Loader";
 
 const FieldCustomizer = () => {
+  const collectionRefDetailsForm = collection(db, "details_form");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
   const [row, setRow] = useState("");
   const [fields, setFields] = useState();
+  const [FieldsLoading, setFieldsLoading] = useState(false);
+  const [docId, setdocId] = useState();
 
   useEffect(() => {
     setScreenLoading(true);
@@ -32,7 +35,9 @@ const FieldCustomizer = () => {
           ...doc.data(),
         }));
         setFields(data[0]?.inputs);
+        setdocId(data[0]?._id);
         setScreenLoading(false);
+        // console.log(data);
       });
     };
 
@@ -121,10 +126,23 @@ const FieldCustomizer = () => {
     setOpen(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     //fields array is updating here we need to call firebase func
-    console.log(fields);
-  };
+    setFieldsLoading(true);
+    console.log(fields, "fields");
+    const clientRef = doc(collectionRefDetailsForm, docId);
+    await setDoc(clientRef, {
+      inputs: fields,
+    }).then(() => {
+      toast.success("Fields updated successfully");
+      setFieldsLoading(false);
+    }
+    ).catch((error) => {
+      console.error("Error adding document: ", error);
+      toast.error("Failed to update fields");
+      setFieldsLoading(false);
+    });
+    };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -133,7 +151,8 @@ const FieldCustomizer = () => {
       ) : (
         <>
           <div className="button-container admin-button">
-            <button onClick={handleSubmit}>Save Changes</button>
+
+            <button  onClick={handleSubmit}>Save Changes</button>
           </div>
 
           {fields?.length > 0 &&

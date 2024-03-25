@@ -10,6 +10,9 @@ import {
 import db from "../../firebase"
 import { collectionRefAbrasionType, collectionRefBrakeBends, collectionRefCurrentUsedPlateType, collectionRefEstimatedDeliveryDate, collectionRefFasteningusingStuds, collectionRefImpactType, collectionRefPlateType, collectionRefRolledBends, collectionRefSunkBolts } from "../../db";
 import { Sorting } from "../../utils";
+import { collectionRef, dbRefCollections } from "../../db";
+import Loader from "../loader/Loader";
+import { generateArray } from "../../pages/dashboard/fieldCustomizer";
 
 const FabForm = ({
   insideCutImg,
@@ -29,6 +32,11 @@ const FabForm = ({
   const [sunkBoltsOptions, setSunkBoltsOptions] = useState([])
   const [estimationDeliveryInWeeksOptions, setEstimationDeliveryInWeeksOptions] = useState([])
   const [weekOptions, setWeekOptions] = useState([]);
+
+  const [fields, setFields] = useState();
+  const [screenLoading, setScreenLoading] = useState(false);
+  
+
 
   let options = [];
   for (let i = 0; i <= 50; i++) {
@@ -82,10 +90,41 @@ const FabForm = ({
   }, []);
 
 
+  useEffect(() => {
+    setScreenLoading(true);
+    const subscribeToCollection = (collectionRef, fieldName) => {
+      return onSnapshot(collectionRef, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          _id: doc.id,
+          ...doc.data(),
+        }));
+        setFields(data[0]?.inputs);
+        setScreenLoading(false);
+        console.log(data[0]?.inputs);
+      });
+    };
+
+    const unsubscribeFunctions = subscribeToCollection(
+      dbRefCollections?.ref,
+      dbRefCollections?.name
+    );
+
+    return () => {
+      // unsubscribeFunctions?.unsubscribe();
+    };
+  }, []);
+
+
+
 
 
   return (
     <div style={{height: "100%"}} className="image-dropdown">
+      {screenLoading ? (
+        <Loader />
+      ) : (
+        <>
+        
       {
         <motion.div {...slideAnimation("left")} className="img head">
           <img
@@ -116,8 +155,43 @@ const FabForm = ({
             overflowY: "auto"
           }}
         >
-          <div style={{ width: "80%" }} className="dropdown">
-            <motion.div {...slideAnimation("up")}>
+          <div style={{ width: "80%" }} className="dropdown"> 
+            {
+              fields?.map((item) => {
+                return (
+                //  <div style={{ width: "calc(100% - 60px)" }} key={item.id}>
+                  // <p style={{ marginBottom: "5px" }}>{item.label}:</p>
+                  // <motion.div {...slideAnimation("up")}>
+                  <motion.div {...slideAnimation("up")}>
+                  <SelectInput
+                    name={item.name}
+                    value={dropdowns[item.name]}
+                    label={item.label}
+                    options={
+                      item.options ||
+                      generateArray(item.min, item.max).map((i) => {
+                        if (
+                          item.label === "Estimated Delivery Date in Weeks"
+                        ) {
+                          return {
+                            label: `${i} ${i === 1 ? "week" : "weeks"}`,
+                            value: i,
+                          };
+                        } else {
+                          return { label: i, value: i };
+                        }
+                      })
+                    }
+                    placeholder={`Select ${item.label}`}
+                    handleChange={handleDropdowns}
+                  />
+                  </motion.div>
+                  // </motion.div>
+                // </div>
+                );
+              })
+            }
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="plateType"
                 value={dropdowns.plateType}
@@ -126,8 +200,8 @@ const FabForm = ({
                 placeholder="Select Wear Plate Type for Estimate"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="deliveryDate"
                 value={dropdowns.deliveryDate}
@@ -136,8 +210,8 @@ const FabForm = ({
                 placeholder="Select Estimated Delivery Date"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="plateTypeUsed"
                 value={dropdowns.plateTypeUsed}
@@ -146,7 +220,7 @@ const FabForm = ({
                 placeholder="Select Type of wear Plate Used Currently"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
+            </motion.div> */}
             <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="perimeterWelding"
@@ -173,7 +247,7 @@ const FabForm = ({
                 handleChange={handleDropdowns}
               />
             </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="fastening"
                 value={dropdowns.fastening}
@@ -182,8 +256,8 @@ const FabForm = ({
                 placeholder="Select Fastening"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="brakeBends"
                 value={dropdowns.brakeBends}
@@ -192,8 +266,8 @@ const FabForm = ({
                 placeholder="Select Brake Bends"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="rolledBends"
                 value={dropdowns.rolledBends}
@@ -202,8 +276,8 @@ const FabForm = ({
                 placeholder="Select Rolled Bends"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="sunkBoltsHoles"
                 value={dropdowns.sunkBoltsHoles}
@@ -212,8 +286,8 @@ const FabForm = ({
                 placeholder="Select Sunk Bolts Holes"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="abrasionType"
                 value={dropdowns.abrasionType}
@@ -222,8 +296,8 @@ const FabForm = ({
                 placeholder="Select Abrasion Type"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
-            <motion.div {...slideAnimation("up")}>
+            </motion.div> */}
+            {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="impactType"
                 value={dropdowns.impactType}
@@ -232,7 +306,7 @@ const FabForm = ({
                 placeholder="Select Impact Type"
                 handleChange={handleDropdowns}
               />
-            </motion.div>
+            </motion.div> */}
             <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="fabricator"
@@ -269,6 +343,9 @@ const FabForm = ({
           </div>
         </div>
       </div>
+        
+        </>
+      )}
     </div>
   );
 };
