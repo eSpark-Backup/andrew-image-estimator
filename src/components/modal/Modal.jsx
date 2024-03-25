@@ -27,7 +27,7 @@ const ModalComponent = ({
   const customStyles = {
     width: "452px",
     // height: dashboard ? "auto" : "22px",
-    padding: dashboard ? "20px 0px" : "20px",
+    padding: dashboard ? "20px 20px" : "20px",
   };
   const navigate = useNavigate();
   const [value, setValue] = useState("");
