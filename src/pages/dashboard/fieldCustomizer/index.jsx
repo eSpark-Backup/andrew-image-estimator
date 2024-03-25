@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SelectInput } from "../../../components";
-import { add } from "../../../assets";
+import { EditIcon, add } from "../../../assets";
 import ModalComponent from "../../../components/modal/Modal";
 import {
   collection,
@@ -13,205 +13,218 @@ import {
 import db from "../../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
-import { AdminDetailsFields, dbRefCollections } from "../../../db";
-
+import { collectionRef, dbRefCollections } from "../../../db";
+import Loader from "../../../components/loader/Loader";
 
 const FieldCustomizer = () => {
-
-  const [open, setOpen] = useState(false)
-  const [openEditModal, setOpenEditModal] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [row, setRow] = useState()
-  const [currentCollectionRef, setCurrentCollectionRef] = useState()
-  const [inputType, setInputType] = useState("text")
-  const [ModalDescription, setModalDescription] = useState("add fields to your dropdown")
-  const [fields, setFields] = useState(AdminDetailsFields);
-
-
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [screenLoading, setScreenLoading] = useState(false);
+  const [row, setRow] = useState("");
+  const [fields, setFields] = useState();
 
   useEffect(() => {
+    setScreenLoading(true);
     const subscribeToCollection = (collectionRef, fieldName) => {
       return onSnapshot(collectionRef, (snapshot) => {
         const data = snapshot.docs.map((doc) => ({
           _id: doc.id,
           ...doc.data(),
         }));
-  
-        setFields(prevFields => {
-          const updatedFields = [...prevFields];
-          const fieldIndex = updatedFields.findIndex(field => field.name === fieldName);
-          if (fieldIndex !== -1) {
-            updatedFields[fieldIndex].options = data;
-            updatedFields[fieldIndex].options.sort((a, b) => a.value - b.value);
-          }
-          return updatedFields;
-        });
+        setFields(data[0]?.inputs);
+        setScreenLoading(false);
       });
     };
-  
-  
-    const unsubscribeFunctions = dbRefCollections.map(({ ref, name }) => subscribeToCollection(ref, name));
-  
+
+    const unsubscribeFunctions = subscribeToCollection(
+      dbRefCollections?.ref,
+      dbRefCollections?.name
+    );
+
     return () => {
-      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+      // unsubscribeFunctions?.unsubscribe();
     };
   }, []);
 
-
-  const handleDelete = (item, collectionRef) => {
-    deleteDoc(doc(collectionRef, item._id)).then(() => {
-      toast.success("Option deleted Successfully")
-    }).catch(() => {
-      toast.error("Option is not deleted")
-    })
+  const handleDelete = (row, obj) => {
+    let modifiedFields;
+    modifiedFields = fields.map((item) => {
+      if (item.label === obj.label) {
+        const updatedOptions = item.options.filter(
+          (newItem) => newItem.label !== row.label
+        );
+        return { ...item, options: updatedOptions };
+      } else {
+        return item;
+      }
+    });
+    setFields(modifiedFields);
   };
 
   const handleAddField = async (value) => {
-    if(inputType === "text") {
-      setLoading(true)
-    const clientRef = doc(currentCollectionRef, uuidv4());
-    await setDoc(clientRef, {
-      label: value,
-      value: value,
-    }).then(() => {
-      toast.success("Option added Successfully");
-      setOpen(false)
-      setLoading(false)
-    })
-      .catch((error) => {
-        toast.error("Option is not added");
-        setLoading(false)
+    let modifiedFields;
+    if (open.type === "text") {
+      modifiedFields = fields.map((item) => {
+        if (item.label === open.label) {
+          const updatedOptions = [
+            ...item.options,
+            { label: value.label, value: Number(value.value) },
+          ];
+          return {
+            ...item,
+            options: updatedOptions,
+          };
+        } else {
+          return item;
+        }
       });
     }
-    else if(inputType === "number") {
-      setLoading(true)
-      
-    // delete all the previous options
-    const querySnapshot = await getDocs(currentCollectionRef);
-    querySnapshot.forEach((doc) => {
-      deleteDoc(doc.ref);
-    });
-     
-    // then add new options
-    for (let i = 1; i <= value; i++) {
-      const clientRef = doc(currentCollectionRef, uuidv4());
-      await setDoc(clientRef, {
-        label: i,
-        value: i,
-      }).then(() => {
-        if(i == value) {
-        toast.success("Option added Successfully");
-        setOpen(false)
-        setLoading(false)
-      }})
-        .catch((error) => {
-          if (i == value) {
-          toast.error("Option is not added");
-          setLoading(false)
-        }});
-      }
-
-    }
-
-  }
-
+    setFields(modifiedFields);
+    setOpen(false);
+  };
 
   const handleEditField = async (value) => {
-    setLoading(true)
-    const clientRef = doc(currentCollectionRef, row._id);
-    await setDoc(clientRef, {
-      label: value,
-      value: clientRef.id,
-    }).then(() => {
-      toast.success("Option Edited Successfully");
-      setLoading(false)
-    })
-      .catch((error) => {
-        toast.success("Option is not edited");
-        setLoading(false)
+    let modifiedFields;
+    if (open.type === "text") {
+      modifiedFields = fields.map((item) => {
+        if (item.label === open.label) {
+          const updatedOptions = item.options.map((option) => {
+            if (option.label === row.label) {
+              return { label: value.label, value: Number(value.value) };
+            } else {
+              return option;
+            }
+          });
+          return {
+            ...item,
+            options: updatedOptions,
+          };
+        } else {
+          return item;
+        }
       });
+    } else {
+      modifiedFields = fields.map((item) => {
+        if (item.label === open.label) {
+          return {
+            ...item,
+            min: Number(value.min),
+            max: Number(value.max),
+            multiplier: Number(value.value),
+          };
+        } else {
+          return item;
+        }
+      });
+    }
+    setFields(modifiedFields);
+    setOpen(false);
+  };
 
-    setOpenEditModal(false)
-    setRow(null)
-  }
+  const handleSubmit = () => {
+    //fields array is updating here we need to call firebase func
+    console.log(fields);
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      {fields.map((item) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div onClick={() => {
-              setCurrentCollectionRef(item.collectionRef)
-              setOpen(true)
-              if (item.id > 4) {
-                setInputType("number")
-                setModalDescription("Enter Maximum value for selected option")
-              }
-              else {
-                setModalDescription("add fields to your dropdown")
-                setInputType("text")
-              }
-            }} className="add">
-              <img src={add} alt="add" />
-            </div>
-            <div style={{ width: "calc(100% - 60px)" }} key={item.id}>
-              <p style={{ marginBottom: "5px" }}>{item.label}:</p>
-              <SelectInput
-                autoOpen
-                customizer
-                showActions={item.id > 4 ? false : true}
-                name={item.name}
-                // value={form.unit}
-                options={item.options}
-                placeholder={item.placeholder}
-                handleDelete={(row) => handleDelete(row, item?.collectionRef)}
-                handleEdit={(row) => {
-                  setRow(row)
-                  setOpenEditModal(true)
-                  setCurrentCollectionRef(item?.collectionRef)
-                  setInputType("text")
-                }}
-                handleChange={() => console.log("changing")}
-              />
-            </div>
+      {screenLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="button-container admin-button">
+            <button onClick={handleSubmit}>Save Changes</button>
           </div>
-        );
-      })}
+
+          {fields?.length > 0 &&
+            fields?.map((item) => {
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    onClick={() => {
+                      if (item.type === "text") {
+                        setOpen({ ...item, mode: "add" });
+                      } else {
+                        setOpen({ ...item, mode: "edit" });
+                        setRow({
+                          min: item.min,
+                          max: item.max,
+                          value: item.multiplier,
+                        });
+                      }
+                    }}
+                    className="add"
+                  >
+                    <img
+                      src={item.type === "number" ? EditIcon : add}
+                      alt="add"
+                    />
+                  </div>
+                  <div style={{ width: "calc(100% - 60px)" }} key={item.id}>
+                    <p style={{ marginBottom: "5px" }}>{item.label}:</p>
+                    <SelectInput
+                      autoOpen
+                      customizer
+                      showActions={item.type === "number" ? false : true}
+                      name={item.name}
+                      options={
+                        item.options ||
+                        generateArray(item.min, item.max).map((i) => {
+                          if (
+                            item.label === "Estimated Delivery Date in Weeks"
+                          ) {
+                            return {
+                              label: `${i} ${i === 1 ? "week" : "weeks"}`,
+                              value: i,
+                            };
+                          } else {
+                            return { label: i, value: i };
+                          }
+                        })
+                      }
+                      placeholder="available options"
+                      handleDelete={(row) => handleDelete(row, item)}
+                      handleEdit={(row) => {
+                        setRow(row);
+                        setOpen({ ...item, mode: "edit" });
+                      }}
+                      handleChange={() => console.log("changing")}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+        </>
+      )}
       <ModalComponent
-        heading={"Add"}
-        label={ModalDescription}
-        placeholder={"Enter value"}
-        btn1Text={"Cancel"}
-        btn2Text={"Add"}
-        closeModal={() => setOpen(false)}
-        modalIsOpen={open}
-        onSuccess={handleAddField}
-        loading2={loading}
-        inputType={inputType}
-      />
-      <ModalComponent
-        heading={"Edit"}
+        heading={open.mode === "add" ? "Add" : "Edit"}
         label={
-          `Edit fields to your dropdown`
+          open.mode === "add"
+            ? "Add fields to your dropdown"
+            : "Edit fields to your dropdown"
         }
         placeholder={"Enter value"}
         btn1Text={"Cancel"}
-        btn2Text={"Edit"}
-        closeModal={() => setOpenEditModal(false)}
-        modalIsOpen={openEditModal}
-        onSuccess={handleEditField}
-        currentValue={row?.label}
+        btn2Text={open.mode === "add" ? "Add" : "Edit"}
+        closeModal={() => setOpen(false)}
+        modalIsOpen={open}
+        onSuccess={open.mode === "add" ? handleAddField : handleEditField}
+        row={row}
         loading2={loading}
-        inputType={inputType}
+        inputType={open.type}
       />
     </div>
   );
 };
 
 export default FieldCustomizer;
+
+export function generateArray(min, max) {
+  return Array.from({ length: max - min + 1 }, (_, index) => index + min);
+}

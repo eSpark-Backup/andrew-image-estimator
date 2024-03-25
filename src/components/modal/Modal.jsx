@@ -21,7 +21,7 @@ const ModalComponent = ({
   onSuccess,
   loading2,
   navigatorHandler,
-  currentValue,
+  row,
   inputType
 }) => {
   const customStyles = {
@@ -31,7 +31,16 @@ const ModalComponent = ({
   };
   const navigate = useNavigate();
   const [value, setValue] = useState("");
-  const [loading,setLoading] = useState(false)
+  const [text, setText] = useState({
+    label: "",
+    value: "",
+  });
+  const [number, setNumber] = useState({
+    min: "",
+    max: "",
+    value: "",
+  });
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -66,9 +75,24 @@ const ModalComponent = ({
       });
   };
 
-  useEffect(()=>{
-     setValue(currentValue)
-  }, [currentValue])
+  useEffect(() => {
+    if (inputType === "text") {
+      if (row) {
+        setText({
+          label: row?.label,
+          value: row?.value,
+        });
+      }
+    } else {
+      if (row) {
+        setNumber({
+          min: row?.min,
+          max: row?.max,
+          value: row?.value,
+        });
+      }
+    }
+  }, [row]);
 
   useEffect(() => {
     if (modalIsOpen) {
@@ -78,7 +102,16 @@ const ModalComponent = ({
     }
 
     return () => {
-        document.body.classList.remove('modal-open');
+            document.body.classList.remove('modal-open')
+      setText({
+        label: "",
+        value: "",
+      });
+      setNumber({
+        min: "",
+        max: "",
+        value: "",
+      });
     };
 }, [modalIsOpen]);
 
@@ -137,13 +170,138 @@ const ModalComponent = ({
             <div className="signin-button-parents">
               <button onClick={closeModal}>Skip</button>
 
-              <button onClick={handleLogin}>{loading ?
-                <div className='button-loader'>
-                  <svg viewBox="25 25 50 50">
-                    <circle r="20" cy="50" cx="50"></circle>
-                  </svg>
-                </div>
-                : "Login"}</button>
+              <button onClick={handleLogin}>
+                {loading ? (
+                  <div className="button-loader">
+                    <svg viewBox="25 25 50 50">
+                      <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+                  </div>
+                ) : (
+                  "Login"
+                )}
+              </button>
+            </div>
+          </div>
+        ) : inputType === "text" ? (
+          <div className="modal" style={{ rowGap: "20px" }}>
+            <h2 className="modal-heading">{heading}</h2>
+            <div className="login-modal-inputs">
+              <TextInput
+                style={{ height: "100%", width: "100%" }}
+                label="Add field to your dropdown"
+                value={text.label}
+                handleChange={(_, value) => setText({ ...text, label: value })}
+                type={"text"}
+                placeholder="Enter field name"
+              />
+              <TextInput
+                style={{ height: "100%", width: "100%" }}
+                label="Add price to your field"
+                value={text.value}
+                handleChange={(_, value) => setText({ ...text, value })}
+                type={"number"}
+                placeholder="Enter field price"
+              />
+            </div>
+            <div className="signin-button-parents">
+              <button
+                onClick={navigatorHandler ? navigatorHandler : closeModal}
+              >
+                {btn1Text}
+              </button>
+
+              <button
+                disabled={
+                  label && placeholder && (!text.label || !text.value)
+                    ? true
+                    : false
+                }
+                onClick={() => {
+                  onSuccess(text);
+                  setText({
+                    label: "",
+                    value: "",
+                  });
+                }}
+              >
+                {loading2 ? (
+                  <div className="button-loader">
+                    <svg viewBox="25 25 50 50">
+                      <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+                  </div>
+                ) : (
+                  btn2Text
+                )}
+              </button>
+            </div>
+          </div>
+        ) : inputType === "number" ? (
+          <div className="modal" style={{ rowGap: "20px" }}>
+            <h2 className="modal-heading">{heading}</h2>
+            <div className="login-modal-inputs">
+              <TextInput
+                style={{ height: "100%", width: "100%" }}
+                label="Add min number to your dropdown"
+                value={number.min}
+                handleChange={(_, value) =>
+                  setNumber({ ...number, min: value })
+                }
+                type={"number"}
+                placeholder="Enter min number"
+              />
+              <TextInput
+                style={{ height: "100%", width: "100%" }}
+                label="Add max number to your dropdown"
+                value={number.max}
+                handleChange={(_, value) =>
+                  setNumber({ ...number, max: value })
+                }
+                type={"text"}
+                placeholder="Enter max number"
+              />
+              <TextInput
+                style={{ height: "100%", width: "100%" }}
+                label="Add price to your field"
+                value={number.value}
+                handleChange={(_, value) => setNumber({ ...number, value })}
+                type={"number"}
+                placeholder="Enter field price"
+              />
+            </div>
+            <div className="signin-button-parents">
+              <button
+                onClick={navigatorHandler ? navigatorHandler : closeModal}
+              >
+                {btn1Text}
+              </button>
+
+              <button
+                disabled={
+                  label && placeholder && (!number.min || !number.max || !number.value)
+                    ? true
+                    : false
+                }
+                onClick={() => {
+                  onSuccess(number);
+                  setNumber({
+                    min: "",
+                    max: "",
+                    value: "",
+                  });
+                }}
+              >
+                {loading2 ? (
+                  <div className="button-loader">
+                    <svg viewBox="25 25 50 50">
+                      <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+                  </div>
+                ) : (
+                  btn2Text
+                )}
+              </button>
             </div>
           </div>
         ) : (
