@@ -16,6 +16,8 @@ export const collectionRefSunkBolts = collection(db, "Sunk Bolts");
 export const collectionRefEstimatedDeliveryDate = collection(db, "Estimated Delivery Date");
 
 export const collectionRef = collection(db, "details_form");
+export const collectionRefRes = collection(db, "result");
 export const dbRefCollections = { ref: collectionRef, name: "details_form" };
+export const dbRefResCollections = { ref: collectionRefRes, name: "result" };
 
   

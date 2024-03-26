@@ -15,11 +15,12 @@ export const SelectInput = ({
   customizer,
   handleDelete,
   handleEdit,
-  showActions
+  showActions,
+  isForm,
 }) => {
   const [open, setOpen] = useState(false);
   useEffect(()=>{
-    if(value === ""){
+    if(value === "" && !isForm){
         setOpen(true)
     }
   },[value])
@@ -27,19 +28,20 @@ export const SelectInput = ({
   useOutsideClick(inputRef, () => setOpen(false));
   return autoOpen ? (
     <>
+    {label && <p className="label">{label}</p>}
       <div
         ref={inputRef}
         onClick={() => {
           !disabled && setOpen(!open);
         }}
-        className={`autoOpenSelect ${customizer ? "cDropdown" : ""}`}
+        className={`autoOpenSelect ${customizer ? "cDropdown" : ""} ${ isForm ? "w-350" : ""}`}
       >
-        <div>{value || placeholder}</div>
+        <div>{typeof value === "object" ? value?.label : value || placeholder}</div>
         <img src={downArrow} alt="arrow" />
         <div className={`options ${!open && "d-none"}`}>
           {options.map((option, index) => {
             return (
-              <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}} onClick={() => handleChange(name, option.value)} key={index}>
+              <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}} onClick={() => handleChange(name, isForm ? option : option.value)} key={index}>
                 <div>{option.label}</div>
                 <div>
                 {showActions && <img onClick={() => handleEdit(option)} className="dropdown-trash" src={EditIcon} alt="add" />}

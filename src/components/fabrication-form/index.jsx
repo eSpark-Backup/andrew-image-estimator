@@ -164,6 +164,9 @@ const FabForm = ({
                   // <motion.div {...slideAnimation("up")}>
                   <motion.div {...slideAnimation("up")}>
                   <SelectInput
+                    autoOpen
+                    isForm
+                    customizer
                     name={item.name}
                     value={dropdowns[item.name]}
                     label={item.label}
@@ -178,7 +181,7 @@ const FabForm = ({
                             value: i,
                           };
                         } else {
-                          return { label: i, value: i };
+                          return { label: i, value: item.multiplier };
                         }
                       })
                     }
@@ -223,6 +226,9 @@ const FabForm = ({
             </motion.div> */}
             <motion.div {...slideAnimation("up")}>
               <SelectInput
+                autoOpen
+                isForm
+                customizer
                 name="perimeterWelding"
                 value={dropdowns.perimeterWelding}
                 label="Perimeter Welding"
@@ -236,6 +242,9 @@ const FabForm = ({
             </motion.div>
             <motion.div {...slideAnimation("up")}>
               <SelectInput
+                autoOpen
+                isForm
+                customizer
                 name="stitchWelding"
                 value={dropdowns.stitchWelding}
                 label="Stitch Welding"
@@ -309,6 +318,9 @@ const FabForm = ({
             </motion.div> */}
             <motion.div {...slideAnimation("up")}>
               <SelectInput
+                autoOpen
+                isForm
+                customizer
                 name="fabricator"
                 value={form.fabricator}
                 label="Calculate Estimate with Fabrication Services"

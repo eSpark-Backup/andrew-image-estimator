@@ -12,6 +12,8 @@ import { sendEmailApi } from "../../services/emailApi";
 import { usernameExtractfromEmail } from "../../utils";
 import { slideAnimation } from "../../constants";
 import { motion } from "framer-motion"
+import { dbRefResCollections } from "../../db";
+import { onSnapshot } from "firebase/firestore";
 
 const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const navigate = useNavigate();
@@ -26,6 +28,20 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
 
   useEffect(() => {
     if (id) {
+        const subscribeToCollection = (collectionRefRes, fieldName) => {
+          return onSnapshot(collectionRefRes, (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              _id: doc.id,
+              ...doc.data(),
+            }));
+            console.log(data.filter((item) => item.payload.estimation_id == id), "<<<<=======data");
+          });
+        };
+    
+        const unsubscribeFunctions = subscribeToCollection(
+          dbRefResCollections?.ref,
+          dbRefResCollections?.name
+        );
       setLoading(true);
       getEstimationFromById(id)
         .then(async (res) => {

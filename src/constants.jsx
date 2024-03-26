@@ -233,3 +233,19 @@ export const ADMIN_DETAILS_ENUMS  = {
     SUNK_BOLTS: "sunkBolts",
     ESTIMATED_DELIVERY_DATE: "estimatedDeliveryDate"
 }
+
+export const getLabels  = {
+    perimeterWelding: "Perimeter Welding",
+    stitchWelding: "Stitch Welding",
+    dtsDate: "Delivery to Site Date",
+    zipCode: "Zip Code",
+    plateType: "Wear Plate Type for Estimate",
+    plateTypeUsed: "Type of wear Plate Used Currently",
+    abrasionType: "Abrasion Type",
+    impactType: "Impact Type",
+    brakeBends: "Brake Bends",
+    fastening: "Fastening using Studs",
+    rolledBends: "Rolled Bends",
+    sunkBoltsHoles: "Sunk Bolts",
+    deliveryDate: "Estimated Delivery Date in Weeks"
+}

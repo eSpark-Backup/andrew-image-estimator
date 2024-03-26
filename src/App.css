@@ -1487,3 +1487,7 @@ select:disabled {
   top: 50px;
   left: 0px;
 }
+
+.w-350 {
+  width: 350px;
+}
