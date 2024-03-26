@@ -14,17 +14,11 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-4">Total Value</div>
               </li>
               <li className="table-row">
-                <div className="col col-1">Wear Plate Type for Estimate</div>
-                <div className="col col-2">{item?.wear_plate_type_est}</div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
-              </li>
-              <li className="table-row">
                 <div className="col col-1">Wear Plate Area</div>
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
                 <div className="col col-4">
-                  {Number(item?.wear_plate_area).toFixed(2)} {form?.unit}&#xb2;
+                  {Number(27.86).toFixed(2)} {form?.unit}&#xb2;
                 </div>
               </li>
               <li className="table-row">
@@ -32,7 +26,7 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
                 <div className="col col-4">
-                  {Number(item?.wear_plate_weight).toFixed(2)} Lbs
+                  {Number(1.56).toFixed(2)} Lbs
                 </div>
               </li>
               <li className="table-row">
@@ -40,9 +34,80 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
                 <div className="col col-4">
-                  $ {Number(item?.plate_price).toFixed(2)}
+                  $ {Number(0.78).toFixed(2)}
                 </div>
               </li>
+
+              {
+                item?.map((item, index) => {
+                  // check item.selectedOption is not a number and not a boolean
+                  return (
+                    <li key={index} className="table-row">
+                      <div className="col col-1">{item?.label}</div>
+                      <div className="col col-2">
+                        {
+                          item.price ? (
+                            item?.selectedOption
+                          )
+                            :
+                            (
+                              item?.selectedOption === true ? "Yes" : item?.selectedOption === false ? "No" : item?.selectedOption
+                            )
+                        }
+                      </div>
+                      <div className="col col-3">
+                        {/* now there muliply the item.selectedOption with price and then divite it with price   */}
+                        {
+                          item.price ? (
+                            typeof item?.selectedOption === "number" ? `$ ${Number(item?.price).toFixed(2)}/ Weight` : item?.selectedOption === true || false ? "-" : `$ ${Number(item?.price).toFixed(2)}`
+                          )
+                            :
+                            "-"
+                        }
+                      </div>
+                      <div className="col col-4">
+                        {
+                          item.price ? (
+                            typeof item?.selectedOption === "number" ? `$ ${Number(item?.selectedOption * item?.price).toFixed(2)}` : item?.selectedOption === true || false ? "-" : `$ ${Number(item?.price).toFixed(2)}`
+                          )
+                            :
+                            "-"
+                        }
+                      </div>
+                    </li>
+                  );
+                })
+              }
+              <li className="table-footer">
+                <div className="col col-1">Total Price</div>
+                <div className="col col-2"></div>
+                <div className="col col-3"></div>
+                <div className="col col-4">
+                  $ {
+                    item?.reduce((acc, item) => {
+                      if (item.price) {
+                        if (typeof item?.selectedOption === "number") {
+                          return acc + item?.selectedOption * item?.price;
+                        } else {
+                          return acc + item?.price;
+                        }
+                      } else {
+                        return acc;
+                      }
+                    }, 0).toFixed(2)
+                  }
+                </div>
+              </li>
+
+
+
+              {/* <li className="table-row">
+                <div className="col col-1">Wear Plate Type for Estimate</div>
+                <div className="col col-2">{item?.wear_plate_type_est}</div>
+                <div className="col col-3">-</div>
+                <div className="col col-4">-</div>
+              </li>
+
               <li className="table-row">
                 <div className="col col-1">Estimated Delivery Date</div>
                 <div className="col col-2">
@@ -133,8 +198,8 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-2">{item?.impact_type}</div>
                 <div className="col col-3">-</div>
                 <div className="col col-4">-</div>
-              </li>
-              <li className="table-row">
+              </li> */}
+              {/* <li className="table-row">
                 <div className="col col-1">Delivery to Site Date</div>
                 <div className="col col-2">{item?.deliver_site_date}</div>
                 <div className="col col-3">-</div>
@@ -145,15 +210,8 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-2">{item?.zip_code}</div>
                 <div className="col col-3">-</div>
                 <div className="col col-4">-</div>
-              </li>
-              <li className="table-footer">
-                <div className="col col-1">Total Price</div>
-                <div className="col col-2"></div>
-                <div className="col col-3"></div>
-                <div className="col col-4">
-                  $ {Number(item?.total_price).toFixed(2)}
-                </div>
-              </li>
+              </li> */}
+
             </ul>
           </div>
         </>
@@ -219,7 +277,7 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-1">Perimeter Welding</div>
                 <div className="col col-2">
                   {dropdowns?.perimeterWelding &&
-                  dropdowns?.perimeterWelding === "true"
+                    dropdowns?.perimeterWelding === "true"
                     ? "Yes"
                     : "No"}
                 </div>
@@ -232,7 +290,7 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-1">Stitch Welding</div>
                 <div className="col col-2">
                   {dropdowns?.stitchWelding &&
-                  dropdowns?.stitchWelding === "true"
+                    dropdowns?.stitchWelding === "true"
                     ? "Yes"
                     : "No"}
                 </div>

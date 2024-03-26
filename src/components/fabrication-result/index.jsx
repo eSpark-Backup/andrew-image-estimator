@@ -23,6 +23,21 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const token = window.localStorage.getItem("token");
   const loggedInUser = window.localStorage.getItem("user");
   const { name, email } = JSON.parse(loggedInUser) || {};
+  const [firebaseData, setFirebaseData] = useState([]);
+  const [detailsData, setDetailsData]= useState([]);
+
+  useEffect(() => {   
+    console.log(detailsData, "detialsData");
+    const updatedData = firebaseData.map((item) => {
+      const CurrentEstimator = detailsData?.filter((detialsItem) => detialsItem?.id === item?.payload?.estimation_id) || {};
+      console.log(CurrentEstimator, "CurrentEstimator");
+      return { ...item };
+    });
+
+    setData(updatedData);
+  
+
+  }, [firebaseData, detailsData]);
 
 
 
@@ -34,7 +49,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
               _id: doc.id,
               ...doc.data(),
             }));
-            console.log(data.filter((item) => item.payload.estimation_id == id), "<<<<=======data");
+            setFirebaseData(data.filter((item) => item.payload.estimation_id == id) || []);
           });
         };
     
@@ -45,13 +60,16 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
       setLoading(true);
       getEstimationFromById(id)
         .then(async (res) => {
-          setData(res?.data);
+          setDetailsData(res?.data);
           const promises = res.data.map(async (item) => {
             const { url } = await downloadFileFromDrive(item.image.split("/")[5], imageToken);
-            return { ...item, imageUrl: url }; // Assuming you want to add imageUrl to each object
+            return { ...item, imageUrl: url }; // Assuming you want to add imageUrl to each object 
+            // I want to add the image to table 
+           
+
           });
           const updatedData = await Promise.all(promises);
-          setData(updatedData);
+          setDetailsData(updatedData);
           setLoading(false);
         })
         .catch((err) => {
@@ -107,9 +125,9 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                   <div
                     style={{
                       height:
-                        data.length === 1 && !item?.fab_service
+                        data.length === 1 && !item?.payload?.fab_service
                           ? "590px"
-                          : item?.fab_service
+                          : item?.payload?.fab_service
                             ? "1635px"
                             : "590px",
                       borderRadius:
@@ -149,10 +167,10 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                     </motion.div>
                   )}
                   <motion.div {...slideAnimation("up")}>
-                  {item?.fab_service ? (
-                    <FabricationTable item={item} form={form} token={token} />
+                  {item?.payload?.fab_service ? (
+                    <FabricationTable  item={item.payload?.data} form={form} token={token} />
                   ) : (
-                    <NormalTable item={item} form={form} token={token} />
+                    <NormalTable item={item.payload?.data} form={form} token={token} />
                   )}
                   </motion.div>
                 </div>
@@ -217,6 +235,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                 <motion.div {...slideAnimation("up")}>
                 {Object.keys(item).includes("dropdowns") ? (
                   <FabricationTable
+            
                     calculation={item?.calculation}
                     form={form}
                     dropdowns={item?.dropdowns}

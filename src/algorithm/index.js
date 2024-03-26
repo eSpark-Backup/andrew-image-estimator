@@ -497,6 +497,7 @@ export const calculateFabrication = async (
   });
   const payload = {
     estimation_id : Number(id),
+    fab_service : form.fabricator ? true : false,
     data : payloadArr
   }
   setCalculation((prev) => ({
