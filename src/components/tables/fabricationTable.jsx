@@ -1,5 +1,7 @@
 import React from "react";
 const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
+  console.log(calculation,"calculation");
+  console.log(dropdowns,"dropdowns");
   return (
     <>
       {token ? (
@@ -237,12 +239,6 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-4">Total Value</div>
               </li>
               <li className="table-row">
-                <div className="col col-1">Wear Plate Type for Estimate</div>
-                <div className="col col-2">{dropdowns?.plateType}</div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
-              </li>
-              <li className="table-row">
                 <div className="col col-1">Wear Plate Area</div>
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
@@ -266,84 +262,95 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                   $ {Number(calculation?.platePrice).toFixed(2)}
                 </div>
               </li>
-              <li className="table-row">
-                <div className="col col-1">Estimated Delivery Date</div>
-                <div className="col col-2">
-                  {dropdowns?.deliveryDate}{" "}
-                  {dropdowns?.deliveryDate === "1" ? "Week" : "Weeks"}
-                </div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
-              </li>
-              <li className="table-row">
-                <div className="col col-1">
-                  Type of wear Plate Used Currently
-                </div>
-                <div className="col col-2">{dropdowns?.plateTypeUsed}</div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
-              </li>
+
               <li className="table-row">
                 <div className="col col-1">Perimeter Welding</div>
                 <div className="col col-2">
                   {dropdowns?.perimeterWelding &&
-                    dropdowns?.perimeterWelding === "true"
+                    dropdowns?.perimeterWelding?.value === true
                     ? "Yes"
                     : "No"}
                 </div>
-                <div className="col col-3">$ 0.20 / Weight</div>
-                <div className="col col-4">
-                  $ {Number(calculation?.perimeterWelding).toFixed(2)}
-                </div>
+                <div className="col col-3">-</div>
+                <div className="col col-4">-</div>
               </li>
               <li className="table-row">
                 <div className="col col-1">Stitch Welding</div>
                 <div className="col col-2">
                   {dropdowns?.stitchWelding &&
-                    dropdowns?.stitchWelding === "true"
+                    dropdowns?.stitchWelding.value === true
                     ? "Yes"
                     : "No"}
                 </div>
-                <div className="col col-3">$ 0.30 / Weight</div>
-                <div className="col col-4">
-                  $ {Number(calculation?.stitchWelding).toFixed(2)}
-                </div>
+                <div className="col col-3">-</div>
+                <div className="col col-4">-</div>
               </li>
+
+              <li className="table-row">
+                <div className="col col-1">Wear Plate Type for Estimate</div>
+                <div className="col col-2">{dropdowns?.plateType?.label}</div>
+                <div className="col col-3">{dropdowns?.plateType?.value}</div>
+                <div className="col col-4">-</div>
+              </li>
+ 
+
+             
               <li className="table-row">
                 <div className="col col-1">Fastening using Studs</div>
-                <div className="col col-2">{dropdowns?.fastening}</div>
-                <div className="col col-3">$ 1.50 / Weight</div>
+                <div className="col col-2">{dropdowns?.fastening?.label}</div>
+                <div className="col col-3">${Number(dropdowns?.fastening?.value).toFixed(2)} / Weight</div>
                 <div className="col col-4">
                   $ {Number(calculation?.fastening).toFixed(2)}
                 </div>
               </li>
               <li className="table-row">
                 <div className="col col-1">Brake Bends</div>
-                <div className="col col-2">{dropdowns?.rolledBends}</div>
-                <div className="col col-3">$ 0.60 / Weight</div>
+                <div className="col col-2">{dropdowns?.rolledBends?.label}</div>
+                <div className="col col-3">${Number(dropdowns?.rolledBends?.value).toFixed(2)} / Weight</div>
                 <div className="col col-4">
                   $ {Number(calculation?.rolledBends).toFixed(2)}
                 </div>
               </li>
               <li className="table-row">
                 <div className="col col-1">Sunk Bolts Holes</div>
-                <div className="col col-2">{dropdowns?.sunkBoltsHoles}</div>
-                <div className="col col-3">$ 0.35 / Weight</div>
+                <div className="col col-2">{dropdowns?.sunkBoltsHoles?.label}</div>
+                <div className="col col-3">${Number(dropdowns?.sunkBoltsHoles?.value).toFixed(2)} / Weight</div>
                 <div className="col col-4">
                   $ {Number(calculation?.sunkBoltsHoles).toFixed(2)}
                 </div>
               </li>
+
               <li className="table-row">
-                <div className="col col-1">Abrasion Type</div>
-                <div className="col col-2">{dropdowns?.abrasionType}</div>
+                <div className="col col-1">
+                  Type of wear Plate Used Currently
+                </div>
+                <div className="col col-2">{dropdowns?.plateTypeUsed?.label}</div>
+                <div className="col col-3">${Number(dropdowns?.plateTypeUsed?.value).toFixed(2)}</div>
+                <div className="col col-4">${Number(dropdowns?.plateTypeUsed?.value).toFixed(2)}</div>
+              </li>
+
+
+              <li className="table-row">
+                <div className="col col-1">Estimated Delivery Date</div>
+                <div className="col col-2">
+                  {dropdowns?.deliveryDate?.label}
+                </div>
                 <div className="col col-3">-</div>
                 <div className="col col-4">-</div>
               </li>
+     
+
+              <li className="table-row">
+                <div className="col col-1">Abrasion Type</div>
+                <div className="col col-2">{dropdowns?.abrasionType?.label}</div>
+                <div className="col col-3">${Number(dropdowns?.abrasionType?.value).toFixed(2)}</div>
+                <div className="col col-4">${Number(dropdowns?.abrasionType?.value).toFixed(2)}</div>
+              </li>
               <li className="table-row">
                 <div className="col col-1">Impact Type</div>
-                <div className="col col-2">{dropdowns?.impactType}</div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
+                <div className="col col-2">{dropdowns?.impactType?.label}</div>
+                <div className="col col-3">${Number(dropdowns?.impactType?.value).toFixed(2)}</div>
+                <div className="col col-4">${Number(dropdowns?.impactType?.value).toFixed(2)}</div>
               </li>
               <li className="table-row">
                 <div className="col col-1">Delivery to Site Date</div>
