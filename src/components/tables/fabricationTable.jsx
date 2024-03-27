@@ -13,7 +13,7 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-3">Price</div>
                 <div className="col col-4">Total Value</div>
               </li>
-              <li className="table-row">
+              {/* <li className="table-row">
                 <div className="col col-1">Wear Plate Area</div>
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
@@ -25,65 +25,75 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
                 <div className="col col-1">Wear Plate Weight</div>
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
-                <div className="col col-4">
-                  {Number(1.56).toFixed(2)} Lbs
-                </div>
+                <div className="col col-4">{Number(1.56).toFixed(2)} Lbs</div>
               </li>
               <li className="table-row">
                 <div className="col col-1">Plate Price</div>
                 <div className="col col-2">-</div>
                 <div className="col col-3">-</div>
-                <div className="col col-4">
-                  $ {Number(0.78).toFixed(2)}
-                </div>
-              </li>
+                <div className="col col-4">$ {Number(0.78).toFixed(2)}</div>
+              </li> */}
 
               {
                 item?.map((item, index) => {
                   // check item.selectedOption is not a number and not a boolean
                   return (
-                    <li key={index} className="table-row">
-                      <div className="col col-1">{item?.label}</div>
-                      <div className="col col-2">
-                        {
-                          item.price ? (
-                            item?.selectedOption
-                          )
-                            :
-                            (
-                              item?.selectedOption === true ? "Yes" : item?.selectedOption === false ? "No" : item?.selectedOption
-                            )
+                  <li
+                    key={index}
+                    className={
+                      item?.label === "Total Price"
+                        ? "table-footer"
+                        : "table-row"
+                    }
+                  >
+                    <div className="col col-1">{item?.label}</div>
+                    <div className="col col-2">
+                      {item?.selectedOption === true 
+                        ? "Yes"
+                        : item?.selectedOption === false
+                        ? "No"
+                        : item?.selectedOption}
+                    </div>
+                    <div className="col col-3">
+                      {/* now there muliply the item.selectedOption with price and then divite it with price   */}
+                      {item.label === "Perimeter Welding" ?
+                      `$ 0.2/ Weight`
+                      : item.label === "Stitch Welding" ?
+                      `$ 0.3/ Weight`
+                      : item.price
+                        ? item.price === "-"
+                          ? "-"
+                          : typeof item?.selectedOption === "number"
+                          ? `$ ${Number(item?.price).toFixed(2)}/ Weight`
+                          : item?.selectedOption === true || item?.selectedOption === false
+                          ? "-"
+                          : `$ ${Number(item?.price).toFixed(2)}`
+                        : "-"}
+                    </div>
+                    <div className="col col-4">
+                      {
+                      item.totalPrice ?
+                        `$ ${Number(item.totalPrice).toFixed(2)}`
+                        : item.price
+                        ? typeof item?.selectedOption === "number"
+                          ? `$ ${Number(
+                              item?.selectedOption * item?.price
+                            ).toFixed(2)}`
+                          : item?.selectedOption === true || item?.selectedOption === false
+                          ? "-"
+                          : `$ ${Number(item?.price).toFixed(2)}`
+                        : "-"
                         }
-                      </div>
-                      <div className="col col-3">
-                        {/* now there muliply the item.selectedOption with price and then divite it with price   */}
-                        {
-                          item.price ? (
-                            typeof item?.selectedOption === "number" ? `$ ${Number(item?.price).toFixed(2)}/ Weight` : item?.selectedOption === true || false ? "-" : `$ ${Number(item?.price).toFixed(2)}`
-                          )
-                            :
-                            "-"
-                        }
-                      </div>
-                      <div className="col col-4">
-                        {
-                          item.price ? (
-                            typeof item?.selectedOption === "number" ? `$ ${Number(item?.selectedOption * item?.price).toFixed(2)}` : item?.selectedOption === true || false ? "-" : `$ ${Number(item?.price).toFixed(2)}`
-                          )
-                            :
-                            "-"
-                        }
-                      </div>
-                    </li>
-                  );
-                })
-              }
-              <li className="table-footer">
+                    </div>
+                  </li>
+                );
+              })}
+              {/* <li className="table-footer">
                 <div className="col col-1">Total Price</div>
                 <div className="col col-2"></div>
                 <div className="col col-3"></div>
-                <div className="col col-4">
-                  $ {
+                <div className="col col-4">-
+                  {/* $ {
                     item?.reduce((acc, item) => {
                       if (item.price) {
                         if (typeof item?.selectedOption === "number") {
