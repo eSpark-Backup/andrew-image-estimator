@@ -266,24 +266,24 @@ const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
               <li className="table-row">
                 <div className="col col-1">Perimeter Welding</div>
                 <div className="col col-2">
-                  {dropdowns?.perimeterWelding &&
+                  {dropdowns?.perimeterWelding?.value &&
                     dropdowns?.perimeterWelding?.value === true
                     ? "Yes"
                     : "No"}
                 </div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
+                <div className="col col-3">$ 0.2 / Weight</div>
+                <div className="col col-4">$ {Number(calculation?.perimeterWelding).toFixed(2)}</div>
               </li>
               <li className="table-row">
                 <div className="col col-1">Stitch Welding</div>
                 <div className="col col-2">
-                  {dropdowns?.stitchWelding &&
+                  {dropdowns?.stitchWelding.value &&
                     dropdowns?.stitchWelding.value === true
                     ? "Yes"
                     : "No"}
                 </div>
-                <div className="col col-3">-</div>
-                <div className="col col-4">-</div>
+                <div className="col col-3">$ 0.3 / Weight</div>
+                <div className="col col-4">$ {Number(calculation?.stitchWelding).toFixed(2)}</div>
               </li>
 
               <li className="table-row">
