@@ -395,6 +395,38 @@ export const handleCalculate = async (
       return item;
     });
   });
+  let payloadArr = [];
+  payloadArr.push({
+    label: "Wear Plate Area",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.size,
+  });
+  payloadArr.push({
+    label: "Wear Plate Weight",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.weight,
+  });
+  payloadArr.push({
+    label: "Plate Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.platePrice,
+  });
+  payloadArr.push({
+    label: "Total Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.platePrice,
+  });
+  const payload = {
+    estimation_id: Number(id),
+    fab_service: form.fabricator ? true : false,
+    data: payloadArr,
+  };
+  const collectionRefDetailsForm = collection(db, "result");
+  const clientRef = doc(collectionRefDetailsForm);
   setPolygonInd(polygonsInd + 1);
   if (!form.fabricator || form?.fabricator === "false") {
     try {
@@ -422,13 +454,16 @@ export const handleCalculate = async (
       formData.append("roll_bends", 0);
       formData.append("abrasion_type", "");
       formData.append("deliver_site_date", "2000-10-10");
-      formData.append("total_price", 0);
+      formData.append("total_price", object?.platePrice);
       if (id) {
         setLoader(true);
         const data = {
           polygons: JSON.stringify(polygons),
         };
         try {
+          await setDoc(clientRef, {
+            payload,
+          });
           await updateEstimationById(id, data);
           await createEstimationFromById(formData);
           setNext(10);
@@ -480,20 +515,69 @@ export const calculateFabrication = async (
       y1: item.y,
     })),
   };
-  
-  let payloadArr = []
+
+  let payloadArr = [];
+  payloadArr.push({
+    label: "Wear Plate Area",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: calculation.size,
+  });
+  payloadArr.push({
+    label: "Wear Plate Weight",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: calculation.weight,
+  });
+  payloadArr.push({
+    label: "Plate Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: calculation.platePrice,
+  });
   Object.entries(dropdowns).map(([key, value], index) => {
-    if(typeof value === "object"){
-      if(key === "stitchWelding" || key === "perimeterWelding") {
-        payloadArr.push({label: getLabels[key], selectedOption: value.value})
+    if (typeof value === "object") {
+      if (key === "perimeterWelding") {
+        payloadArr.push({
+          label: getLabels[key],
+          selectedOption: value.value,
+          price: 0.2,
+          totalPrice: value.value ? Number(calculation.weight) * 0.2 : 0,
+        });
+      } else if (key === "stitchWelding") {
+        payloadArr.push({
+          label: getLabels[key],
+          selectedOption: value.value,
+          price: 0.3,
+          totalPrice: value.value ? Number(calculation.weight) * 0.3 : 0,
+        });
       } else if (key === "deliveryDate") {
-        payloadArr.push({label: getLabels[key], selectedOption: value.label})
+        payloadArr.push({ label: getLabels[key], selectedOption: value.label });
       } else {
-        payloadArr.push({label: getLabels[key], selectedOption: value.label, price : value.value})
+        payloadArr.push({
+          label: getLabels[key],
+          selectedOption: value.label,
+          price: value.value,
+        });
       }
     } else {
-      payloadArr.push({label: getLabels[key], selectedOption: value})
+      payloadArr.push({ label: getLabels[key], selectedOption: value });
     }
+  });
+  payloadArr.push({
+    label: "Total Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice:
+      Number(calculation.platePrice) +
+      (dropdowns.perimeterWelding ? Number(calculation.weight) * 0.2 : 0) +
+      (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
+      Number(dropdowns.fastening.label) * Number(dropdowns.fastening.value) +
+      Number(dropdowns.brakeBends.label) * Number(dropdowns.brakeBends.value) +
+      Number(dropdowns.rolledBends.label) *
+        Number(dropdowns.rolledBends.value) +
+      Number(dropdowns.sunkBoltsHoles.label) *
+        Number(dropdowns.sunkBoltsHoles.value),
   });
   const payload = {
     estimation_id : Number(id),
@@ -575,11 +659,8 @@ export const calculateFabrication = async (
     });
   });
   const collectionRefDetailsForm = collection(db, "result");
+  const clientRef = doc(collectionRefDetailsForm);
   try {
-    const clientRef = doc(collectionRefDetailsForm);
-    await setDoc(clientRef, {
-      payload,
-    })
     const calDetail = calArr.find(
       (item) => item?.polygonsInd === polygonsInd - 1
     );
@@ -655,6 +736,9 @@ export const calculateFabrication = async (
         polygons: JSON.stringify(polygons),
       };
       try {
+      await setDoc(clientRef, {
+        payload,
+      });
         await updateEstimationById(id, data);
         await createEstimationFromById(formData);
         setNext(10);

@@ -27,20 +27,17 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const [detailsData, setDetailsData]= useState([]);
 
   useEffect(() => {   
-    console.log(detailsData, "detialsData");
-    const updatedData = firebaseData.map((item) => {
-      const CurrentEstimator = detailsData?.filter((detialsItem) => detialsItem?.id === item?.payload?.estimation_id) || {};
-      console.log(CurrentEstimator, "CurrentEstimator");
-      return { ...item };
-    });
+    if (firebaseData.length > 0 && detailsData.length > 0) {
+      const updatedData = firebaseData.map((item) => {
+        const dash = item?.payload?.data?.find(i => i.label === "Total Price");
+        const CurrentEstimator = detailsData.find((detialsItem) => detialsItem?.total_price === dash?.totalPrice);
+        return { ...item, imageUrl: CurrentEstimator?.imageUrl };
+      });
 
-    setData(updatedData);
-  
-
+      setData(updatedData);
+    }
   }, [firebaseData, detailsData]);
-
-
-
+  
   useEffect(() => {
     if (id) {
         const subscribeToCollection = (collectionRefRes, fieldName) => {
@@ -60,7 +57,6 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
       setLoading(true);
       getEstimationFromById(id)
         .then(async (res) => {
-          setDetailsData(res?.data);
           const promises = res.data.map(async (item) => {
             const { url } = await downloadFileFromDrive(item.image.split("/")[5], imageToken);
             return { ...item, imageUrl: url }; // Assuming you want to add imageUrl to each object 
