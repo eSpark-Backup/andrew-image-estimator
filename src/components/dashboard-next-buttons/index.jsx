@@ -95,7 +95,7 @@ const DashboardNextButtons = ({
               childPoints[0]?.x === childPoints[childPoints.length - 1]?.x)) ||
           (next === 7 && form.fabricator)) && (
           <div className="next-submit-button animation">
-            {`Please click to ${
+            {`Please click ${
               next === 0 ||
               next === 1 ||
               next === 4 ||
@@ -104,7 +104,7 @@ const DashboardNextButtons = ({
               next === 9
                 ? 'Submit'
                 : 'Next'
-            } to proced`}
+            } to Proceed`}
           </div>
         )}
         {(next <= 10 || (form.fabricator && next === 9)) && (
