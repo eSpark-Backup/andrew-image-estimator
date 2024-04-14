@@ -169,7 +169,7 @@ button:disabled {
 
 .image-dropdown {
   display: flex;
-  justify-content: space-between;
+  width: 100%;
   align-items: center;
   gap: 20px;
   /* height: auto; */
@@ -227,9 +227,9 @@ button:disabled {
 .image-dropdown .dropdown {
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 10px;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   margin-right: 50px;
   justify-content: space-evenly;
   align-items: center;

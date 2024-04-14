@@ -215,7 +215,7 @@ const FabForm = ({
                 overflowY: 'auto',
               }}
             >
-              <div style={{ width: '80%' }} className="dropdown">
+              <div className="dropdown">
                 {fields?.map((item, index) => {
                   return (
                     //  <div style={{ width: "calc(100% - 60px)" }} key={item.id}>
@@ -223,7 +223,7 @@ const FabForm = ({
                     // <motion.div {...slideAnimation("up")}>
                     <motion.div {...slideAnimation('up')}>
                       {item?.fieldType === 'number' ||
-                      item?.fieldType === 'date' ? (
+                        item?.fieldType === 'date' ? (
                         <TextInput
                           name={item.name}
                           value={dropdowns[item.name]}
