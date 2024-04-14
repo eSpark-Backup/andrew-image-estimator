@@ -18,6 +18,7 @@ export const SelectInput = ({
   showActions,
   isForm,
   blinking,
+  setCurrentFieldName,
 }) => {
   const [open, setOpen] = useState(false);
   useEffect(() => {
