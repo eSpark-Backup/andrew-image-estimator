@@ -23,7 +23,7 @@ const Header = () => {
           </div>
         ) : (
           <div className="header-links">
-            {user.role === 'admin' && (
+            {user?.role === 'admin' && (
               <button
                 style={{ width: '180px' }}
                 onClick={() => navigate(!InAdmin ? '/admin' : '/')}

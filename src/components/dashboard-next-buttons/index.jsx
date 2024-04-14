@@ -94,19 +94,32 @@ const DashboardNextButtons = ({
               childPoints.length >= 1 ||
               childPoints[0]?.x === childPoints[childPoints.length - 1]?.x)) ||
           (next === 7 && form.fabricator)) && (
-          <div className="next-submit-button animation">
-            {`Please click ${
-              next === 0 ||
-              next === 1 ||
-              next === 4 ||
-              next === 6 ||
-              next === 7 ||
-              next === 9
-                ? 'Submit'
-                : 'Next'
-            } to Proceed`}
-          </div>
-        )}
+            <div className="next-submit-button animation">
+              {
+                next === 0 ?
+                  "Please Submit the selected Image to Proceed" :
+                  next === 1 ?
+                    "Please Submit the selected Unit to Proceed" :
+                    next === 2 ?
+                      "Please Submit Cropped Image to Proceed" :
+                      next === 3 ?
+                        "Please Submit the Height  to Proceed" :
+                        next === 4 ?
+                          "Please Submit the Length to Proceed" :
+                          next === 5 ?
+                            "Please Submit the Points to Proceed" :
+                            next === 6 ?
+                              "Please Submit the Points to Proceed" :
+                              next === 7 ?
+                                "Please Submit the Fabricator to Proceed" :
+                                next === 9 ?
+                                  "Please Submit the Fabrication Details to Proceed" :
+
+                                  "Please Click Next to Proceed"
+
+              }
+            </div>
+          )}
         {(next <= 10 || (form.fabricator && next === 9)) && (
           <button
             disabled={
@@ -122,7 +135,7 @@ const DashboardNextButtons = ({
               (next === 6 &&
                 (childPoints.length <= 1 ||
                   childPoints[0]?.x !==
-                    childPoints[childPoints.length - 1]?.x)) ||
+                  childPoints[childPoints.length - 1]?.x)) ||
               (next === 7 && form.fabricator === '') ||
               (next === 9 && !hasNoFalsyValue(dropdowns))
             }

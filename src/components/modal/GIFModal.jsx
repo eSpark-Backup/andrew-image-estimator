@@ -13,8 +13,8 @@ const GIFModal = ({ modalIsOpen, closeModal, GIF, description }) => {
             showCloseButton={false}
         >
             <div className='GIF-modal-container'>
-                <div>
-                    <img className='modal-GIF' src={GIF} width={400} alt="GIF" />
+                <div className='GIF-Image-desc-container'>
+                    <img className='modal-GIF' src={GIF} width={500} alt="GIF" />
                     <p className='GIF-modal-description'>{description}</p>
                 </div>
 
