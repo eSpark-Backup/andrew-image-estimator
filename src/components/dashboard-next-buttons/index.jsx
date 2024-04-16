@@ -218,7 +218,22 @@ const DashboardNextButtons = ({
                 });
               }
             }}
-            className={`${!canvasImage && next === 0 ? 'hidden' : ''}`}
+            className={`
+            ${(next === 5 &&
+                !(points.length <= 1 ||
+                  points[0]?.x !== points[points.length - 1]?.x)
+                )
+                ? "blink-box-shadow" 
+                : ""
+              }
+            ${(next === 6 &&
+                !(childPoints.length <= 1 ||
+                  childPoints[0]?.x !== childPoints[childPoints.length - 1]?.x)
+                )
+                ? "blink-box-shadow"
+                : ""
+              }
+            ${!canvasImage && next === 0 ? 'hidden' : ''}`}
           >
             {loader ? (
               <div className="button-loader">
