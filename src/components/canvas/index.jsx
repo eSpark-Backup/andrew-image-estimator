@@ -205,7 +205,7 @@ const Canvas = ({
       context.fillStyle = "#39FF14";
       for (let i = 0; i < points.length; i++) {
         context.beginPath();
-        i === 0 ? context.arc(points[i].x, points[i].y, 6, 0, 2 * Math.PI) :  context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
+        i === 0 ? context.arc(points[i].x, points[i].y, 10, 0, 2 * Math.PI) :  context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
         context.fill();
       }
     };

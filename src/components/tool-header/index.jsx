@@ -46,7 +46,7 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
               Back to Dashboard
             </button>
           </div>
-          {token &&
+          {/* {token &&
             <>
               <div className="header-links">
                 {user?.role === 'admin' && (
@@ -59,7 +59,18 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
                 )}
               </div>
             </>
-          }
+          } */}
+
+          <div className="header-links">
+            {/* {user?.role === 'admin' && ( */}
+              <button
+                style={{ width: '180px', height: '35px' }}
+                onClick={() => navigate('/admin')}
+              >
+                {'Go to Admin Panel'}
+              </button>
+            {/* )} */}
+          </div>
         </div>
 
 

@@ -18,19 +18,33 @@ const Header = () => {
         <h2 style={{ color: '#000' }}>Logo</h2>
         {!token ? (
           <div className="header-links">
+            <button
+              style={{ width: '180px' }}
+              onClick={() => navigate(!InAdmin ? '/admin' : '/')}
+            >
+              {!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}
+            </button>
             <button onClick={() => navigate('/sign-up')}>Signup</button>
             <button onClick={() => navigate('/login')}>Login</button>
           </div>
         ) : (
           <div className="header-links">
-            {user?.role === 'admin' && (
+            {/* {user?.role === 'admin' && (
               <button
                 style={{ width: '180px' }}
                 onClick={() => navigate(!InAdmin ? '/admin' : '/')}
               >
                 {!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}
               </button>
-            )}
+             )}  */}
+
+            {/* // Code added to show button of admin panel for testing 👇 */}
+            <button
+              style={{ width: '180px' }}
+              onClick={() => navigate(!InAdmin ? '/admin' : '/')}
+            >
+              {!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}
+            </button>
             <button onClick={() => setLogoutModalOpen(true)}>Logout</button>
           </div>
         )}
