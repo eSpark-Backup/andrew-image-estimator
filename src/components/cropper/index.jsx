@@ -4,6 +4,7 @@ import { slideAnimation } from "../../constants";
 import { motion } from "framer-motion"
 import GIFModal from "../modal/GIFModal";
 import { cropGIF } from "../../assets";
+import TextInput from "../inputs/text-input";
 
 export const ImageCropper = ({
   shapeDrawn,
@@ -13,6 +14,8 @@ export const ImageCropper = ({
   crop,
   setCrop,
   image,
+  next,
+  handleChange
 }) => {
   const [xColor, setXColor] = useState("#39FF14");
   const [yColor, setYColor] = useState("#39FF14");
@@ -347,6 +350,51 @@ export const ImageCropper = ({
         </p> */}
       </motion.div>}
       <div>
+        {next >= 3 && (
+          <div
+            className={`${focus === 'length' || form.length ? 'active-inputs' : ''
+              } tool-inputs-container tour`}
+          >
+            <p style={{ color: '#fff' }}>Height:</p>
+            <TextInput
+              disabled={focus !== 'length'}
+              className="tool-inputs "
+              name="length"
+              value={form.length}
+              type="number"
+              placeholder="Enter"
+              handleChange={handleChange}
+            />
+            {focus === 'length' && (
+              <div className="dim-selector animation">
+                Add height of red flashing line to proceed.
+              </div>
+            )}
+          </div>
+        )}
+
+        {next >= 4 && (
+          <div
+            className={`${focus === 'height' || form.width ? 'active-inputs' : ''
+              } tool-inputs-container tour`}
+          >
+            <p style={{ color: '#fff' }}>Length:</p>
+            <TextInput
+              disabled={focus !== 'height'}
+              className="tool-inputs "
+              name="width"
+              value={form.width}
+              type="number"
+              placeholder="Enter"
+              handleChange={handleChange}
+            />
+            {focus === 'height' && (
+              <div className="dim-selector animation">
+                Add length of red flashing line to proceed.
+              </div>
+            )}
+          </div>
+        )}
         <canvas
           ref={canvasRef}
           width={form.imageWidth}

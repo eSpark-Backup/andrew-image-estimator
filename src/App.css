@@ -775,6 +775,7 @@ body.modal-open {
 
 
 @media screen and (min-width:900px) {
+
   .main-conatiner {
     justify-content: center;
     align-items: center;
@@ -808,26 +809,30 @@ body.modal-open {
   }
 }
 
+.tool-header-responsivness{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px
+}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+@media screen and (max-width: 1300px) {
+  .tool-header-responsivness{
+    display: none;
+ }
+}
 
 
 
 /* RESPONSIVE SECTION  */
 
 @media screen and (max-width: 1000px) {
+
+
+
   .esmitimation-list-card-container {
     width: 100%;
   }

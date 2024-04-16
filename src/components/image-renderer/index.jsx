@@ -1,8 +1,11 @@
 import { getImgDim } from '../../algorithm';
 import { uploadImg } from '../../assets';
+import { SelectInput } from '../inputs/select-input';
 
 export const ImageRenderer = ({
   form,
+  next,
+  active,
   imgRef,
   image,
   handleChange,
@@ -30,7 +33,41 @@ export const ImageRenderer = ({
   return (
     <>
       {image ? (
-        <img style={{ width, height }} src={image} alt="canvas-image" />
+        <>
+          {next >= 1 && (
+            <div
+              className={`${active === 'select' || form.unit !== '' ? 'active-inputs' : ''
+                } tool-inputs-container tour`}
+            >
+              <p style={{ color: '#fff' }}>Measuring Unit:</p>
+              <SelectInput
+                autoOpen
+                className="tool-inputs "
+                name="unit"
+                disabled={active !== 'select'}
+                value={form.unit}
+                options={[
+                  { label: 'cm', value: 'cm' },
+                  { label: 'inch', value: 'inch' },
+                  { label: 'm', value: 'm' },
+                  { label: 'mm', value: 'mm' },
+                  { label: 'ft', value: 'ft' },
+                ]}
+                placeholder="Select Unit"
+                handleChange={handleChange}
+                header={true}
+              />
+              {active === 'select' && (
+                <div className="unit-selector animation">
+                  You can select the unit for measurement
+                </div>
+              )}
+            </div>
+          )}
+
+          <br />
+          <img style={{ width, height }} src={image} alt="canvas-image" />
+        </>
       ) : (
         <div className="upload-container">
           <div className="upload-img">

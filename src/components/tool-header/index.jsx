@@ -76,12 +76,8 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
 
 
         <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 24,
-          }}
+          className='tool-header-responsivness'
+          
         >
           {next >= 1 && (
             <div

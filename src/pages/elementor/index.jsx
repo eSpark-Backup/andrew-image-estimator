@@ -396,10 +396,10 @@ function Elementor() {
           next === 1
             ? 'select'
             : next === 3
-            ? 'height'
-            : next === 4
-            ? 'length'
-            : ''
+              ? 'height'
+              : next === 4
+                ? 'length'
+                : ''
         }
         form={form}
         handleChange={handleChange}
@@ -446,6 +446,7 @@ function Elementor() {
                 <div>
                   <div>
                     <ImageRenderer
+                      active={"select"}
                       form={form}
                       imgRef={imgRef}
                       image={imagetoShow}
@@ -472,6 +473,7 @@ function Elementor() {
               ) : next === 3 ? (
                 <div>
                   <ImageCropper
+                    next={next}
                     focus={'length'}
                     form={form}
                     crop={crop}
@@ -486,6 +488,7 @@ function Elementor() {
               ) : next === 4 ? (
                 <div>
                   <ImageCropper
+                    next={next}
                     focus={'height'}
                     form={form}
                     crop={crop}
