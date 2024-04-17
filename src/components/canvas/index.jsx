@@ -156,7 +156,7 @@ const Canvas = ({
         const distance = Math.sqrt(
           (x - firstPoint.x) ** 2 + (y - firstPoint.y) ** 2
         );
-        if (distance < 5) {
+        if (distance < 10) {
           setPoints((prevDots) => [
             ...prevDots,
             { x: firstPoint.x, y: firstPoint.y },
