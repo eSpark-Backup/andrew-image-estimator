@@ -206,15 +206,16 @@ const FabForm = ({
               </p>
             </motion.div>
             <div
-              style={{
-                width: '100%',
-                maxHeight: 'calc(100% - 100px)',
-                // minhe: "200px",
-                display: 'flex',
-                justifyContent: 'center',
-                overflowY: 'auto',
-                padding:"50px 0px"
-              }}
+            className='input-parent'
+              // style={{
+              //   width: '100%',
+              //   maxHeight: 'calc(100% - 100px)',
+              //   // minhe: "200px",
+              //   display: 'flex',
+              //   justifyContent: 'center',
+              //   overflowY: 'auto',
+              //   padding:"50px 0px"
+              // }}
             >
               <div className="dropdown">
                 {fields?.map((item, index) => {
