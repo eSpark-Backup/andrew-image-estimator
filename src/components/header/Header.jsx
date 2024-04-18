@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModalComponent from '../modal/Modal';
 import { logout } from '../../services/authApi';
@@ -13,6 +13,7 @@ const Header = () => {
   const user = JSON.parse(localStorage.getItem('user')) || null;
   const InAdmin = location.pathname === '/admin';
   const [showLinks, setShowLinks] = useState(false)
+  const LinksRef = useRef(null);
 
   const NavigatorHandler = (data) => {
     if (data === "logout") {
@@ -24,13 +25,33 @@ const Header = () => {
     }
   }
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+        if (LinksRef.current && !LinksRef.current.contains(event.target)) {
+          setShowLinks(false)
+        }
+    };
+
+    if (showLinks) {
+        document.addEventListener('mousedown', handleClickOutside);
+    } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+}, [showLinks]);
+
+
   return (
     <>
       <div className="header">
         <h2 style={{ color: '#000' }}>Logo</h2>
         <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={() => setShowLinks(!showLinks)} />
+        
         {!token ? (
-          <div className="header-links">
+          <div className="header-links" >
             <button
               style={{ width: '180px' }}
               onClick={() => navigate(!InAdmin ? '/admin' : '/')}
@@ -62,27 +83,27 @@ const Header = () => {
           </div>
         )}
       </div>
-      <div className={`mobile-links ${showLinks ? "show-links" : ""}`}>
+      <div className={`mobile-links ${showLinks ? "show-links" : ""}`} ref={LinksRef}>
+      {showLinks && (
+        <>
         <h2 onClick={
-          // () => navigate(!InAdmin ? '/admin' : '/')
-          ()=>NavigatorHandler(!InAdmin ? "/admin" : "/")
+          () => NavigatorHandler(!InAdmin ? "/admin" : "/")
         }>{!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}</h2>
 
         {!token ? (<>
           <h2 onClick={
-            // () => navigate('/sign-up')
-            ()=>NavigatorHandler('/sign-up')
+            () => NavigatorHandler('/sign-up')
           }>Signup</h2>
           <h2 onClick={
-            // () => navigate('/login')
-            ()=>NavigatorHandler('/login')
+            () => NavigatorHandler('/login')
           }>Login</h2>
         </>) : (<>
           <h2 onClick={
-            // () => setLogoutModalOpen(true)
-            ()=>NavigatorHandler("logout")
+            () => NavigatorHandler("logout")
           }>Logout</h2>
         </>)}
+        </>
+      )}
       </div>
       <ModalComponent
         heading={'Logout'}
