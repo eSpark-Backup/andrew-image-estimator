@@ -427,6 +427,7 @@ th {
 
 .esmitimation-list-item-options {
   display: flex;
+  justify-content: flex-end;
   gap: 15px;
 }
 
@@ -623,6 +624,10 @@ th {
   display: none;
 }
 
+.hamburger-container {
+  display: none;
+}
+
 .mobile-links {
   border-top: 1px solid white;
   background-color: #ffc107;
@@ -655,6 +660,7 @@ th {
     display: none;
   }
   .hamburger-icon{
+    cursor: pointer;
     display: block;
     width: 24px;
     height: 24px;
@@ -827,6 +833,9 @@ body.modal-open {
 
 
 /* RESPONSIVE SECTION  */
+.estimation-box-card-container {
+  width: 40%;
+}
 
 @media screen and (max-width: 1000px) {
   .esmitimation-list-card-container {
@@ -849,6 +858,9 @@ body.modal-open {
   .esmitimation-list-table-container {
     height: 400px;
     padding: 0 5px;
+  }
+  .estimation-box-card-container {
+    width: 100%;
   }
 }
 
@@ -1572,8 +1584,8 @@ select:disabled {
 
 .admin-button {
   position: ABSOLUTE;
-  top: 50px;
-  left: 0px;
+  top: 70px;
+  right: 0px;
 }
 
 .w-350 {
@@ -1603,4 +1615,85 @@ select:disabled {
 #disabled-input-field {
   background-color: #ccc !important;
   cursor: no-drop;
+}
+
+
+
+/* DASHBOARD RESPONSIVENESS  */
+.customed-side-drawer-container-close {
+  position: absolute;
+  top: 0;
+  left: -400px;
+  z-index: 2;
+  transition: right 0.5s ease;
+}
+
+.customed-side-drawer-container-open {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  transition: right 0.5s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.customed-side-drawer-box {
+  width: 320px;
+  height: 100vh;
+  background-color: #ffc107;
+  overflow-y: auto;
+}
+
+.drawer-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.drawer-menu {
+  padding: 0px 10px;
+}
+
+.drawer-menu-item {
+  margin: 10px 0;
+  padding: 5px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid #BABABA;
+}
+
+.drawer-menu-text {
+  color: #303032;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+
+@media screen and (max-width:400px){
+  .rounded {
+    border: none;
+    padding: 0px;
+    width: 20px;
+  }
+
+  .esmitimation-list-item-name { 
+    font-size: 14px;
+  }
+}
+
+
+@media screen and (max-width:1000px){
+.hamburger-container {
+  padding: 10px 30px 0px 30px;
+  display: block;
+}
+
+.listing-view-container {
+  display: none;
+}
+
+
 }
