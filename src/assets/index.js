@@ -21,6 +21,8 @@ import cropGIF from "./gifs/cropGIF.gif"
 import areaGIF from "./gifs/areaGIF.gif"
 import objectGIF from "./gifs/objectGIF.gif"
 import add from "./icons/add.png"
+import hamburger from "./icons/hamburger.png"
+import close from "./icons/close.png"
 
 
 export {
@@ -46,5 +48,7 @@ export {
   downArrow,
   cropGIF,
   areaGIF,
-  objectGIF
+  objectGIF,
+  hamburger,
+  close
 };
