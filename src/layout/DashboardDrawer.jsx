@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { hamburger } from '../assets'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AdminMenuList, menuList } from '../constants';
@@ -10,11 +10,12 @@ const DashboardDrawer = ({ drawerOpen, onClose }) => {
     const token = localStorage.getItem('token');
     const screenWidth = useScreenWidth();
     const [menu, setMenu] = useState(menuList);
-    
+    const drawerRef = useRef(null);
+
     const isSmallScreen = screenWidth < 1000;
     const menuToRender = location.pathname === '/admin' ? AdminMenuList : menu;
-    
-    
+
+
     useLayoutEffect(() => {
         if (token) {
             setMenu(menuList);
@@ -23,10 +24,28 @@ const DashboardDrawer = ({ drawerOpen, onClose }) => {
         }
     }, [token]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        if (drawerOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [drawerOpen, onClose]);
+
 
     return (
         <div className={`${drawerOpen && !!isSmallScreen ? "customed-side-drawer-container-open" : "customed-side-drawer-container-close"}`}>
-            <div className="customed-side-drawer-box">
+            <div className="customed-side-drawer-box" ref={drawerRef}>
                 <div className='drawer-header-container'>
                     <h3>{location.pathname !== '/admin' ? 'Dashboard' : 'Admin Panel'}</h3>
                     <div>

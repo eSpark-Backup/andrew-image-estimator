@@ -1619,13 +1619,13 @@ select:disabled {
 
 
 
-/* DASHBOARD RESPONSIVENESS  */
+/* DASHBOARD RESPONSIVENESS STARTS  */
 .customed-side-drawer-container-close {
   position: absolute;
   top: 0;
   left: -400px;
   z-index: 2;
-  transition: right 0.5s ease;
+  transition: left 0.5s ease;
 }
 
 .customed-side-drawer-container-open {
@@ -1633,7 +1633,7 @@ select:disabled {
   top: 0;
   left: 0;
   z-index: 2;
-  transition: right 0.5s ease;
+  transition: left 0.5s ease;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -1682,6 +1682,16 @@ select:disabled {
   .esmitimation-list-item-name { 
     font-size: 14px;
   }
+
+  .search-bar-box {
+     gap: 0px;
+     height: 60px;
+  }
+
+  .search-bar-input {
+    font-size: 15px;
+  }
+
 }
 
 
@@ -1694,6 +1704,6 @@ select:disabled {
 .listing-view-container {
   display: none;
 }
-
-
 }
+
+/* DASHBOARD RESPONSIVENESS END  */
