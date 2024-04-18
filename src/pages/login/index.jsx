@@ -21,12 +21,12 @@ const Login = () => {
             <div className='signin-left-container-head'>
               <h2 className='center'>Welcome to  Image Estimator. Please Login</h2>
             </div>
-            <img src={signupPic} alt="Signup" style={{ width: "100%", height: "400px" }} />
+            <img src={signupPic} alt="Signup" />
           </motion.div>
 
           <div className="signin-right-container">
 
-            <h2 className='center typing-animation'>If you already have an account please login using your email & password.</h2>
+            <h2 className='center2 typing-animation'>If you already have an account please login using your email & password.</h2>
 
             <div className='signin-form-parent'>
               <SigninForm />
