@@ -1,6 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import { downloadFileFromDrive } from "../../algorithm";
 import Loader from "../loader/Loader";
+import { slideAnimation } from "../../constants";
+import { motion } from "framer-motion"
+import GIFModal from "../modal/GIFModal";
+import { areaGIF, objectGIF } from "../../assets";
 
 const Canvas = ({
   apiPolygons,
@@ -15,6 +19,17 @@ const Canvas = ({
   const canvasRef = useRef(null);
   const [src, setSrc] = useState("");
   const [loader, setLoader] = useState(false);
+  const [showGIFModal, setShowGIFModal] = useState(false);
+
+
+
+  useEffect(() => {
+    if (img) {
+      setShowGIFModal(true);
+    }
+  }, [img]);
+
+
   useEffect(() => {
     if (polygonArr) {
       let arr = [];
@@ -38,7 +53,7 @@ const Canvas = ({
       try {
         if (token !== "") {
           const data = await downloadFileFromDrive(img.split("/")[5], token);
-            setSrc(data?.url);
+          setSrc(data?.url);
           setLoader(false);
         }
       } catch (error) {
@@ -78,16 +93,16 @@ const Canvas = ({
     const drawPolygonsApi = () => {
       apiPolarr && apiPolarr.length > 0
         ? apiPolarr?.forEach(({ points }) => {
-            redrawCanvasLoop(points);
-          })
+          redrawCanvasLoop(points);
+        })
         : null;
     };
 
     const drawPolygons = () => {
       polygonArr && polygonArr.length > 0
         ? polygonArr?.forEach(({ new: newArr, points }) => {
-            if (!newArr) redrawCanvasLoop(points);
-          })
+          if (!newArr) redrawCanvasLoop(points);
+        })
         : null;
     };
 
@@ -141,7 +156,7 @@ const Canvas = ({
         const distance = Math.sqrt(
           (x - firstPoint.x) ** 2 + (y - firstPoint.y) ** 2
         );
-        if (distance < 5) {
+        if (distance < 10) {
           setPoints((prevDots) => [
             ...prevDots,
             { x: firstPoint.x, y: firstPoint.y },
@@ -190,7 +205,15 @@ const Canvas = ({
       context.fillStyle = "#39FF14";
       for (let i = 0; i < points.length; i++) {
         context.beginPath();
-        context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
+        if (i === 0) {
+          context.fillStyle = "#FFC107"
+          context.arc(points[i].x, points[i].y, 10, 0, 2 * Math.PI)
+        }
+        else {
+          context.fillStyle = "#39FF14"
+          context.arc(points[i].x, points[i].y, 4, 0, 2 * Math.PI);
+        }
+
         context.fill();
       }
     };
@@ -205,41 +228,34 @@ const Canvas = ({
 
   return (
     <>
-      <div className="details">
-        <p className="details-heading">
-          {polygonArr ? "Select the object" : "Select the area"}
-        </p>
-        {polygonArr ? (
-          <p className="details-desc">
-            Click on the object to set the starting point of your polygon.
-            Continue clicking at each corner or key point to outline the object
-            you want to get estimated. Ensure precision by placing points
-            accurately. If you make a mistake click on the Revert button undo
-            the last step. However Reset button will clear all points, allowing
-            you to begin anew.
-          </p>
-        ) : (
-          <p className="details-desc">
-            Click on the image to set the starting point of your polygon. For
-            clipping out the area, continue clicking at each corner or key point
-            to outline the area of interest. Ensure precision by placing points
-            accurately. If you make a mistake click on the Revert button undo
-            the last step. However Reset button will clear all points, allowing
-            you to begin anew.
-          </p>
-        )}
-      </div>
+      <motion.div {...slideAnimation("down")} className="details">
+      </motion.div>
 
       {loader ? (
         <Loader />
       ) : (
-        <canvas
-          ref={canvasRef}
-          width={cropImg.width}
-          height={cropImg.height}
-          style={{ cursor: "crosshair" }}
-        ></canvas>
+        <>
+          <div>
+            <canvas
+              className="image-area-tour"
+              ref={canvasRef}
+              width={cropImg.width}
+              height={cropImg.height}
+              style={{ cursor: "crosshair" }}
+            ></canvas>
+          </div>
+          <GIFModal
+            GIF={polygonArr ? objectGIF : areaGIF}
+            description={polygonArr
+              ? "Now Select the object you want to clip for your project."
+              : "Now Select the area of the image you want to clip for your project."}
+            modalIsOpen={showGIFModal}
+            closeModal={() => setShowGIFModal(false)}
+          />
+        </>
       )}
+
+
     </>
   );
 };

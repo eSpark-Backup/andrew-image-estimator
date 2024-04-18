@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { getDimention } from "../../algorithm";
+import { getImgDim } from "../../algorithm";
+import { slideAnimation } from "../../constants";
+import { motion } from "framer-motion"
+import GIFModal from "../modal/GIFModal";
+import { cropGIF } from "../../assets";
 
 export const ImageCropper = ({
   shapeDrawn,
@@ -14,8 +18,17 @@ export const ImageCropper = ({
   const [yColor, setYColor] = useState("#39FF14");
   const [isDrawing, setIsDrawing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [showGIFModal, setShowGIFModal] = useState(false);
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
+
+
+  useEffect(() => {
+    if (image && !focus) {
+      setShowGIFModal(true);
+    }
+  }, [!focus]);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -38,47 +51,13 @@ export const ImageCropper = ({
     if (image) {
       const context = canvasRef.current.getContext("2d");
       var canvas = context.canvas;
-      const scaleFactor = canvas.width / image.width; // Scale factor to fit image width to 700 pixels
-      const newHeight = image.height * scaleFactor; // Calculate new canvas height based on image aspect ratio
+      const { width, height } = getImgDim({ width: image.width, height: image.height }, form)
+      canvas.width = width;
+      canvas.height = height;
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
-      canvas.height = newHeight;
-      const { centerShift_x, centerShift_y, w, h } = getDimention(
-        canvas.width,
-        canvas.height,
-        image.width,
-        image.height
-      );
-      // context.clearRect(0, 0, canvas.width, canvas.height);
-      // context.drawImage(
-      //   image,
-      //   0,
-      //   0,
-      //   image.width,
-      //   image.height,
-      //   centerShift_x,
-      //   centerShift_y,
-      //   w,
-      //   h
-      // );
-      const aspectRatio = image.width / image.height;
-
-    // Calculate new canvas dimensions to fit within a 700x700 area
-    let canvasWidth, canvasHeight;
-    if (aspectRatio >= 1) { // Landscape or square image
-      canvasWidth = 700;
-      canvasHeight = canvasWidth / aspectRatio;
-    } else { // Portrait image
-      canvasHeight = 700;
-      canvasWidth = canvasHeight * aspectRatio;
-    }
-
-    // Set canvas dimensions
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the image onto the canvas
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      // Draw the image onto the canvas
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
       if (focus) {
         drawCropRectangle(context);
       } else {
@@ -276,7 +255,7 @@ export const ImageCropper = ({
           // const rect = canvasRef.current.getBoundingClientRect();
           // const scaleX = canvasRef.current.width / rect.width;
           // const scaleY = canvasRef.current.height / rect.height;
-      
+
           // const x = (clientX - rect.left) * scaleX;
           // const y = (clientY - rect.top) * scaleY;
           setCrop((prevCrop) => ({
@@ -360,23 +339,33 @@ export const ImageCropper = ({
 
   return (
     <>
-      {!focus && <div className="details">
-        <p className="details-heading">Crop</p>
+      {!focus && <motion.div {...slideAnimation("down")} className="details">
+        {/* <p className="details-heading">Crop</p>
         <p className="details-desc">
           Click and drag to create a crop box over your image. Resize and
           reposition the box to cover the portion you want to keep.
-        </p>
-      </div>}
-      <canvas
-        ref={canvasRef}
-        width={form.imageWidth}
-        height={form.imageHeight}
-        style={{
-          cursor: focus ? "pointer" : shapeDrawn ? "move" : "crosshair",
-        }}
-        onMouseDown={!focus && handleMouseDown}
-        onMouseMove={!focus && handleMouseMove}
-        onMouseUp={!focus && handleMouseUp}
+        </p> */}
+      </motion.div>}
+      <div>
+        <canvas
+          ref={canvasRef}
+          width={form.imageWidth}
+          height={form.imageHeight}
+          className="image-crop-tour"
+          style={{
+            cursor: focus ? "pointer" : shapeDrawn ? "move" : "crosshair",
+          }}
+          onMouseDown={!focus && handleMouseDown}
+          onMouseMove={!focus && handleMouseMove}
+          onMouseUp={!focus && handleMouseUp}
+        />
+      </div>
+
+      <GIFModal
+        GIF={cropGIF}
+        description={"Follow the steps to crop your image and create an estimation for your project."}
+        modalIsOpen={showGIFModal}
+        closeModal={() => setShowGIFModal(false)}
       />
     </>
   );

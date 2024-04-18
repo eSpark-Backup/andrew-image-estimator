@@ -10,6 +10,10 @@ import ConfirmModal from "../modal/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import { sendEmailApi } from "../../services/emailApi";
 import { usernameExtractfromEmail } from "../../utils";
+import { slideAnimation } from "../../constants";
+import { motion } from "framer-motion"
+import { dbRefResCollections } from "../../db";
+import { onSnapshot } from "firebase/firestore";
 
 const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const navigate = useNavigate();
@@ -19,21 +23,49 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   const token = window.localStorage.getItem("token");
   const loggedInUser = window.localStorage.getItem("user");
   const { name, email } = JSON.parse(loggedInUser) || {};
+  const [firebaseData, setFirebaseData] = useState([]);
+  const [detailsData, setDetailsData]= useState([]);
 
+  useEffect(() => {   
+    if (firebaseData.length > 0 && detailsData.length > 0) {
+      const updatedData = firebaseData.map((item) => {
+        const dash = item?.payload?.data?.find(i => i.label === "Total Price");
+        const CurrentEstimator = detailsData.find((detialsItem) => detialsItem?.total_price === dash?.totalPrice);
+        return { ...item, imageUrl: CurrentEstimator?.imageUrl };
+      });
 
-
+      setData(updatedData);
+    }
+  }, [firebaseData, detailsData]);
+  
   useEffect(() => {
     if (id) {
+        const subscribeToCollection = (collectionRefRes, fieldName) => {
+          return onSnapshot(collectionRefRes, (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              _id: doc.id,
+              ...doc.data(),
+            }));
+            setFirebaseData(data.filter((item) => item.payload.estimation_id == id) || []);
+          });
+        };
+    
+        const unsubscribeFunctions = subscribeToCollection(
+          dbRefResCollections?.ref,
+          dbRefResCollections?.name
+        );
       setLoading(true);
       getEstimationFromById(id)
         .then(async (res) => {
-          setData(res?.data);
           const promises = res.data.map(async (item) => {
             const { url } = await downloadFileFromDrive(item.image.split("/")[5], imageToken);
-            return { ...item, imageUrl: url }; // Assuming you want to add imageUrl to each object
+            return { ...item, imageUrl: url }; // Assuming you want to add imageUrl to each object 
+            // I want to add the image to table 
+           
+
           });
           const updatedData = await Promise.all(promises);
-          setData(updatedData);
+          setDetailsData(updatedData);
           setLoading(false);
         })
         .catch((err) => {
@@ -73,7 +105,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
   };
 
   return (
-    <div style={{ width: "100%",maxHeight:"80vh",overflowY:"scroll"}}>
+    <div style={{ width: "100%", height: "auto" }}>
       {loading ? (
         <Loader />
       ) : token ? (
@@ -81,7 +113,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
           data.map((item, index) => {
             return (
               <div
-                style={{ width: "100%" }}
+                style={{ width: "98%", height: "auto" }}
                 key={item.id}
                 className="image-dropdown"
               >
@@ -89,9 +121,9 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                   <div
                     style={{
                       height:
-                        data.length === 1 && !item?.fab_service
+                        data.length === 1 && !item?.payload?.fab_service
                           ? "590px"
-                          : item?.fab_service
+                          : item?.payload?.fab_service
                             ? "1635px"
                             : "590px",
                       borderRadius:
@@ -105,10 +137,10 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                     }}
                     className="img"
                   >
-                    <div className={index === 0 && "head"}>
+                    <motion.div {...slideAnimation("left")} className={index === 0 && "head"}>
                       <img
                         style={{
-                          width: "200px",
+                          width: "100%",
                           objectFit: "contain",
                         }}
                         // style={{
@@ -118,23 +150,25 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                         // }}
                         src={item?.imageUrl}
                       />
-                    </div>
+                    </motion.div>
                   </div>
                 }
-                <div style={{ width: "85%", padding: "20px 0"}}>
+                <div style={{ width: "85%", padding: "20px 0" }}>
                   {index === 0 && (
-                    <div className="details">
+                    <motion.div {...slideAnimation("down")} className="details">
                       <p className="details-heading">Estimations</p>
                       <p style={{ width: "auto" }} className="details-desc">
                         Here is the estimations of the object you have selected
                       </p>
-                    </div>
+                    </motion.div>
                   )}
-                  {item?.fab_service ? (
-                    <FabricationTable item={item} form={form} />
+                  <motion.div {...slideAnimation("up")}>
+                  {item?.payload?.fab_service ? (
+                    <FabricationTable  item={item.payload?.data} form={form} token={token} />
                   ) : (
-                    <NormalTable item={item} form={form} />
+                    <NormalTable item={item.payload?.data} form={form} token={token} />
                   )}
+                  </motion.div>
                 </div>
               </div>
             );
@@ -144,7 +178,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
         calArr.map((item, index) => {
           return (
             <div
-              style={{ width: "100%" }}
+              style={{ width: "100%", height: "auto" }}
               key={item.polygonsInd}
               className="image-dropdown"
             >
@@ -169,10 +203,10 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                   }}
                   className="img"
                 >
-                  <div className={index === 0 && "head"}>
+                  <motion.div {...slideAnimation("left")} className={index === 0 && "head"}>
                     <img
                       style={{
-                        width: "200px",
+                        width: "100%",
                         objectFit: "contain",
                       }}
                       // style={{
@@ -182,20 +216,22 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                       // }}
                       src={item?.imageToShow}
                     />
-                  </div>
+                  </motion.div>
                 </div>
               }
               <div style={{ width: "85%", padding: "20px 0" }}>
                 {index === 0 && (
-                  <div className="details">
+                  <motion.div {...slideAnimation("down")} className="details">
                     <p className="details-heading">Estimations</p>
                     <p style={{ width: "auto" }} className="details-desc">
                       Here is the estimations of the object you have selected
                     </p>
-                  </div>
+                  </motion.div>
                 )}
+                <motion.div {...slideAnimation("up")}>
                 {Object.keys(item).includes("dropdowns") ? (
                   <FabricationTable
+            
                     calculation={item?.calculation}
                     form={form}
                     dropdowns={item?.dropdowns}
@@ -208,6 +244,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                     token={token}
                   />
                 )}
+                </motion.div>
               </div>
             </div>
           );

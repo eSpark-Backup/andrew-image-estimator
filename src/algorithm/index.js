@@ -1,8 +1,12 @@
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import {
   createEstimationFromById,
   updateEstimationById,
 } from "../services/estimationsApi";
+import db from "../firebase"
+import { getLabels } from "../constants";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 export const getImgSrc = (img) => {
   const id = img?.split("/")[5];
@@ -391,6 +395,38 @@ export const handleCalculate = async (
       return item;
     });
   });
+  let payloadArr = [];
+  payloadArr.push({
+    label: "Wear Plate Area",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.size,
+  });
+  payloadArr.push({
+    label: "Wear Plate Weight",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.weight,
+  });
+  payloadArr.push({
+    label: "Plate Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.platePrice,
+  });
+  payloadArr.push({
+    label: "Total Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: object.platePrice,
+  });
+  const payload = {
+    estimation_id: Number(id),
+    fab_service: form.fabricator ? true : false,
+    data: payloadArr,
+  };
+  const collectionRefDetailsForm = collection(db, "result");
+  const clientRef = doc(collectionRefDetailsForm);
   setPolygonInd(polygonsInd + 1);
   if (!form.fabricator || form?.fabricator === "false") {
     try {
@@ -418,13 +454,16 @@ export const handleCalculate = async (
       formData.append("roll_bends", 0);
       formData.append("abrasion_type", "");
       formData.append("deliver_site_date", "2000-10-10");
-      formData.append("total_price", 0);
+      formData.append("total_price", object?.platePrice);
       if (id) {
         setLoader(true);
         const data = {
           polygons: JSON.stringify(polygons),
         };
         try {
+          await setDoc(clientRef, {
+            payload,
+          });
           await updateEstimationById(id, data);
           await createEstimationFromById(formData);
           setNext(10);
@@ -471,11 +510,82 @@ export const calculateFabrication = async (
   }
   const polygons = {
     ...apiPolygons,
-    [`poly${newPol}`]: polygonArr[polygonsInd]?.points?.map((item) => ({
+    [`poly${newPol}`]: polygonArr[polygonsInd - 1]?.points?.map((item) => ({
       x1: item.x,
       y1: item.y,
     })),
   };
+
+  let payloadArr = [];
+  payloadArr.push({
+    label: "Wear Plate Area",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: calculation.size,
+  });
+  payloadArr.push({
+    label: "Wear Plate Weight",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: calculation.weight,
+  });
+  payloadArr.push({
+    label: "Plate Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice: calculation.platePrice,
+  });
+  Object.entries(dropdowns).map(([key, value], index) => {
+    if (key !== "fabricator") {
+      if (typeof value === "object") {
+        if (key === "perimeterWelding") {
+          payloadArr.push({
+            label: getLabels[key],
+            selectedOption: value.value,
+            price: 0.2,
+            totalPrice: value.value ? Number(calculation.weight) * 0.2 : 0,
+          });
+        } else if (key === "stitchWelding") {
+          payloadArr.push({
+            label: getLabels[key],
+            selectedOption: value.value,
+            price: 0.3,
+            totalPrice: value.value ? Number(calculation.weight) * 0.3 : 0,
+          });
+        } else if (key === "deliveryDate") {
+          payloadArr.push({ label: getLabels[key], selectedOption: value.label });
+        } else {
+          payloadArr.push({
+            label: getLabels[key],
+            selectedOption: value.label,
+            price: value.value,
+          });
+        }
+      } else {
+        payloadArr.push({ label: getLabels[key], selectedOption: value });
+      }
+    }
+  });
+  payloadArr.push({
+    label: "Total Price",
+    selectedOption: "-",
+    price: "-",
+    totalPrice:
+      Number(calculation.platePrice) +
+      (dropdowns.perimeterWelding ? Number(calculation.weight) * 0.2 : 0) +
+      (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
+      Number(dropdowns.fastening.label) * Number(dropdowns.fastening.value) +
+      Number(dropdowns.brakeBends.label) * Number(dropdowns.brakeBends.value) +
+      Number(dropdowns.rolledBends.label) *
+        Number(dropdowns.rolledBends.value) +
+      Number(dropdowns.sunkBoltsHoles.label) *
+        Number(dropdowns.sunkBoltsHoles.value),
+  });
+  const payload = {
+    estimation_id : Number(id),
+    fab_service : form.fabricator ? true : false,
+    data : payloadArr
+  }
   setCalculation((prev) => ({
     ...prev,
     perimeterWelding: dropdowns.perimeterWelding
@@ -484,18 +594,25 @@ export const calculateFabrication = async (
     stitchWelding: dropdowns.stitchWelding
       ? Number(calculation.weight) * 0.3
       : 0,
-    fastening: Number(dropdowns.fastening) * 1.5,
-    brakeBends: Number(dropdowns.brakeBends) * 0.6,
-    rolledBends: Number(dropdowns.rolledBends) * 0.6,
-    sunkBoltsHoles: Number(dropdowns.sunkBoltsHoles) * 0.35,
+    fastening:
+      Number(dropdowns.fastening.label) * Number(dropdowns.fastening.value),
+    brakeBends:
+      Number(dropdowns.brakeBends.label) * Number(dropdowns.brakeBends.value),
+    rolledBends:
+      Number(dropdowns.rolledBends.label) * Number(dropdowns.rolledBends.value),
+    sunkBoltsHoles:
+      Number(dropdowns.sunkBoltsHoles.label) *
+      Number(dropdowns.sunkBoltsHoles.value),
     totalPrice:
       Number(calculation.platePrice) +
       (dropdowns.perimeterWelding ? Number(calculation.weight) * 0.2 : 0) +
       (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
-      Number(dropdowns.fastening) * 1.5 +
-      Number(dropdowns.brakeBends) * 0.6 +
-      Number(dropdowns.rolledBends) * 0.6 +
-      Number(dropdowns.sunkBoltsHoles) * 0.35,
+      Number(dropdowns.fastening.label) * Number(dropdowns.fastening.value) +
+      Number(dropdowns.brakeBends.label) * Number(dropdowns.brakeBends.value) +
+      Number(dropdowns.rolledBends.label) *
+        Number(dropdowns.rolledBends.value) +
+      Number(dropdowns.sunkBoltsHoles.label) *
+        Number(dropdowns.sunkBoltsHoles.value),
   }));
   setCalArr((prevCalArray) => {
     return prevCalArray.map((item) => {
@@ -511,26 +628,40 @@ export const calculateFabrication = async (
             stitchWelding: dropdowns.stitchWelding
               ? Number(calculation.weight) * 0.3
               : 0,
-            fastening: Number(dropdowns.fastening) * 1.5,
-            brakeBends: Number(dropdowns.brakeBends) * 0.6,
-            rolledBends: Number(dropdowns.rolledBends) * 0.6,
-            sunkBoltsHoles: Number(dropdowns.sunkBoltsHoles) * 0.35,
+            fastening:
+              Number(dropdowns.fastening.label) *
+              Number(dropdowns.fastening.value),
+            brakeBends:
+              Number(dropdowns.brakeBends.label) *
+              Number(dropdowns.brakeBends.value),
+            rolledBends:
+              Number(dropdowns.rolledBends.label) *
+              Number(dropdowns.rolledBends.value),
+            sunkBoltsHoles:
+              Number(dropdowns.sunkBoltsHoles.label) *
+              Number(dropdowns.sunkBoltsHoles.value),
             totalPrice:
               Number(calculation.platePrice) +
               (dropdowns.perimeterWelding
                 ? Number(calculation.weight) * 0.2
                 : 0) +
               (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
-              Number(dropdowns.fastening) * 1.5 +
-              Number(dropdowns.brakeBends) * 0.6 +
-              Number(dropdowns.rolledBends) * 0.6 +
-              Number(dropdowns.sunkBoltsHoles) * 0.35,
+              Number(dropdowns.fastening.label) *
+                Number(dropdowns.fastening.value) +
+              Number(dropdowns.brakeBends.label) *
+                Number(dropdowns.brakeBends.value) +
+              Number(dropdowns.rolledBends.label) *
+                Number(dropdowns.rolledBends.value) +
+              Number(dropdowns.sunkBoltsHoles.label) *
+                Number(dropdowns.sunkBoltsHoles.value),
           },
         };
       }
       return item;
     });
   });
+  const collectionRefDetailsForm = collection(db, "result");
+  const clientRef = doc(collectionRefDetailsForm);
   try {
     const calDetail = calArr.find(
       (item) => item?.polygonsInd === polygonsInd - 1
@@ -552,36 +683,36 @@ export const calculateFabrication = async (
       calDetail?.calculation?.platePrice.toFixed(2)
     );
     formData.append("fab_service", form.fabricator ? "True" : "False");
-    formData.append("wear_plate_type_est", dropdowns.plateTypeUsed);
-    formData.append("wear_plate_type_curr", dropdowns.plateType);
+    formData.append("wear_plate_type_est", dropdowns.plateTypeUsed.label);
+    formData.append("wear_plate_type_curr", dropdowns.plateType.label);
     formData.append(
       "stich_welding",
-      dropdowns.stitchWelding ? "True" : "False"
+      dropdowns.stitchWelding.value ? "True" : "False"
     );
     formData.append(
       "press_break_bends",
-      dropdowns.brakeBends !== "" ? dropdowns.brakeBends : 0
+      dropdowns.brakeBends.label !== "" ? dropdowns.brakeBends.label : 0
     );
     formData.append(
       "bolt_holes",
-      dropdowns.sunkBoltsHoles !== "" ? dropdowns.sunkBoltsHoles : 0
+      dropdowns.sunkBoltsHoles.label !== "" ? dropdowns.sunkBoltsHoles.label : 0
     );
-    formData.append("impact_type", dropdowns.impactType);
+    formData.append("impact_type", dropdowns.impactType.label);
     formData.append("zip_code", dropdowns.zipCode);
-    formData.append("est_delivery_date", dropdowns.deliveryDate);
+    formData.append("est_delivery_date", dropdowns.deliveryDate.label);
     formData.append(
       "perimeter_welding",
-      dropdowns.perimeterWelding ? "True" : "False"
+      dropdowns.perimeterWelding.value ? "True" : "False"
     );
     formData.append(
       "fasten_use_studs",
-      dropdowns.fastening !== "" ? dropdowns.fastening : 0
+      dropdowns.fastening.label !== "" ? dropdowns.fastening.label : 0
     );
     formData.append(
       "roll_bends",
-      dropdowns.rolledBends !== "" ? dropdowns.rolledBends : 0
+      dropdowns.rolledBends.label !== "" ? dropdowns.rolledBends.label : 0
     );
-    formData.append("abrasion_type", dropdowns.abrasionType);
+    formData.append("abrasion_type", dropdowns.abrasionType.label);
     formData.append("deliver_site_date", dropdowns.dtsDate || "2000-12-12");
     formData.append(
       "total_price",
@@ -591,10 +722,14 @@ export const calculateFabrication = async (
               ? Number(calculation.weight) * 0.2
               : 0) +
             (dropdowns.stitchWelding ? Number(calculation.weight) * 0.3 : 0) +
-            Number(dropdowns.fastening) * 1.5 +
-            Number(dropdowns.brakeBends) * 0.6 +
-            Number(dropdowns.rolledBends) * 0.6 +
-            Number(dropdowns.sunkBoltsHoles) * 0.35
+            Number(dropdowns.fastening.label) *
+              Number(dropdowns.fastening.value) +
+            Number(dropdowns.brakeBends.label) *
+              Number(dropdowns.brakeBends.value) +
+            Number(dropdowns.rolledBends.label) *
+              Number(dropdowns.rolledBends.value) +
+            Number(dropdowns.sunkBoltsHoles.label) *
+              Number(dropdowns.sunkBoltsHoles.value)
         : 0
     );
     if (id) {
@@ -603,6 +738,9 @@ export const calculateFabrication = async (
         polygons: JSON.stringify(polygons),
       };
       try {
+      await setDoc(clientRef, {
+        payload,
+      });
         await updateEstimationById(id, data);
         await createEstimationFromById(formData);
         setNext(10);
@@ -664,4 +802,34 @@ export const formatDate = (dateString) => {
     .slice(-2)}`;
 
   return formattedDate;
+};
+
+export const getImgDim = (imageSize, form) => {
+  const aspectRatio = imageSize.width / imageSize.height;
+
+  let width, height;
+  if (aspectRatio >= 1) {
+    width = form.imageWidth;
+    height = Math.min(width / aspectRatio, form.imageHeight);
+  } else {
+    height = form.imageHeight;
+    width = Math.min(height * aspectRatio, form.imageWidth);
+  }
+  return { width, height }
+}
+
+export const useOutsideClick = (ref, callback) => {
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [ref, callback]);
 };

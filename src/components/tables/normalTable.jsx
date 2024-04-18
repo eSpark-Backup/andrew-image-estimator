@@ -1,4 +1,5 @@
 const NormalTable = ({ item, form, calculation, token }) => {
+  console.log(calculation, "calculation");
   return (
     <>
       {token ? (
@@ -49,10 +50,10 @@ const NormalTable = ({ item, form, calculation, token }) => {
               <li className="table-row">
                 <div className="col col-1">Weight</div>
                 <div className="col col-2">
-                  {Number(calculation?.weight).toFixed(2)} Lbs
+                  {Number(calculation?.weight).toFixed(4)} Lbs
                 </div>
               </li>
-              <li className="table-row">
+              <li className="table-footer">
                 <div className="col col-1">Total Price</div>
                 <div className="col col-2">
                   $ {Number(calculation.platePrice).toFixed(2)}

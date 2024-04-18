@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
   Canvas,
   ImageRenderer,
@@ -9,22 +9,23 @@ import {
   Result,
   FabForm,
   TopButtons,
-} from "../../components";
-import {
-  downloadFileFromDrive,
-  getErrors,
-} from "../../algorithm";
-import axios from "axios";
-import { handleCropApi, handleCutoutApi } from "../../services/cropingApi";
-import { toast } from "react-toastify";
+} from '../../components';
+import { downloadFileFromDrive, getErrors } from '../../algorithm';
+import axios from 'axios';
+import { handleCropApi, handleCutoutApi } from '../../services/cropingApi';
+import { toast } from 'react-toastify';
 import {
   getEstimationById,
   updateEstimationById,
-} from "../../services/estimationsApi";
-import { useSearchParams } from "react-router-dom";
-import Loader from "../../components/loader/Loader";
+} from '../../services/estimationsApi';
+import { useSearchParams } from 'react-router-dom';
+import Loader from '../../components/loader/Loader';
+import { motion } from 'framer-motion';
+import { fadeAnimation, slideAnimation } from '../../constants';
 
 function Elementor() {
+  const [currentFieldIndex, setCurrentFieldIndex] = useState(null);
+  const [currentFieldName, setCurrentFieldName] = useState(null);
   const [screenLoader, setScreenLoader] = useState(false);
   const [loader, setLoader] = useState(false);
   const [imagetoShow, setImagetoShow] = useState(null);
@@ -44,64 +45,64 @@ function Elementor() {
   const [apiPolygons, setApiPolygons] = useState({});
   const [modal, setModal] = useState(false);
   const [cutImg, setCutImg] = useState({
-    width: "",
-    height: "",
+    width: '',
+    height: '',
   });
   const [insideCutImg, setInsideCutImg] = useState({
-    width: "",
-    height: "",
+    width: '',
+    height: '',
   });
   const [cropImg, setCropImg] = useState({
-    width: "",
-    height: "",
+    width: '',
+    height: '',
   });
   const [form, setForm] = useState({
     imageWidth: 700,
-    imageHeight: 700,
+    imageHeight: 350,
     image: null,
-    unit: "",
-    length: "",
-    width: "",
+    unit: '',
+    length: '',
+    width: '',
     thickness: 5,
     density: 7.85,
-    fabricator: "",
+    fabricator: '',
   });
   const [dropdowns, setDropdowns] = useState({
     perimeterWelding: false,
     stitchWelding: false,
-    fastening: "",
-    brakeBends: "",
-    rolledBends: "",
-    sunkBoltsHoles: "",
-    plateType: "",
-    deliveryDate: "",
-    plateTypeUsed: "",
-    abrasionType: "",
-    impactType: "",
-    dtsDate: "",
-    zipCode: "",
+    fastening: '',
+    brakeBends: '',
+    rolledBends: '',
+    sunkBoltsHoles: '',
+    plateType: '',
+    deliveryDate: '',
+    plateTypeUsed: '',
+    abrasionType: '',
+    impactType: '',
+    dtsDate: '',
+    zipCode: '',
   });
   const [calculation, setCalculation] = useState({
-    weight: "",
-    size: "",
-    platePrice: "",
-    perimeterWelding: "",
-    stitchWelding: "",
-    fastening: "",
-    brakeBends: "",
-    rolledBends: "",
-    sunkBoltsHoles: "",
-    totalPrice: "",
-    plateType: "",
-    deliveryDate: "",
-    plateTypeUsed: "",
-    abrasionType: "",
-    impactType: "",
+    weight: '',
+    size: '',
+    platePrice: '',
+    perimeterWelding: '',
+    stitchWelding: '',
+    fastening: '',
+    brakeBends: '',
+    rolledBends: '',
+    sunkBoltsHoles: '',
+    totalPrice: '',
+    plateType: '',
+    deliveryDate: '',
+    plateTypeUsed: '',
+    abrasionType: '',
+    impactType: '',
   });
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
 
   const [searchParams] = useSearchParams();
-  const id = searchParams.get("id");
+  const id = searchParams.get('id');
 
   //fetching current estimation
   const fetchCurrentEstimation = () => {
@@ -109,7 +110,7 @@ function Elementor() {
       setScreenLoader(true);
       getEstimationById(id)
         .then((res) => {
-          if (res?.data?.image !== "") {
+          if (res?.data?.image !== '') {
             setNext(6);
             setForm({
               ...form,
@@ -140,11 +141,19 @@ function Elementor() {
   }, [id]);
 
   //handle dropdowns function
-  const handleDropdowns = (name, value) => {
+  const handleDropdowns = (name, value, type) => {
+    console.log({ name, value, type });
     setDropdowns({
       ...dropdowns,
       [name]: value,
     });
+    if (type === 'number') {
+      if (value.length > 4) {
+        setCurrentFieldIndex((ps) => ps + 1);
+      }
+    } else {
+      setCurrentFieldIndex((ps) => ps + 1);
+    }
   };
 
   //handle inputs function
@@ -173,6 +182,7 @@ function Elementor() {
       image: null,
     });
     setCanvasImage(null);
+    setImagetoShow(null);
   };
 
   //image ref to get image actual dimention
@@ -194,7 +204,7 @@ function Elementor() {
       })
       .catch((err) => {
         setLoader(false);
-        toast.error("Something went wrong!");
+        toast.error('Something went wrong!');
       });
   };
 
@@ -206,7 +216,7 @@ function Elementor() {
         points,
         croppedImage,
         cropImg,
-        "cutout.png",
+        'cutout.png',
         token
       );
       setToken(res?.data?.g_api);
@@ -214,27 +224,27 @@ function Elementor() {
         width: res?.data?.image_width / 2,
         height: res?.data?.image_height / 2,
       });
-      setChildCroppedImage(res?.data?.image_url);
       // setNext(6);
       if (id) {
         const { url, fileData } = await downloadFileFromDrive(
-          res?.data?.image_url.split("/")[5],
+          res?.data?.image_url.split('/')[5],
           token
         );
         let formData = new FormData();
-        formData.append("image", fileData);
-        formData.append("length", form.width);
-        formData.append("height", form.length);
-        formData.append("measuring_unit", form.unit);
-        formData.append("px_height", res?.data?.image_height / 2);
-        formData.append("px_length", res?.data?.image_width / 2);
+        formData.append('image', fileData);
+        formData.append('length', form.width);
+        formData.append('height', form.length);
+        formData.append('measuring_unit', form.unit);
+        formData.append('px_height', res?.data?.image_height / 2);
+        formData.append('px_length', res?.data?.image_width / 2);
         const updateRes = await updateEstimationById(id, formData);
       }
+      setChildCroppedImage(res?.data?.image_url);
       setNext(6);
       setLoader(false);
     } catch (err) {
       setLoader(false);
-      toast.error("Something went wrong!");
+      toast.error('Something went wrong!');
     }
   };
 
@@ -255,10 +265,12 @@ function Elementor() {
         width: res?.data?.image_width / 2,
         height: res?.data?.image_height / 2,
       });
-      const { url } = await downloadFileFromDrive(res?.data?.image_url.split("/")[5], token);
-      setInsideChildCroppedImage(res?.data?.image_url);
+      const { url } = await downloadFileFromDrive(
+        res?.data?.image_url.split('/')[5],
+        token
+      );
       setPolygonImgToShow(url);
-  
+
       //arr
       const tempObj = {
         polygonsInd,
@@ -270,14 +282,15 @@ function Elementor() {
         },
       };
       setCalArr((prevArr) => [...prevArr, tempObj]);
+      setInsideChildCroppedImage(res?.data?.image_url);
       setNext(7);
       setLoader(false);
     } catch (err) {
       setLoader(false);
-      toast.error("Something went wrong!");
+      toast.error('Something went wrong!');
     }
   };
-  
+
   // const handleInsideCutout = async () => {
   //   setLoader(true);
   //   handleCutoutApi(
@@ -352,19 +365,28 @@ function Elementor() {
   //reverting with ctrl + z
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.ctrlKey && (event.key === "z" || event.key === "Z")) {
+      if (event.ctrlKey && (event.key === 'z' || event.key === 'Z')) {
         if (next === 5) {
           handleRevert();
         } else if (next === 6) {
           handleRevertChild();
         }
       }
+      if (event.ctrlKey && (event.key === 'x' || event.key === 'X')) {
+        if (next === 5) {
+          handleReset();
+        } else if (next === 6) {
+          handleResetChild();
+        } else if (next === 2) {
+          resetShape();
+        }
+      }
     };
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [points, childPoints]);
+  }, [points, childPoints, crop]);
 
   return (
     <section className="container1">
@@ -372,12 +394,12 @@ function Elementor() {
         next={next}
         active={
           next === 1
-            ? "select"
+            ? 'select'
             : next === 3
-            ? "height"
+            ? 'height'
             : next === 4
-            ? "length"
-            : ""
+            ? 'length'
+            : ''
         }
         form={form}
         handleChange={handleChange}
@@ -387,7 +409,7 @@ function Elementor() {
         <div
           className={`
          
-           ${(next > 4 || next === 2) && "top"}  ${next > 9 && "py-0"}
+           ${(next > 4 || next === 2) && 'top'}  ${next > 9 && 'p-0'}
            card`}
         >
           {screenLoader ? (
@@ -409,24 +431,30 @@ function Elementor() {
                 handleRevertChild={handleRevertChild}
               />
               {next === 0 ? (
-                <ImageRenderer
-                  form={form}
-                  image={imagetoShow}
-                  handleChange={handleChange}
-                  setCanvasImage={setCanvasImage}
-                  setImagetoShow={setImagetoShow}
-                  next={next}
-                />
-              ) : next === 1 ? (
                 <div>
                   <ImageRenderer
                     form={form}
+                    imgRef={imgRef}
                     image={imagetoShow}
                     handleChange={handleChange}
                     setCanvasImage={setCanvasImage}
                     setImagetoShow={setImagetoShow}
                     next={next}
                   />
+                </div>
+              ) : next === 1 ? (
+                <div>
+                  <div>
+                    <ImageRenderer
+                      form={form}
+                      imgRef={imgRef}
+                      image={imagetoShow}
+                      handleChange={handleChange}
+                      setCanvasImage={setCanvasImage}
+                      setImagetoShow={setImagetoShow}
+                      next={next}
+                    />
+                  </div>
                 </div>
               ) : next === 2 ? (
                 <ImageCropper
@@ -444,7 +472,7 @@ function Elementor() {
               ) : next === 3 ? (
                 <div>
                   <ImageCropper
-                    focus={"length"}
+                    focus={'length'}
                     form={form}
                     crop={crop}
                     setCrop={setCrop}
@@ -458,7 +486,7 @@ function Elementor() {
               ) : next === 4 ? (
                 <div>
                   <ImageCropper
-                    focus={"height"}
+                    focus={'height'}
                     form={form}
                     crop={crop}
                     setCrop={setCrop}
@@ -495,18 +523,21 @@ function Elementor() {
               ) : next === 7 ? (
                 <div>
                   {insideChildCroppedImage && (
-                    <div className="fab-container">
+                    <motion.div
+                      {...slideAnimation('down')}
+                      className="fab-container"
+                    >
                       <p className="details-heading">For your object</p>
                       <p className="details-desc">
                         Do you want fabrication services?
                       </p>
-                      <div style={{ width: "350px" }}>
+                      <div style={{ width: '350px' }}>
                         <SelectInput
                           name="fabricator"
                           value={form.fabricator}
                           options={[
-                            { label: "No", value: false },
-                            { label: "Yes", value: true },
+                            { label: 'No', value: false },
+                            { label: 'Yes', value: true },
                           ]}
                           placeholder="Select"
                           handleChange={handleChange}
@@ -520,7 +551,7 @@ function Elementor() {
                         }}
                         src={polygonImgToShow}
                       />
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               ) : next === 8 ? (
@@ -530,8 +561,8 @@ function Elementor() {
                     value={form.fabricator}
                     label="Do you want fabrication services"
                     options={[
-                      { label: "No", value: false },
-                      { label: "Yes", value: true },
+                      { label: 'No', value: false },
+                      { label: 'Yes', value: true },
                     ]}
                     placeholder="Select"
                     handleChange={handleChange}
@@ -545,6 +576,10 @@ function Elementor() {
                   handleDropdowns={handleDropdowns}
                   form={form}
                   handleChange={handleChange}
+                  setCurrentFieldIndex={setCurrentFieldIndex}
+                  currentFieldIndex={currentFieldIndex}
+                  setCurrentFieldName={setCurrentFieldName}
+                  currentFieldName={currentFieldName}
                 />
               ) : (
                 <Result
@@ -595,7 +630,7 @@ function Elementor() {
         {imagetoShow && (
           <img
             ref={imgRef}
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             src={imagetoShow}
             alt="img"
           />

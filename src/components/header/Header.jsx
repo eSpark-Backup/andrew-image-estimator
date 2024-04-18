@@ -1,40 +1,108 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import ModalComponent from '../modal/Modal'
-import { logout } from '../../services/authApi'
-import ConfirmModal from '../modal/ConfirmModal'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ModalComponent from '../modal/Modal';
+import { logout } from '../../services/authApi';
+import ConfirmModal from '../modal/ConfirmModal';
+import { hamburger, close } from '../../assets';
 
 const Header = () => {
-    const navigate = useNavigate()
-    const token = window?.localStorage.getItem("token")
-    const [isLogoutModalOpen, setLogoutModalOpen] = useState(false)
-    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
-    return (
-        <>
-            <div className='header'>
-                <h2 style={{ color: "white" }} onClick={() => setIsSuccessModalOpen(true)}>Logo</h2>
-                {!token ? <div className='header-links'>
-                    <h2 style={{ color: "white" }}><span onClick={() => navigate("/sign-up")} style={{ cursor: "pointer" }}>Signup</span> | <span onClick={() => navigate("/login")} style={{ cursor: "pointer" }}>Login</span></h2>
-                </div> : <div className='header-links'>
-                    <h2 style={{ color: "white" }}><span style={{ cursor: "pointer" }} onClick={() => setLogoutModalOpen(true)}>Logout</span></h2>
-                </div>}
+  const navigate = useNavigate();
+  const token = window?.localStorage.getItem('token');
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const user = JSON.parse(localStorage.getItem('user')) || null;
+  const InAdmin = location.pathname === '/admin';
+  const [showLinks, setShowLinks] = useState(false)
 
-            </div>
-            <ModalComponent
-                heading={"Logout"}
-                description={"Are you sure you want to logout?"}
-                btn1Text={"Cancel"}
-                btn2Text={"Logout"}
-                closeModal={() => setLogoutModalOpen(false)}
-                modalIsOpen={isLogoutModalOpen}
-                onSuccess={() => {
-                    logout()
-                    setLogoutModalOpen(false)
-                }}
-            />
-            <ConfirmModal modalIsOpen={isSuccessModalOpen} closeModal={() => setIsSuccessModalOpen(false)} />
-        </>
-    )
-}
+  const NavigatorHandler = (data) => {
+    if (data === "logout") {
+      setLogoutModalOpen(true)
+      setShowLinks(false)
+    }
+    else {
+      navigate(data)
+    }
+  }
 
-export default Header
+  return (
+    <>
+      <div className="header">
+        <h2 style={{ color: '#000' }}>Logo</h2>
+        <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={() => setShowLinks(!showLinks)} />
+        {!token ? (
+          <div className="header-links">
+            <button
+              style={{ width: '180px' }}
+              onClick={() => navigate(!InAdmin ? '/admin' : '/')}
+            >
+              {!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}
+            </button>
+            <button onClick={() => navigate('/sign-up')}>Signup</button>
+            <button onClick={() => navigate('/login')}>Login</button>
+          </div>
+        ) : (
+          <div className="header-links">
+            {/* {user?.role === 'admin' && (
+              <button
+                style={{ width: '180px' }}
+                onClick={() => navigate(!InAdmin ? '/admin' : '/')}
+              >
+                {!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}
+              </button>
+             )}  */}
+
+            {/* // Code added to show button of admin panel for testing 👇 */}
+            <button
+              style={{ width: '180px' }}
+              onClick={() => navigate(!InAdmin ? '/admin' : '/')}
+            >
+              {!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}
+            </button>
+            <button onClick={() => setLogoutModalOpen(true)}>Logout</button>
+          </div>
+        )}
+      </div>
+      <div className={`mobile-links ${showLinks ? "show-links" : ""}`}>
+        <h2 onClick={
+          // () => navigate(!InAdmin ? '/admin' : '/')
+          ()=>NavigatorHandler(!InAdmin ? "/admin" : "/")
+        }>{!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}</h2>
+
+        {!token ? (<>
+          <h2 onClick={
+            // () => navigate('/sign-up')
+            ()=>NavigatorHandler('/sign-up')
+          }>Signup</h2>
+          <h2 onClick={
+            // () => navigate('/login')
+            ()=>NavigatorHandler('/login')
+          }>Login</h2>
+        </>) : (<>
+          <h2 onClick={
+            // () => setLogoutModalOpen(true)
+            ()=>NavigatorHandler("logout")
+          }>Logout</h2>
+        </>)}
+      </div>
+      <ModalComponent
+        heading={'Logout'}
+        description={'Are you sure you want to logout?'}
+        btn1Text={'Cancel'}
+        btn2Text={'Logout'}
+        closeModal={() => setLogoutModalOpen(false)}
+        modalIsOpen={isLogoutModalOpen}
+        onSuccess={() => {
+          // navigate("/")
+          logout();
+          setLogoutModalOpen(false);
+        }}
+      />
+      <ConfirmModal
+        modalIsOpen={isSuccessModalOpen}
+        closeModal={() => setIsSuccessModalOpen(false)}
+      />
+    </>
+  );
+};
+
+export default Header;
