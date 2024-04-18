@@ -536,32 +536,34 @@ export const calculateFabrication = async (
     totalPrice: calculation.platePrice,
   });
   Object.entries(dropdowns).map(([key, value], index) => {
-    if (typeof value === "object") {
-      if (key === "perimeterWelding") {
-        payloadArr.push({
-          label: getLabels[key],
-          selectedOption: value.value,
-          price: 0.2,
-          totalPrice: value.value ? Number(calculation.weight) * 0.2 : 0,
-        });
-      } else if (key === "stitchWelding") {
-        payloadArr.push({
-          label: getLabels[key],
-          selectedOption: value.value,
-          price: 0.3,
-          totalPrice: value.value ? Number(calculation.weight) * 0.3 : 0,
-        });
-      } else if (key === "deliveryDate") {
-        payloadArr.push({ label: getLabels[key], selectedOption: value.label });
+    if (key !== "fabricator") {
+      if (typeof value === "object") {
+        if (key === "perimeterWelding") {
+          payloadArr.push({
+            label: getLabels[key],
+            selectedOption: value.value,
+            price: 0.2,
+            totalPrice: value.value ? Number(calculation.weight) * 0.2 : 0,
+          });
+        } else if (key === "stitchWelding") {
+          payloadArr.push({
+            label: getLabels[key],
+            selectedOption: value.value,
+            price: 0.3,
+            totalPrice: value.value ? Number(calculation.weight) * 0.3 : 0,
+          });
+        } else if (key === "deliveryDate") {
+          payloadArr.push({ label: getLabels[key], selectedOption: value.label });
+        } else {
+          payloadArr.push({
+            label: getLabels[key],
+            selectedOption: value.label,
+            price: value.value,
+          });
+        }
       } else {
-        payloadArr.push({
-          label: getLabels[key],
-          selectedOption: value.label,
-          price: value.value,
-        });
+        payloadArr.push({ label: getLabels[key], selectedOption: value });
       }
-    } else {
-      payloadArr.push({ label: getLabels[key], selectedOption: value });
     }
   });
   payloadArr.push({

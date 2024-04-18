@@ -216,13 +216,13 @@ export const inputAnimation = (type) => {
 }
 
 export const GIFModalStyle = {
-    width: '450px',
-    height: '350px',
+    width: '600px',
+    height: '430px',
     padding: '20px',
 }
 
 
-export const ADMIN_DETAILS_ENUMS  = {
+export const ADMIN_DETAILS_ENUMS = {
     PLATE_TYPE: "plateType",
     CURRENT_PLATE_TYPE: "currentPlateType",
     ABRASION_TYPE: "abrasionType",
@@ -234,7 +234,7 @@ export const ADMIN_DETAILS_ENUMS  = {
     ESTIMATED_DELIVERY_DATE: "estimatedDeliveryDate"
 }
 
-export const getLabels  = {
+export const getLabels = {
     perimeterWelding: "Perimeter Welding",
     stitchWelding: "Stitch Welding",
     dtsDate: "Delivery to Site Date",

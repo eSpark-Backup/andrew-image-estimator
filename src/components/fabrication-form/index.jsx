@@ -206,52 +206,72 @@ const FabForm = ({
               </p>
             </motion.div>
             <div
-              style={{
-                width: '100%',
-                maxHeight: 'calc(100% - 100px)',
-                // minhe: "200px",
-                display: 'flex',
-                justifyContent: 'center',
-                overflowY: 'auto',
-              }}
+            className='input-parent'
+              // style={{
+              //   width: '100%',
+              //   maxHeight: 'calc(100% - 100px)',
+              //   // minhe: "200px",
+              //   display: 'flex',
+              //   justifyContent: 'center',
+              //   overflowY: 'auto',
+              //   padding:"50px 0px"
+              // }}
             >
-              <div style={{ width: '80%' }} className="dropdown">
+              <div className="dropdown">
                 {fields?.map((item, index) => {
                   return (
                     //  <div style={{ width: "calc(100% - 60px)" }} key={item.id}>
                     // <p style={{ marginBottom: "5px" }}>{item.label}:</p>
                     // <motion.div {...slideAnimation("up")}>
                     <motion.div {...slideAnimation('up')}>
-                      <SelectInput
-                        autoOpen
-                        isForm
-                        customizer
-                        name={item.name}
-                        value={dropdowns[item.name]}
-                        label={item.label}
-                        // blinking={index === currentFieldIndex}
-                        // disabled={index > currentFieldIndex}
-                        setCurrentFieldName={setCurrentFieldName}
-                        options={
-                          item.options ||
-                          generateArray(item.min, item.max).map((i) => {
-                            if (
-                              item.label === 'Estimated Delivery Date in Weeks'
-                            ) {
-                              return {
-                                label: `${i} ${i === 1 ? 'week' : 'weeks'}`,
-                                value: i,
-                              };
-                            } else {
-                              return { label: i, value: item.multiplier };
-                            }
-                          })
-                        }
-                        placeholder={
-                          item?.placeholder || `Select ${item?.label}`
-                        }
-                        handleChange={handleDropdowns}
-                      />
+                      {item?.fieldType === 'number' ||
+                        item?.fieldType === 'date' ? (
+                        <TextInput
+                          name={item.name}
+                          value={dropdowns[item.name]}
+                          label={item.label}
+                          type={item?.fieldType}
+                          placeholder={item?.placeholder}
+                          handleChange={handleDropdowns}
+                          blinking={index === currentFieldIndex}
+                          disabled={index > currentFieldIndex}
+                          setCurrentFieldName={setCurrentFieldName}
+                          onFocus={() => setCurrentFieldName(item.name)}
+                          max={item.max}
+                        />
+                      ) : (
+                        <SelectInput
+                          autoOpen
+                          isForm
+                          customizer
+                          name={item.name}
+                          value={dropdowns[item.name]}
+                          label={item.label}
+                          blinking={index === currentFieldIndex}
+                          disabled={index > currentFieldIndex}
+                          setCurrentFieldName={setCurrentFieldName}
+                          options={
+                            item.options ||
+                            generateArray(item.min, item.max).map((i) => {
+                              if (
+                                item.label ===
+                                'Estimated Delivery Date in Weeks'
+                              ) {
+                                return {
+                                  label: `${i} ${i === 1 ? 'week' : 'weeks'}`,
+                                  value: i,
+                                };
+                              } else {
+                                return { label: i, value: item.multiplier };
+                              }
+                            })
+                          }
+                          placeholder={
+                            item?.placeholder || `Select ${item?.label}`
+                          }
+                          handleChange={handleDropdowns}
+                        />
+                      )}
                     </motion.div>
                     // </motion.div>
                     // </div>

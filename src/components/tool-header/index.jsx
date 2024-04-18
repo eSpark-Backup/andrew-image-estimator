@@ -6,7 +6,9 @@ import ModalComponent from '../modal/Modal';
 
 const ToolHeader = ({ next, active, form, handleChange }) => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user')) || null;
   const [isNavigatorModalOpen, setIsNavigatorModalOpen] = useState(false);
+  const token = window?.localStorage.getItem('token');
 
   const NavigatorHandler = () => {
     if (window.localStorage.getItem('token')) {
@@ -33,19 +35,46 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
           <p style={{ fontSize: '20px', fontWeight: 600, color: '#303032' }}>
             Logo
           </p>
-          <p
-            onClick={NavigatorHandler}
-            style={{
-              fontSize: '18px',
-              fontWeight: 400,
-              color: '#303032',
-              cursor: 'pointer',
-              lineHeight: '10px',
-            }}
-          >
-            Back to Dashboard
-          </p>
+          <div className='header-links'>
+            <button
+              onClick={NavigatorHandler}
+              style={{
+                width: '180px',
+                height: '35px',
+              }}
+            >
+              Back to Dashboard
+            </button>
+          </div>
+          {/* {token &&
+            <>
+              <div className="header-links">
+                {user?.role === 'admin' && (
+                  <button
+                    style={{ width: '180px', height: '35px' }}
+                    onClick={() => navigate('/admin')}
+                  >
+                    {'Go to Admin Panel'}
+                  </button>
+                )}
+              </div>
+            </>
+          } */}
+
+          <div className="header-links">
+            {/* {user?.role === 'admin' && ( */}
+              <button
+                style={{ width: '180px', height: '35px' }}
+                onClick={() => navigate('/admin')}
+              >
+                {'Go to Admin Panel'}
+              </button>
+            {/* )} */}
+          </div>
         </div>
+
+
+
         <div
           style={{
             display: 'flex',
@@ -56,9 +85,8 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
         >
           {next >= 1 && (
             <div
-              className={`${
-                active === 'select' || form.unit !== '' ? 'active-inputs' : ''
-              } tool-inputs-container tour`}
+              className={`${active === 'select' || form.unit !== '' ? 'active-inputs' : ''
+                } tool-inputs-container tour`}
             >
               <p style={{ color: '#fff' }}>Measuring Unit:</p>
               <SelectInput
@@ -87,9 +115,8 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
           )}
           {next >= 3 && (
             <div
-              className={`${
-                active === 'height' || form.length ? 'active-inputs' : ''
-              } tool-inputs-container tour`}
+              className={`${active === 'height' || form.length ? 'active-inputs' : ''
+                } tool-inputs-container tour`}
             >
               <p style={{ color: '#fff' }}>Height:</p>
               <TextInput
@@ -103,16 +130,15 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
               />
               {active === 'height' && (
                 <div className="dim-selector animation">
-                  Add height for flashing line to proceed.
+                  Add height of red flashing line to proceed.
                 </div>
               )}
             </div>
           )}
           {next >= 4 && (
             <div
-              className={`${
-                active === 'length' || form.width ? 'active-inputs' : ''
-              } tool-inputs-container tour`}
+              className={`${active === 'length' || form.width ? 'active-inputs' : ''
+                } tool-inputs-container tour`}
             >
               <p style={{ color: '#fff' }}>Length:</p>
               <TextInput
@@ -126,7 +152,7 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
               />
               {active === 'length' && (
                 <div className="dim-selector animation">
-                  Add length for flashing line to proceed.
+                  Add length of red flashing line to proceed.
                 </div>
               )}
             </div>
