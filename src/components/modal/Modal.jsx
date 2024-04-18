@@ -25,7 +25,7 @@ const ModalComponent = ({
   inputType
 }) => {
   const customStyles = {
-    width: "452px",
+    // width: "452px",
     // height: dashboard ? "auto" : "22px",
     padding: dashboard ? "20px 20px" : "20px",
   };
@@ -130,7 +130,8 @@ const ModalComponent = ({
         showCloseButton={false}
         
       >
-        {dashboard ? (
+        {dashboard ?
+         (
           <div className="modal" style={{ rowGap: "20px" }}>
             <h2 className="modal-heading">Login</h2>
             <div className="login-modal-inputs">
@@ -311,7 +312,7 @@ const ModalComponent = ({
           >
             <h2 className="modal-heading">{heading}</h2>
             {label && placeholder && (
-              <div style={{ width: "70%", marginBottom: "10px", display:"flex", justifyContent:"center", alignItems:"center" }}>
+              <div className="login-modal-inputs">
                 <TextInput
                   style={{ height: "100%", width: "100%" }}
                   name={name}
