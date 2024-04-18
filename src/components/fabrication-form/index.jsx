@@ -120,47 +120,47 @@ const FabForm = ({
         console.log({ data });
         setFields([
           ...data[0]?.inputs,
-          {
-            label: 'Perimeter Welding',
-            placeholder: 'Select Perimeter Welding',
-            options: [
-              { label: 'No', value: false },
-              { label: 'Yes', value: true },
-            ],
-            name: 'perimeterWelding',
-          },
-          {
-            label: 'Stitch Welding',
-            placeholder: 'Select Stitch Welding',
-            options: [
-              { label: 'No', value: false },
-              { label: 'Yes', value: true },
-            ],
-            name: 'stitchWelding',
-          },
+          // {
+          //   label: 'Perimeter Welding',
+          //   placeholder: 'Select Perimeter Welding',
+          //   options: [
+          //     { label: 'No', value: false },
+          //     { label: 'Yes', value: true },
+          //   ],
+          //   name: 'perimeterWelding',
+          // },
+          // {
+          //   label: 'Stitch Welding',
+          //   placeholder: 'Select Stitch Welding',
+          //   options: [
+          //     { label: 'No', value: false },
+          //     { label: 'Yes', value: true },
+          //   ],
+          //   name: 'stitchWelding',
+          // },
 
-          {
-            label: 'Calculate Estimate with Fabrication Services',
-            placeholder: 'Select',
-            options: [
-              { label: 'No', value: false },
-              { label: 'Yes', value: true },
-            ],
-            name: 'fabricator',
-          },
-          {
-            label: 'Zip Code',
-            placeholder: 'Enter Zip Code',
-            name: 'zipCode',
-            fieldType: 'number',
-            max: 5,
-          },
-          {
-            label: 'Delivery to Site Date',
-            placeholder: 'Enter Delivery to Site Date',
-            name: 'dtsDate',
-            fieldType: 'date',
-          },
+          // {
+          //   label: 'Calculate Estimate with Fabrication Services',
+          //   placeholder: 'Select',
+          //   options: [
+          //     { label: 'No', value: false },
+          //     { label: 'Yes', value: true },
+          //   ],
+          //   name: 'fabricator',
+          // },
+          // {
+          //   label: 'Zip Code',
+          //   placeholder: 'Enter Zip Code',
+          //   name: 'zipCode',
+          //   fieldType: 'number',
+          //   max: 5,
+          // },
+          // {
+          //   label: 'Delivery to Site Date',
+          //   placeholder: 'Enter Delivery to Site Date',
+          //   name: 'dtsDate',
+          //   fieldType: 'date',
+          // },
         ]);
         setCurrentFieldIndex(0);
         setScreenLoading(false);
@@ -277,6 +277,74 @@ const FabForm = ({
                     // </div>
                   );
                 })}
+                <motion.div {...slideAnimation('up')}>
+                  <SelectInput
+                    autoOpen
+                    isForm
+                    customizer
+                    name="perimeterWelding"
+                    value={dropdowns.perimeterWelding}
+                    label="Perimeter Welding"
+                    options={[
+                      { label: 'No', value: false },
+                      { label: 'Yes', value: true },
+                    ]}
+                    placeholder="Select Perimeter Welding"
+                    handleChange={handleDropdowns}
+                  />
+                </motion.div>
+                <motion.div {...slideAnimation('up')}>
+                  <SelectInput
+                    autoOpen
+                    isForm
+                    customizer
+                    name="stitchWelding"
+                    value={dropdowns.stitchWelding}
+                    label="Stitch Welding"
+                    options={[
+                      { label: 'No', value: false },
+                      { label: 'Yes', value: true },
+                    ]}
+                    placeholder="Select Stitch Welding"
+                    handleChange={handleDropdowns}
+                  />
+                </motion.div>
+                <motion.div {...slideAnimation('up')}>
+                  <SelectInput
+                    autoOpen
+                    isForm
+                    customizer
+                    name="fabricator"
+                    value={form.fabricator}
+                    label="Calculate Estimate with Fabrication Services"
+                    options={[
+                      { label: 'No', value: false },
+                      { label: 'Yes', value: true },
+                    ]}
+                    placeholder="Select"
+                    handleChange={handleChange}
+                  />
+                </motion.div>
+                <motion.div {...slideAnimation('up')}>
+                  <TextInput
+                    name="zipCode"
+                    value={dropdowns.zipCode}
+                    label="Zip Code"
+                    type="number"
+                    placeholder="Enter Zip Code"
+                    handleChange={handleDropdowns}
+                  />
+                </motion.div>
+                <motion.div {...slideAnimation('up')}>
+                  <TextInput
+                    name="dtsDate"
+                    value={dropdowns.dtsDate}
+                    label="Delivery to Site Date"
+                    type="date"
+                    placeholder="Enter Delivery to Site Date"
+                    handleChange={handleDropdowns}
+                  />
+                </motion.div>
                 {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="plateType"
