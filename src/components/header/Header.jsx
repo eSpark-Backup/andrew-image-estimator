@@ -63,26 +63,26 @@ const Header = () => {
         )}
       </div>
       <div className={`mobile-links ${showLinks ? "show-links" : ""}`}>
+      {showLinks && (
+        <>
         <h2 onClick={
-          // () => navigate(!InAdmin ? '/admin' : '/')
-          ()=>NavigatorHandler(!InAdmin ? "/admin" : "/")
+          () => NavigatorHandler(!InAdmin ? "/admin" : "/")
         }>{!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}</h2>
 
         {!token ? (<>
           <h2 onClick={
-            // () => navigate('/sign-up')
-            ()=>NavigatorHandler('/sign-up')
+            () => NavigatorHandler('/sign-up')
           }>Signup</h2>
           <h2 onClick={
-            // () => navigate('/login')
-            ()=>NavigatorHandler('/login')
+            () => NavigatorHandler('/login')
           }>Login</h2>
         </>) : (<>
           <h2 onClick={
-            // () => setLogoutModalOpen(true)
-            ()=>NavigatorHandler("logout")
+            () => NavigatorHandler("logout")
           }>Logout</h2>
         </>)}
+        </>
+      )}
       </div>
       <ModalComponent
         heading={'Logout'}

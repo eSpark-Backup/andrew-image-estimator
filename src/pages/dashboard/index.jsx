@@ -1,20 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import { Sidebar } from '../../layout'
+import { DashboardDrawer, Sidebar } from '../../layout'
 import Header from "../../components/header/Header"
 import ModalComponent from '../../components/modal/Modal'
+import { hamburger } from '../../assets';
 
 const DashboardLayout = () => {
-  const [loginModal, setLoginModal] = useState(false)
+  const { pathname } = useLocation()
   const cookie = window?.localStorage.getItem("token")
+  const [loginModal, setLoginModal] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+
+  const showDrawer = () => {
+    setDrawerOpen(true);
+  };
+
+
+  const onClose = () => {
+    setDrawerOpen(false);
+  };
+
   useEffect(() => {
     cookie ? setLoginModal(false) : setLoginModal(true)
   }, [cookie])
-  const { pathname } = useLocation()
+
+
+
   return (
     <>
       <Header />
-      <div className={`canvas-container ${pathname === "/admin" ? "adminScreen" : ""}`}>
+
+      <div className='hamburger-container'>
+        <img onClick={showDrawer} src={hamburger} className='hamburger-icon' />
+      </div>
+
+
+      <div className={`canvas-container ${pathname === "/admin" ? "adminScreen" : ""}`}
+      >
         <div className='dashboard-card'>
           <Sidebar />
 
@@ -23,10 +46,17 @@ const DashboardLayout = () => {
           </div>
         </div>
       </div>
+
+
       <ModalComponent
         closeModal={() => setLoginModal(false)}
         modalIsOpen={loginModal}
         dashboard={true}
+      />
+
+      <DashboardDrawer
+        drawerOpen={drawerOpen}
+        onClose={onClose}
       />
     </>
   )

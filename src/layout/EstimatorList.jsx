@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EstimatorBoxCard,
   EstimatorTableCard,
@@ -21,18 +21,31 @@ import { getErrors } from '../algorithm';
 import { motion, useIsPresent } from 'framer-motion';
 import { gridSlideAnimation, slideAnimation } from '../constants';
 import Loader from '../components/loader/Loader';
+import { useScreenWidth } from '../hooks';
 
 const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
-  const [view, setView] = useState(2);
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const hasData = estimatorListData?.length > 0;
   const location = useLocation();
   const navigate = useNavigate();
+  const isPresent = useIsPresent();
+  const screenWidth = useScreenWidth();
+
+  const hasData = estimatorListData?.length > 0;
   const isTrash = location.pathname.includes('trash');
+
+  const [view, setView] = useState(2);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const isPresent = useIsPresent();
+  const isSmallScreen = screenWidth < 1000;
+
+  useEffect(() => {
+    if (isSmallScreen) {
+      setView(2);
+    }
+  }, [isSmallScreen]);
+
+
   const Navigator = () => {
     navigate('/tool');
     setCreateModalOpen(false);
@@ -122,7 +135,7 @@ const EstimatorList = ({ fetchAllEstimations, estimatorListData }) => {
                     return (
                       <motion.div
                         key={index + estimatorListData.length}
-                        style={{ width: '40%' }}
+                        className='estimation-box-card-container'
                         {...gridSlideAnimation(index)}
                       >
                         <EstimatorBoxCard
