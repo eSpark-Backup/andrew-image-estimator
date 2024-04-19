@@ -118,7 +118,6 @@ const FabForm = ({
           _id: doc.id,
           ...doc.data(),
         }));
-        console.log({ data });
         setFields([
           ...data[0]?.inputs,
           {
@@ -165,7 +164,6 @@ const FabForm = ({
         ]);
         setCurrentFieldIndex(0);
         setScreenLoading(false);
-        console.log(data[0]?.inputs);
       });
     };
 
@@ -178,7 +176,6 @@ const FabForm = ({
       // unsubscribeFunctions?.unsubscribe();
     };
   }, []);
-  console.log({ fields });
 
   useEffect(() => {
     if (currentFieldIndex > 0) {

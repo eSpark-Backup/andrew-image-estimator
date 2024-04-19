@@ -17,6 +17,7 @@ import Result from "./fabrication-result";
 import FabForm from "./fabrication-form";
 import TopButtons from "./top-buttons";
 import GIFModal from "./modal/GIFModal";
+import DimentionSelector from "./dimention-selector"
 
 export {
   EstimatorTableCard,
@@ -38,4 +39,5 @@ export {
   FabForm,
   TopButtons,
   GIFModal,
+  DimentionSelector,
 };

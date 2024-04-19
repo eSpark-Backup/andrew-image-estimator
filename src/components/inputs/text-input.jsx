@@ -17,7 +17,7 @@ const TextInput = ({
     const value = event.target.value;
 
     // Filter out non-numeric characters
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/[^\d.]/g, '');
 
     // Call the handleChange function passed as a prop
     if (type === 'number') {
