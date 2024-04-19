@@ -363,7 +363,7 @@ export const ImageCropper = ({
 
       <GIFModal
         GIF={cropGIF}
-        description={"Follow the steps to crop your image and create an estimation for your project."}
+        description={"Follow the steps to crop your image and create an estimation for your estimate."}
         modalIsOpen={showGIFModal}
         closeModal={() => setShowGIFModal(false)}
       />

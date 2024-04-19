@@ -247,8 +247,8 @@ const Canvas = ({
           <GIFModal
             GIF={polygonArr ? objectGIF : areaGIF}
             description={polygonArr
-              ? "Now Select the object you want to clip for your project."
-              : "Now Select the area of the image you want to clip for your project."}
+              ? "Now Select the object you want to clip for your estimate."
+              : "Now Select the area of the image you want to clip for your estimate."}
             modalIsOpen={showGIFModal}
             closeModal={() => setShowGIFModal(false)}
           />

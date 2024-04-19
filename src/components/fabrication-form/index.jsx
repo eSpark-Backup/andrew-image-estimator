@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SelectInput } from '../inputs/select-input';
 import TextInput from '../inputs/text-input';
 import { motion } from 'framer-motion';
@@ -57,6 +57,7 @@ const FabForm = ({
   const [fields, setFields] = useState();
   // const [currentFieldIndex, setCurrentFieldIndex] = useState(null);
   const [screenLoading, setScreenLoading] = useState(false);
+  const dropdownRefs = useRef([]);
 
   let options = [];
   for (let i = 0; i <= 50; i++) {
@@ -120,47 +121,47 @@ const FabForm = ({
         console.log({ data });
         setFields([
           ...data[0]?.inputs,
-          // {
-          //   label: 'Perimeter Welding',
-          //   placeholder: 'Select Perimeter Welding',
-          //   options: [
-          //     { label: 'No', value: false },
-          //     { label: 'Yes', value: true },
-          //   ],
-          //   name: 'perimeterWelding',
-          // },
-          // {
-          //   label: 'Stitch Welding',
-          //   placeholder: 'Select Stitch Welding',
-          //   options: [
-          //     { label: 'No', value: false },
-          //     { label: 'Yes', value: true },
-          //   ],
-          //   name: 'stitchWelding',
-          // },
+          {
+            label: 'Perimeter Welding',
+            placeholder: 'Select Perimeter Welding',
+            options: [
+              { label: 'No', value: false },
+              { label: 'Yes', value: true },
+            ],
+            name: 'perimeterWelding',
+          },
+          {
+            label: 'Stitch Welding',
+            placeholder: 'Select Stitch Welding',
+            options: [
+              { label: 'No', value: false },
+              { label: 'Yes', value: true },
+            ],
+            name: 'stitchWelding',
+          },
 
-          // {
-          //   label: 'Calculate Estimate with Fabrication Services',
-          //   placeholder: 'Select',
-          //   options: [
-          //     { label: 'No', value: false },
-          //     { label: 'Yes', value: true },
-          //   ],
-          //   name: 'fabricator',
-          // },
-          // {
-          //   label: 'Zip Code',
-          //   placeholder: 'Enter Zip Code',
-          //   name: 'zipCode',
-          //   fieldType: 'number',
-          //   max: 5,
-          // },
-          // {
-          //   label: 'Delivery to Site Date',
-          //   placeholder: 'Enter Delivery to Site Date',
-          //   name: 'dtsDate',
-          //   fieldType: 'date',
-          // },
+          {
+            label: 'Calculate Estimate with Fabrication Services',
+            placeholder: 'Select',
+            options: [
+              { label: 'No', value: false },
+              { label: 'Yes', value: true },
+            ],
+            name: 'fabricator',
+          },
+          {
+            label: 'Zip Code',
+            placeholder: 'Enter Zip Code',
+            name: 'zipCode',
+            fieldType: 'number',
+            max: 5,
+          },
+          {
+            label: 'Delivery to Site Date',
+            placeholder: 'Enter Delivery to Site Date',
+            name: 'dtsDate',
+            fieldType: 'date',
+          },
         ]);
         setCurrentFieldIndex(0);
         setScreenLoading(false);
@@ -178,6 +179,17 @@ const FabForm = ({
     };
   }, []);
   console.log({ fields });
+
+  useEffect(() => {
+    if (currentFieldIndex > 0) {
+      if (currentFieldIndex < dropdownRefs.current.length - 1) {
+        dropdownRefs.current[currentFieldIndex + 1].scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    }
+  }, [currentFieldIndex])
 
   return (
     <div style={{ height: '100%' }} className="image-dropdown">
@@ -206,16 +218,16 @@ const FabForm = ({
               </p>
             </motion.div>
             <div
-            className='input-parent'
-              // style={{
-              //   width: '100%',
-              //   maxHeight: 'calc(100% - 100px)',
-              //   // minhe: "200px",
-              //   display: 'flex',
-              //   justifyContent: 'center',
-              //   overflowY: 'auto',
-              //   padding:"50px 0px"
-              // }}
+              className='input-parent'
+            // style={{
+            //   width: '100%',
+            //   maxHeight: 'calc(100% - 100px)',
+            //   // minhe: "200px",
+            //   display: 'flex',
+            //   justifyContent: 'center',
+            //   overflowY: 'auto',
+            //   padding:"50px 0px"
+            // }}
             >
               <div className="dropdown">
                 {fields?.map((item, index) => {
@@ -223,61 +235,63 @@ const FabForm = ({
                     //  <div style={{ width: "calc(100% - 60px)" }} key={item.id}>
                     // <p style={{ marginBottom: "5px" }}>{item.label}:</p>
                     // <motion.div {...slideAnimation("up")}>
-                    <motion.div {...slideAnimation('up')}>
-                      {item?.fieldType === 'number' ||
-                        item?.fieldType === 'date' ? (
-                        <TextInput
-                          name={item.name}
-                          value={dropdowns[item.name]}
-                          label={item.label}
-                          type={item?.fieldType}
-                          placeholder={item?.placeholder}
-                          handleChange={handleDropdowns}
-                          blinking={index === currentFieldIndex}
-                          disabled={index > currentFieldIndex}
-                          setCurrentFieldName={setCurrentFieldName}
-                          onFocus={() => setCurrentFieldName(item.name)}
-                          max={item.max}
-                        />
-                      ) : (
-                        <SelectInput
-                          autoOpen
-                          isForm
-                          customizer
-                          name={item.name}
-                          value={dropdowns[item.name]}
-                          label={item.label}
-                          blinking={index === currentFieldIndex}
-                          disabled={index > currentFieldIndex}
-                          setCurrentFieldName={setCurrentFieldName}
-                          options={
-                            item.options ||
-                            generateArray(item.min, item.max).map((i) => {
-                              if (
-                                item.label ===
-                                'Estimated Delivery Date in Weeks'
-                              ) {
-                                return {
-                                  label: `${i} ${i === 1 ? 'week' : 'weeks'}`,
-                                  value: i,
-                                };
-                              } else {
-                                return { label: i, value: item.multiplier };
-                              }
-                            })
-                          }
-                          placeholder={
-                            item?.placeholder || `Select ${item?.label}`
-                          }
-                          handleChange={handleDropdowns}
-                        />
-                      )}
-                    </motion.div>
+                    <div key={item.id} ref={(el) => (dropdownRefs.current[index] = el)}>
+                      <motion.div {...slideAnimation('up')}>
+                        {item?.fieldType === 'number' ||
+                          item?.fieldType === 'date' ? (
+                          <TextInput
+                            name={item.name}
+                            value={dropdowns[item.name]}
+                            label={item.label}
+                            type={item?.fieldType}
+                            placeholder={item?.placeholder}
+                            handleChange={handleDropdowns}
+                            blinking={index === currentFieldIndex}
+                            disabled={index > currentFieldIndex}
+                            setCurrentFieldName={setCurrentFieldName}
+                            onFocus={() => setCurrentFieldName(item.name)}
+                            max={item.max}
+                          />
+                        ) : (
+                          <SelectInput
+                            autoOpen
+                            isForm
+                            customizer
+                            name={item.name}
+                            value={dropdowns[item.name]}
+                            label={item.label}
+                            blinking={index === currentFieldIndex}
+                            disabled={index > currentFieldIndex}
+                            setCurrentFieldName={setCurrentFieldName}
+                            options={
+                              item.options ||
+                              generateArray(item.min, item.max).map((i) => {
+                                if (
+                                  item.label ===
+                                  'Estimated Delivery Date in Weeks'
+                                ) {
+                                  return {
+                                    label: `${i} ${i === 1 ? 'week' : 'weeks'}`,
+                                    value: i,
+                                  };
+                                } else {
+                                  return { label: i, value: item.multiplier };
+                                }
+                              })
+                            }
+                            placeholder={
+                              item?.placeholder || `Select ${item?.label}`
+                            }
+                            handleChange={handleDropdowns}
+                          />
+                        )}
+                      </motion.div>
+                    </div>
                     // </motion.div>
                     // </div>
                   );
                 })}
-                <motion.div {...slideAnimation('up')}>
+                {/* <motion.div {...slideAnimation('up')}>
                   <SelectInput
                     autoOpen
                     isForm
@@ -344,7 +358,7 @@ const FabForm = ({
                     placeholder="Enter Delivery to Site Date"
                     handleChange={handleDropdowns}
                   />
-                </motion.div>
+                </motion.div> */}
                 {/* <motion.div {...slideAnimation("up")}>
               <SelectInput
                 name="plateType"
