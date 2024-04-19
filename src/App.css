@@ -47,10 +47,18 @@ section.container1 {
 .button-container {
   display: flex;
   gap: 20px;
-  margin: 15px 25px;
 }
 
-.button-container button {
+.button-container-test{  
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  width: 100%;
+  padding: 25px 20px 0 0;
+  flex-wrap: wrap;
+}
+
+.button-container button, .button-container-test button {
   background: #d7222a;
   border: 0;
   color: #fff;
@@ -163,9 +171,7 @@ button:disabled {
   align-self: flex-start;
 }
 
-.right {
-  align-self: flex-end;
-}
+
 
 .image-dropdown {
   display: flex;
@@ -184,6 +190,63 @@ button:disabled {
   align-items: center;
   border-radius: 10px 0 0 10px;
 }
+
+
+
+@media screen and (max-width:1000px){
+  .image-dropdown{
+    /* width: 100vw; */
+    flex-direction: column;
+  }
+  .image-dropdown .img{
+    width: 97%;
+    border-radius: 10px 10px 10px 10px;
+    /* display: none; */
+  }
+  .image-dropdown .img img{
+    margin: 50px 0px;
+  }
+  .input-parent{
+    /* border: 1px solid red; */
+    padding-bottom: 20px;
+  }
+  .input-parent .dropdown{
+    margin-right: 0px !important;
+  }
+
+  .image-dropdown .head::after{
+    padding-top: 10px;
+  }
+  .canvas-container{
+    height: auto;
+  }
+  .card {
+    width: 95vw;
+    height: 90vh;
+  }
+}
+
+@media screen and (min-width:1001px) and (max-width:1550px){
+  .canvas-container{
+    height: 100vh;
+  }
+  .card{
+    height: 95%;
+  }
+}
+
+@media screen and (max-width:550px){
+
+  .input-parent .dropdown div div{
+    width: 90vw;
+  }
+}
+
+
+
+
+
+
 
 .image-dropdown .img>div {
   position: relative;
@@ -631,9 +694,15 @@ th {
     box-shadow: 0px 0px 15px 0px #00000033;
   }
 
+  .right {
+    align-self: flex-end;
+  }
+
   .signup-left-container img, .signin-left-container img{
     height: 400px;
   }
+
+
 }
 
 .header {
@@ -836,6 +905,10 @@ body.modal-open {
     height: calc(100% - 40px);
     padding: 0px 20px;
     flex-direction: row;
+  }
+
+  .left-button{
+    margin-left: 50px;
   }
 
 
@@ -1299,6 +1372,16 @@ select:disabled {
   .signup-inputs>div>.text-input,
   .signin-inputs>div>.text-input {
     width: 100% !important;
+  }
+
+  .button-container button, .button-container-test button{
+    width: 90vw;
+  }
+
+  .button-container-test{
+    justify-content: center;
+    align-items: center;
+    padding: 25px 0 0 0;
   }
 }
 
@@ -1801,5 +1884,9 @@ select:disabled {
   display: none;
 }
 }
+
+
+
+
 
 /* DASHBOARD RESPONSIVENESS END  */
