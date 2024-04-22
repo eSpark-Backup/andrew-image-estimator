@@ -229,6 +229,9 @@ function Elementor() {
     });
     setCanvasImage(null);
     setImagetoShow(null);
+    setCrop({ x: 0, y: 0, width: 0, height: 0 });
+    setChildPoints([]);
+    setPoints([]);
   };
 
   //image ref to get image actual dimention
@@ -443,10 +446,10 @@ function Elementor() {
           next === 1
             ? 'select'
             : next === 3
-            ? 'height'
-            : next === 4
-            ? 'length'
-            : ''
+              ? 'height'
+              : next === 4
+                ? 'length'
+                : ''
         }
         form={form}
         handleChange={handleChange}
