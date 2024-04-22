@@ -13,6 +13,7 @@ export const ImageCropper = ({
   crop,
   setCrop,
   image,
+  screenSize,
 }) => {
   const [xColor, setXColor] = useState("#39FF14");
   const [yColor, setYColor] = useState("#39FF14");
@@ -71,8 +72,13 @@ export const ImageCropper = ({
   const handleResizeMove = (e) => {
     if (!isDrawingRef.current || !crop.handleType) return;
 
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
+    const touch = e.touches[0];
+    const { clientX, clientY } = touch;
+
+    const xClient = screenSize === "mobile" ? clientX : e.clientX
+    const yClient = screenSize === "mobile" ? clientY : e.clientY
+    const deltaX = xClient - dragStart.x;
+    const deltaY = yClient - dragStart.y;
 
     switch (crop.handleType) {
       case "top-left":
@@ -111,7 +117,7 @@ export const ImageCropper = ({
         break;
     }
 
-    setDragStart({ x: e.clientX, y: e.clientY });
+    setDragStart({ x: xClient, y: yClient });
   };
 
   const drawResizeHandles = (context) => {
@@ -311,6 +317,102 @@ export const ImageCropper = ({
     setCrop((prevCrop) => ({ ...prevCrop, handleType: null }));
   };
 
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    const { clientX, clientY } = touch;
+    const { left, top } = canvasRef.current.getBoundingClientRect();
+    const x = clientX - left;
+    const y = clientY - top;
+    const handle = getHandleAtPosition(x, y);
+
+    if (handle) {
+      setDragStart({ x: clientX, y: clientY });
+      setCrop((prevCrop) => ({ ...prevCrop, handleType: handle.type }));
+      isDrawingRef.current = true;
+    } else if (isPointInCropArea(x, y)) {
+      setDragStart({ x, y });
+      isDrawingRef.current = true;
+    } else {
+      if (!shapeDrawn) {
+        setDragStart({ x: clientX, y: clientY });
+        setCrop((prevCrop) => ({
+          ...prevCrop,
+          x,
+          y,
+          width: 0,
+          height: 0,
+          handleType: null,
+        }));
+        isDrawingRef.current = true;
+        setIsDrawing(true);
+      }
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    const { clientX, clientY } = touch;
+    const { left, top } = canvasRef.current.getBoundingClientRect();
+    const x = clientX - left;
+    const y = clientY - top;
+    if (isDrawingRef.current) {
+      if (shapeDrawn) {
+        if (crop.handleType) {
+          handleResizeMove(e);
+        } else {
+          setCrop((prevCrop) => ({
+            ...prevCrop,
+            x: x - dragStart.x + prevCrop.x,
+            y: y - dragStart.y + prevCrop.y,
+          }));
+
+          setDragStart({ x, y });
+        }
+      } else {
+        const { clientX, clientY } = touch;
+        const { left, top } = canvasRef.current.getBoundingClientRect();
+
+        if (shapeDrawn) {
+          const x = clientX - left - dragStart.x;
+          const y = clientY - top - dragStart.y;
+
+          setCrop((prevCrop) => ({
+            ...prevCrop,
+            x,
+            y,
+          }));
+        } else {
+          const width = clientX - left - crop.x;
+          const height = clientY - top - crop.y;
+
+          setCrop((prevCrop) => ({ ...prevCrop, width, height }));
+        }
+      }
+    } else {
+      const { clientX, clientY } = touch;
+      const { left, top } = canvasRef.current.getBoundingClientRect();
+      const x = clientX - left;
+      const y = clientY - top;
+
+      const handle = getHandleAtPosition(x, y);
+
+      if (handle) {
+        canvasRef.current.style.cursor = handle.cursor;
+      } else if (isPointInCropArea(x, y)) {
+        canvasRef.current.style.cursor = "move";
+      } else {
+        canvasRef.current.style.cursor = shapeDrawn ? "default" : "crosshair";
+      }
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    isDrawingRef.current = false;
+    setIsDrawing(false);
+    setShapeDrawn(true);
+    setCrop((prevCrop) => ({ ...prevCrop, handleType: null }));
+  };
+
   const getHandleAtPosition = (x, y) => {
     const handles = [
       { x: crop.x, y: crop.y, type: "top-left" },
@@ -358,6 +460,9 @@ export const ImageCropper = ({
           onMouseDown={!focus && handleMouseDown}
           onMouseMove={!focus && handleMouseMove}
           onMouseUp={!focus && handleMouseUp}
+          onTouchStart={!focus && handleTouchStart}
+          onTouchMove={!focus && handleTouchMove}
+          onTouchEnd={!focus && handleTouchEnd}
         />
       </div>
 

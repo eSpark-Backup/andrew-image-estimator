@@ -22,34 +22,45 @@ const Header = () => {
     }
     else {
       navigate(data)
+      setShowLinks(false)
     }
   }
 
   useEffect(() => {
+    console.log(showLinks)
     const handleClickOutside = (event) => {
-        if (LinksRef.current && !LinksRef.current.contains(event.target)) {
-          setShowLinks(false)
-        }
+      if (LinksRef.current && !LinksRef.current.contains(event.target)) {
+        setShowLinks(false)
+      }
     };
 
     if (showLinks) {
-        document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-        document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-}, [showLinks]);
+  }, [showLinks]);
+
+  const ShowLinksToggler = (e) => {
+    e.preventDefault();
+    setShowLinks(!showLinks);
+    e.stopPropagation();
+}
+
+
+
 
 
   return (
     <>
       <div className="header">
         <h2 style={{ color: '#000' }}>Logo</h2>
-        <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={() => setShowLinks(!showLinks)} />
-        
+        <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={ShowLinksToggler} />
+
         {!token ? (
           <div className="header-links" >
             <button
@@ -84,26 +95,26 @@ const Header = () => {
         )}
       </div>
       <div className={`mobile-links ${showLinks ? "show-links" : ""}`} ref={LinksRef}>
-      {showLinks && (
-        <>
-        <h2 onClick={
-          () => NavigatorHandler(!InAdmin ? "/admin" : "/")
-        }>{!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}</h2>
+        {showLinks && (
+          <>
+            <h2 onClick={
+              () => NavigatorHandler(!InAdmin ? "/admin" : "/")
+            }>{!InAdmin ? 'Go to Admin Panel' : 'Back to Dashboard'}</h2>
 
-        {!token ? (<>
-          <h2 onClick={
-            () => NavigatorHandler('/sign-up')
-          }>Signup</h2>
-          <h2 onClick={
-            () => NavigatorHandler('/login')
-          }>Login</h2>
-        </>) : (<>
-          <h2 onClick={
-            () => NavigatorHandler("logout")
-          }>Logout</h2>
-        </>)}
-        </>
-      )}
+            {!token ? (<>
+              <h2 onClick={
+                () => NavigatorHandler('/sign-up')
+              }>Signup</h2>
+              <h2 onClick={
+                () => NavigatorHandler('/login')
+              }>Login</h2>
+            </>) : (<>
+              <h2 onClick={
+                () => NavigatorHandler("logout")
+              }>Logout</h2>
+            </>)}
+          </>
+        )}
       </div>
       <ModalComponent
         heading={'Logout'}

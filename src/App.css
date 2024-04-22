@@ -24,9 +24,12 @@ section.container1 {
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  height: 90vh;
-  /* height: calc(100vh - 62px); */
+  height: calc(100vh - 62px);
 
+}
+
+.new-card {
+  height: calc(100% - 170px) !important;
 }
 
 .card {
@@ -35,7 +38,7 @@ section.container1 {
   box-shadow: 0px 0px 15px 0px #00000033;
   border-radius: 10px;
   width: calc(100% - 50px);
-  height: calc(100% - 90px);
+  height: calc(100% - 40px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,18 +50,12 @@ section.container1 {
 .button-container {
   display: flex;
   gap: 20px;
-}
-
-.button-container-test{  
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
+  padding: 25px;
   width: 100%;
-  padding: 25px 20px 0 0;
-  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.button-container button, .button-container-test button {
+.button-container button {
   background: #d7222a;
   border: 0;
   color: #fff;
@@ -171,7 +168,9 @@ button:disabled {
   align-self: flex-start;
 }
 
-
+.right {
+  align-self: flex-end;
+}
 
 .image-dropdown {
   display: flex;
@@ -217,36 +216,14 @@ button:disabled {
   .image-dropdown .head::after{
     padding-top: 10px;
   }
-  .canvas-container{
-    height: auto;
-  }
-  .card {
-    width: 95vw;
-    height: 90vh;
-  }
-}
-
-@media screen and (min-width:1001px) and (max-width:1550px){
-  .canvas-container{
-    height: 100vh;
-  }
-  .card{
-    height: 95%;
-  }
 }
 
 @media screen and (max-width:550px){
 
   .input-parent .dropdown div div{
-    width: 90vw;
+    width: 80vw;
   }
 }
-
-
-
-
-
-
 
 .image-dropdown .img>div {
   position: relative;
@@ -329,6 +306,17 @@ th {
 
 ::-webkit-scrollbar {
   width: 0px;
+}
+
+.options::-webkit-scrollbar {
+  width: 10px !important;
+  background: #f3f2f2;
+}
+
+.options::-webkit-scrollbar-thumb {
+  width: 10px;
+  background: #9a9696;
+  border-radius: 10px;
 }
 
 /* DASHBOARD  */
@@ -694,15 +682,9 @@ th {
     box-shadow: 0px 0px 15px 0px #00000033;
   }
 
-  .right {
-    align-self: flex-end;
-  }
-
   .signup-left-container img, .signin-left-container img{
     height: 400px;
   }
-
-
 }
 
 .header {
@@ -718,6 +700,7 @@ th {
   font-size: 20px;
   font-weight: 600;
   padding: 5px 10px;
+  z-index: 666666;
 }
 
 .header-links {
@@ -752,6 +735,10 @@ th {
   z-index: 1;
 }
 
+.mobile-links.main {
+  top: 44px !important;
+}
+
 .mobile-links.show-links {
   opacity: 1;
 }
@@ -762,7 +749,7 @@ th {
 
 
 
-@media screen and (max-width:1000px){
+@media screen and (max-width:768px){
   .header-links{
     display: none;
   }
@@ -907,11 +894,10 @@ body.modal-open {
     flex-direction: row;
   }
 
+
   .left-button{
     margin-left: 50px;
   }
-
-
 }
 
 
@@ -1169,6 +1155,7 @@ select:disabled {
 }
 
 .fab-container>div {
+  width: 350px;
   margin-top: 50px;
   margin-bottom: 80px;
 }
@@ -1348,6 +1335,20 @@ select:disabled {
   animation: dash4 1.5s ease-in-out infinite;
 }
 
+.dimention-container {
+    margin-top: 10px;
+    overflow-x: auto;
+    width: 90%;
+    height: 142px;
+    position: absolute;
+    top: 0;
+    z-index: 99999;
+}
+
+.dimention-container > div {
+  justify-content: flex-start !important;
+}
+
 @keyframes rotate4 {
   100% {
     transform: rotate(360deg);
@@ -1388,14 +1389,85 @@ select:disabled {
     width: 100% !important;
   }
 
-  .button-container button, .button-container-test button{
-    width: 90vw;
+  .upload-container {
+    padding: 15px 20px;
+    margin: 10px;
   }
 
-  .button-container-test{
-    justify-content: center;
-    align-items: center;
-    padding: 25px 0 0 0;
+  .upload-desc {
+    width: 220px;
+  }
+
+  .button-container button {
+    width: 100px;
+  }
+
+  .fab-container>div {
+    width: 150px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .text-input, .select-input {
+    width: 150px;
+  }
+
+  .change-image {
+    top: 82px !important;
+    right: -214px !important;
+    width: 200px !important;
+    padding: 10px !important;
+    font-size: 12px;
+  }
+  
+  .change-image::after {
+    top: -30px !important;
+    left: 46px !important;
+  }
+
+  .image-selector {
+    width: 200px !important;
+    font-size: 12px !important;
+    padding: 10px !important;
+    bottom: -55px !important;
+  }
+
+  .topBtns {
+    position: absolute;
+    left: 12px;
+    top: -15px;
+}
+
+  .next-submit-button {
+    top: auto !important;
+    font-size: 12px;
+    bottom: 60px !important;
+    padding: 10px !important;
+    right: 0px !important;
+    width: 200px !important;
+    animation-name: bounceB !important;
+    -moz-animation-name: bounceB !important;
+  }
+  
+  .next-submit-button::after {
+    top: 63px !important;
+    border-color: transparent transparent transparent #ffffff !important;
+    right: 24px !important;
+  }
+}
+
+@media screen and (max-width: 400px) {
+
+  .upload-container {
+    gap: 8px;
+  }
+
+  .upload-img {
+    display: none;
+  }
+
+  .upload-desc {
+    width: auto;
   }
 
   .table-buttons{
@@ -1512,30 +1584,29 @@ select:disabled {
 
 .change-image {
   position: absolute;
-  top: 50%;
-  right: -360px;
+  top: 85px;
+  right: -396px;
   background: #fff;
   color: #000;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   padding: 20px;
   text-align: center;
   border-radius: 5px;
-  transform: translatey(-50%);
   width: 325px;
-  animation-name: bounceL;
-  -moz-animation-name: bounceL;
+  animation-name: bounceT;
+  -moz-animation-name: bounceT;
 }
 
 .change-image::after {
   content: "";
   position: absolute;
-  top: 50%;
+  top: -33px;
   border-style: solid;
   border-width: 15px 15px 15px 15px;
-  border-color: #ffffff transparent transparent transparent;
+  border-color: transparent #ffffff transparent transparent !important;
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
-  transform: rotate(90deg) translateX(-50%);
-  left: -32px;
+  transform: rotate(90deg);
+  left: 51px;
 }
 
 .unit-selector {
@@ -1569,14 +1640,14 @@ select:disabled {
 
 .next-submit-button {
   position: absolute;
-  bottom: -10px;
+  top: 50%;
   background: #fff;
   color: #000;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   padding: 14px;
   text-align: center;
   border-radius: 5px;
-  right: 260px;
+  right: 240px;
   transform: translateX(-50%);
   width: 348px;
   animation-name: bounceR;
@@ -1652,6 +1723,25 @@ select:disabled {
     -webkit-transform: translate(-50%, -10%);
     -ms-transform: translate(-50%, -10%);
     transform: translate(-50%, -10%);
+  }
+}
+
+@keyframes bounceB {
+
+  0%,
+  100%,
+  20%,
+  50%,
+  80% {
+    -webkit-transform: translate(0, -10px);
+    -ms-transform: translate(0, -10px);
+    transform: translate(0, -10px);
+  }
+
+  50% {
+    -webkit-transform: translate(0%, 0%);
+    -ms-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
   }
 }
 
@@ -1782,7 +1872,7 @@ select:disabled {
 
 .admin-button {
   position: ABSOLUTE;
-  top: 70px;
+  top: 40px;
   right: 0px;
 }
 
@@ -1926,6 +2016,12 @@ select:disabled {
 
 }
 
+@media screen and (max-width:768px){
+  .admin-button {
+    top: 80px !important;
+  }
+}
+
 
 @media screen and (max-width:1000px){
 .hamburger-container {
@@ -1937,9 +2033,5 @@ select:disabled {
   display: none;
 }
 }
-
-
-
-
 
 /* DASHBOARD RESPONSIVENESS END  */

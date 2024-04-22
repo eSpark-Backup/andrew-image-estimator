@@ -1,5 +1,4 @@
 const NormalTable = ({ item, form, calculation, token }) => {
-  console.log(calculation, "calculation");
   return (
     <>
       {token ? (

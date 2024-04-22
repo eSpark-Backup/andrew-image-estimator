@@ -38,9 +38,7 @@ const DashboardNextButtons = ({
   setLoader,
   setModal,
 }) => {
-  console.log({ next, nxt: next === 0 });
   const authToken = window.localStorage.getItem('token');
-  console.log({ cond1: points[0]?.x === points[points.length - 1]?.x, points });
   const handleClickPrev = () => {
     if (next === 0) {
       alert('first');
@@ -61,7 +59,7 @@ const DashboardNextButtons = ({
     <motion.div
       key={next}
       {...slideAnimation('right')}
-      className="button-container-test right"
+      className="button-container"
       // style={{
       //   display: 'flex',
       //   justifyContent: 'space-between',
@@ -80,7 +78,7 @@ const DashboardNextButtons = ({
           </button>
         )}
       </div>
-      <div className='table-buttons'>
+      <div style={{position: "relative"}} className='table-buttons'>
         {((!loader && next === 0 && canvasImage) ||
           (next === 1 && form.unit) ||
           (next === 2 && crop.width > 0) ||

@@ -1,7 +1,5 @@
 import React from "react";
 const FabricationTable = ({ item, form, calculation, dropdowns, token }) => {
-  console.log(calculation,"calculation");
-  console.log(dropdowns,"dropdowns");
   return (
     <>
       {token ? (

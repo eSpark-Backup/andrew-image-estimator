@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
   Canvas,
   ImageRenderer,
@@ -9,6 +9,7 @@ import {
   Result,
   FabForm,
   TopButtons,
+  DimentionSelector,
 } from '../../components';
 import { downloadFileFromDrive, getErrors } from '../../algorithm';
 import axios from 'axios';
@@ -56,6 +57,7 @@ function Elementor() {
     width: '',
     height: '',
   });
+  const [screenSize, setScreenSize] = useState("laptop");
   const [form, setForm] = useState({
     imageWidth: 700,
     imageHeight: 350,
@@ -67,6 +69,51 @@ function Elementor() {
     density: 7.85,
     fabricator: '',
   });
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      setForm((prev) => ({
+        ...prev,
+        imageWidth: 250,
+        imageHeight: 400,
+      }));
+      setScreenSize("mobile");
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        imageWidth: 700,
+        imageHeight: 350,
+      }));
+      setScreenSize("laptop");
+    }
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setScreenSize("mobile");
+      } else {
+        setScreenSize("laptop");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  useEffect(() => {
+    if (screenSize === "mobile") {
+      setForm((prev) => ({
+        ...prev,
+        imageWidth: 250,
+        imageHeight: 400,
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        imageWidth: 700,
+        imageHeight: 350,
+      }));
+    }
+  }, [screenSize]);
   const [dropdowns, setDropdowns] = useState({
     perimeterWelding: false,
     stitchWelding: false,
@@ -142,7 +189,6 @@ function Elementor() {
 
   //handle dropdowns function
   const handleDropdowns = (name, value, type) => {
-    console.log({ name, value, type });
     setDropdowns({
       ...dropdowns,
       [name]: value,
@@ -183,6 +229,9 @@ function Elementor() {
     });
     setCanvasImage(null);
     setImagetoShow(null);
+    setCrop({ x: 0, y: 0, width: 0, height: 0 });
+    setChildPoints([]);
+    setPoints([]);
   };
 
   //image ref to get image actual dimention
@@ -391,25 +440,47 @@ function Elementor() {
   return (
     <section className="container1">
       <ToolHeader
+        screenSize={screenSize}
         next={next}
         active={
           next === 1
             ? 'select'
             : next === 3
-            ? 'height'
-            : next === 4
-            ? 'length'
-            : ''
+              ? 'height'
+              : next === 4
+                ? 'length'
+                : ''
         }
         form={form}
         handleChange={handleChange}
       />
-      <div className="canvas-container">
+      <div style={{ position: "relative", justifyContent: (next >= 1 && next <= 8) ? "flex-end" : "flex-start"}} className="canvas-container">
+        {screenSize === "mobile" && next >= 1 ? (
+          <div style={{height: next !== 1 ? "72px" : "142px"}} className="dimention-container">
+            <DimentionSelector
+              screenSize={screenSize}
+              next={next}
+              active={
+                next === 1
+                  ? "select"
+                  : next === 3
+                  ? "height"
+                  : next === 4
+                  ? "length"
+                  : ""
+              }
+              form={form}
+              handleChange={handleChange}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
         {/* canvas card */}
         <div
           className={`
-         
-           ${(next > 4 || next === 2) && 'top'}  ${next > 9 && 'p-0'}
+           ${(next >= 1 && next <= 8) && "new-card"}
+           ${next > 8 && 'top'}  ${next > 9 && 'p-0'}
            card`}
         >
           {screenLoader ? (
@@ -458,6 +529,7 @@ function Elementor() {
                 </div>
               ) : next === 2 ? (
                 <ImageCropper
+                  screenSize={screenSize}
                   form={form}
                   crop={crop}
                   setCrop={setCrop}
@@ -531,7 +603,7 @@ function Elementor() {
                       <p className="details-desc">
                         Do you want fabrication services?
                       </p>
-                      <div style={{ width: '350px' }}>
+                      <div>
                         <SelectInput
                           name="fabricator"
                           value={form.fabricator}
@@ -595,7 +667,7 @@ function Elementor() {
           )}
         </div>
         {/* bottom buttons */}
-        <DashboardNextButtons
+        {(next >= 1 || canvasImage) && <DashboardNextButtons
           fetchCurrentEstimation={fetchCurrentEstimation}
           apiPolygons={apiPolygons}
           token={token}
@@ -625,7 +697,7 @@ function Elementor() {
           loader={loader}
           setLoader={setLoader}
           setModal={setModal}
-        />
+        />}
         {/* image for getting it's actual width and height */}
         {imagetoShow && (
           <img

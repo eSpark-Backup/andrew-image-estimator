@@ -12,12 +12,13 @@ const TextInput = ({
   style,
   blinking,
   max,
+  inputClassname,
 }) => {
   const handleChangeInput = (event) => {
     const value = event.target.value;
 
     // Filter out non-numeric characters
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/[^\d.]/g, '');
 
     // Call the handleChange function passed as a prop
     if (type === 'number') {
@@ -31,10 +32,11 @@ const TextInput = ({
       {label && <p className="label">{label}</p>}
       <input
         id={disabled && 'disabled-input-field'}
-        className={[
+        className={`${[
           blinking && 'blink-box-shadow',
           disabled && 'disabled-input-field',
-        ].join(' ')}
+        ].join(' ')} ${inputClassname}`
+        }
         style={style}
         disabled={disabled}
         onFocus={onFocus}

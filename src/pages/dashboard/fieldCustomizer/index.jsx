@@ -37,7 +37,6 @@ const FieldCustomizer = () => {
         setFields(data[0]?.inputs);
         setdocId(data[0]?._id);
         setScreenLoading(false);
-        // console.log(data);
       });
     };
 
@@ -129,7 +128,6 @@ const FieldCustomizer = () => {
   const handleSubmit = async () => {
     //fields array is updating here we need to call firebase func
     setFieldsLoading(true);
-    console.log(fields, "fields");
     const clientRef = doc(collectionRefDetailsForm, docId);
     await setDoc(clientRef, {
       inputs: fields,
@@ -138,7 +136,6 @@ const FieldCustomizer = () => {
       setFieldsLoading(false);
     }
     ).catch((error) => {
-      console.error("Error adding document: ", error);
       toast.error("Failed to update fields");
       setFieldsLoading(false);
     });

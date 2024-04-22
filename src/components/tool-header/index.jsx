@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { SelectInput } from '../inputs/select-input';
-import TextInput from '../inputs/text-input';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import ModalComponent from '../modal/Modal';
+import DimentionSelector from '../dimention-selector';
+import { close, hamburger } from '../../assets';
 
-const ToolHeader = ({ next, active, form, handleChange }) => {
+const ToolHeader = ({ screenSize, next, active, form, handleChange }) => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user')) || null;
   const [isNavigatorModalOpen, setIsNavigatorModalOpen] = useState(false);
+  const [showLinks, setShowLinks] = useState(false);
   const token = window?.localStorage.getItem('token');
 
   const NavigatorHandler = () => {
@@ -17,6 +18,26 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
       setIsNavigatorModalOpen(true);
     }
   };
+
+  const LinksRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+        if (LinksRef.current && !LinksRef.current.contains(event.target)) {
+          setShowLinks(false)
+        }
+    };
+
+    if (showLinks) {
+        document.addEventListener('mousedown', handleClickOutside);
+    } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+}, [showLinks]);
 
   return (
     <>
@@ -31,10 +52,11 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
           padding: '10px 30px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+        <div style={{ width: screenSize === "mobile" && "100%", justifyContent: screenSize === "mobile" && "space-between", display: 'flex', alignItems: 'center', gap: 40 }}>
           <p style={{ fontSize: '20px', fontWeight: 600, color: '#303032' }}>
             Logo
           </p>
+          <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={() => setShowLinks(!showLinks)} />
           <div className='header-links'>
             <button
               onClick={NavigatorHandler}
@@ -75,89 +97,28 @@ const ToolHeader = ({ next, active, form, handleChange }) => {
 
 
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 24,
-          }}
-        >
-          {next >= 1 && (
-            <div
-              className={`${active === 'select' || form.unit !== '' ? 'active-inputs' : ''
-                } tool-inputs-container tour`}
-            >
-              <p style={{ color: '#fff' }}>Measuring Unit:</p>
-              <SelectInput
-                autoOpen
-                className="tool-inputs "
-                name="unit"
-                disabled={active !== 'select'}
-                value={form.unit}
-                options={[
-                  { label: 'cm', value: 'cm' },
-                  { label: 'inch', value: 'inch' },
-                  { label: 'm', value: 'm' },
-                  { label: 'mm', value: 'mm' },
-                  { label: 'ft', value: 'ft' },
-                ]}
-                placeholder="Select Unit"
-                handleChange={handleChange}
-                header={true}
-              />
-              {active === 'select' && (
-                <div className="unit-selector animation">
-                  You can select the unit for measurement
-                </div>
-              )}
-            </div>
-          )}
-          {next >= 3 && (
-            <div
-              className={`${active === 'height' || form.length ? 'active-inputs' : ''
-                } tool-inputs-container tour`}
-            >
-              <p style={{ color: '#fff' }}>Height:</p>
-              <TextInput
-                disabled={active !== 'height'}
-                className="tool-inputs "
-                name="length"
-                value={form.length}
-                type="number"
-                placeholder="Enter"
-                handleChange={handleChange}
-              />
-              {active === 'height' && (
-                <div className="dim-selector animation">
-                  Add height of red flashing line to proceed.
-                </div>
-              )}
-            </div>
-          )}
-          {next >= 4 && (
-            <div
-              className={`${active === 'length' || form.width ? 'active-inputs' : ''
-                } tool-inputs-container tour`}
-            >
-              <p style={{ color: '#fff' }}>Length:</p>
-              <TextInput
-                disabled={active !== 'length'}
-                className="tool-inputs "
-                name="width"
-                value={form.width}
-                type="number"
-                placeholder="Enter"
-                handleChange={handleChange}
-              />
-              {active === 'length' && (
-                <div className="dim-selector animation">
-                  Add length of red flashing line to proceed.
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        {screenSize === "mobile" ?
+        <></>
+        :
+        <DimentionSelector
+          next={next}
+          active={active}
+          handleChange={handleChange}
+          form={form}
+        />
+        }
+      </div>
+      <div className={`mobile-links main ${showLinks ? "show-links" : ""}`} ref={LinksRef}>
+      {showLinks && (
+        <>
+        <h2 onClick={
+          () => navigate("/admin")
+        }>Go to Admin Panel</h2>
+          <h2 onClick={
+            () => navigate('/')
+          }>Back to Dashboard</h2>
+        </>
+      )}
       </div>
       <ModalComponent
         heading={'Confirm Navigation'}

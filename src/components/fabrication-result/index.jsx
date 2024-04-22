@@ -69,7 +69,6 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
           setLoading(false);
         })
         .catch((err) => {
-          console.log(err, "errerrerr")
           setLoading(false);
           toast.error(getErrors(err));
         });
