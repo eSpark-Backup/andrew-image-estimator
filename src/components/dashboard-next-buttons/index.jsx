@@ -60,13 +60,15 @@ const DashboardNextButtons = ({
       key={next}
       {...slideAnimation('right')}
       className="button-container right"
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        width: '100%',
-      }}
+      // style={{
+      //   display: 'flex',
+      //   justifyContent: 'space-between',
+      //   width: '100%',
+      //   padding: '25px 20px 0 0',
+      //   flexWrap:"wrap"
+      // }}
     >
-      <div>
+      <div className='left-button'>
         {next >= 1 && (
           <button
             onClick={handleClickPrev}
