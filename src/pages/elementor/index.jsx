@@ -452,7 +452,7 @@ function Elementor() {
         handleChange={handleChange}
       />
       <div className="canvas-container">
-        {screenSize === "mobile" ? (
+        {screenSize === "mobile" && next >= 1 ? (
           <div className="dimention-container">
             <DimentionSelector
               screenSize={screenSize}
@@ -664,7 +664,7 @@ function Elementor() {
           )}
         </div>
         {/* bottom buttons */}
-        <DashboardNextButtons
+        {(next >= 1 || canvasImage) && <DashboardNextButtons
           fetchCurrentEstimation={fetchCurrentEstimation}
           apiPolygons={apiPolygons}
           token={token}
@@ -694,7 +694,7 @@ function Elementor() {
           loader={loader}
           setLoader={setLoader}
           setModal={setModal}
-        />
+        />}
         {/* image for getting it's actual width and height */}
         {imagetoShow && (
           <img

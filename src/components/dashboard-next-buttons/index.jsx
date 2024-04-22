@@ -59,7 +59,7 @@ const DashboardNextButtons = ({
     <motion.div
       key={next}
       {...slideAnimation('right')}
-      className="button-container right"
+      className="button-container"
       // style={{
       //   display: 'flex',
       //   justifyContent: 'space-between',
