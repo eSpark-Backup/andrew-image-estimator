@@ -134,7 +134,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                               ? "0 0 0 10px"
                               : "0",
                     }}
-                    className="img"
+                    className={`img ${calArr.length === 1 && !Object.keys(item).includes("dropdown")?"half-height":Object.keys(item).includes("dropdowns")?"full-height":"half-height"}`}
                   >
                     <motion.div {...slideAnimation("left")} className={index === 0 && "head"}>
                       <img
@@ -200,7 +200,7 @@ const Result = ({ modal, setModal, id, calArr, form, imageToken }) => {
                             ? "0 0 0 10px"
                             : "0",
                   }}
-                  className="img"
+                  className={`img ${calArr.length === 1 && !Object.keys(item).includes("dropdown")?"half-height":Object.keys(item).includes("dropdowns")?"full-height":"half-height"}`}
                 >
                   <motion.div {...slideAnimation("left")} className={index === 0 && "head"}>
                     <img

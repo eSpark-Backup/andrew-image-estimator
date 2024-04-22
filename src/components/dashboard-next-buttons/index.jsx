@@ -78,7 +78,7 @@ const DashboardNextButtons = ({
           </button>
         )}
       </div>
-      <div style={{position: "relative"}}>
+      <div style={{position: "relative"}} className='table-buttons'>
         {((!loader && next === 0 && canvasImage) ||
           (next === 1 && form.unit) ||
           (next === 2 && crop.width > 0) ||
