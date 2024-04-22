@@ -28,6 +28,10 @@ section.container1 {
 
 }
 
+.new-card {
+  height: calc(100% - 170px) !important;
+}
+
 .card {
   position: relative;
   margin-top: 20px;
@@ -696,6 +700,7 @@ th {
   font-size: 20px;
   font-weight: 600;
   padding: 5px 10px;
+  z-index: 666666;
 }
 
 .header-links {
@@ -1331,10 +1336,13 @@ select:disabled {
 }
 
 .dimention-container {
-  margin-top: 10px;
-  overflow-x: auto;
-  width: 90%;
-  height: 108px;
+    margin-top: 10px;
+    overflow-x: auto;
+    width: 90%;
+    height: 142px;
+    position: absolute;
+    top: 0;
+    z-index: 99999;
 }
 
 .dimention-container > div {

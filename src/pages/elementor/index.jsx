@@ -454,9 +454,9 @@ function Elementor() {
         form={form}
         handleChange={handleChange}
       />
-      <div className="canvas-container">
+      <div style={{ position: "relative", justifyContent: (next >= 1 && next <= 8) ? "flex-end" : "flex-start"}} className="canvas-container">
         {screenSize === "mobile" && next >= 1 ? (
-          <div className="dimention-container">
+          <div style={{height: next !== 2 ? "65px" : "142px"}} className="dimention-container">
             <DimentionSelector
               screenSize={screenSize}
               next={next}
@@ -479,7 +479,7 @@ function Elementor() {
         {/* canvas card */}
         <div
           className={`
-         
+           ${(next >= 1 && next <= 8) && "new-card"}
            ${next > 8 && 'top'}  ${next > 9 && 'p-0'}
            card`}
         >
