@@ -1229,52 +1229,13 @@ select:disabled {
   }
 }
 
-/* .half-height{
-  height: 590px !important;
-}
 
-.full-height{
-  height: 1635px !important;
-} */
 
 .table-buttons{
   display: flex;
   column-gap: 3px;
 }
 
-@media screen and (max-width:550px){
-  .responsive-table{
-    .table-row {
-      /* background-color: red; */
-      width: 640px;
-      
-    }
-  }
-  .table-box{
-    width: auto;
-    padding-right: 20px;
-    overflow-x: scroll;
-    border: none;
-    padding: 10px;
-  }
-
-  .table-header, .table-footer{
-    width: 640px;
-  }
-
-
-
-
-
-
-  /* .image-dropdown .img>.head::after{
-    top: 0px;
-  } */
-  /* .full-height, .half-height{
-    height: 350px;
-  } */
-  
-}
 
 
 
@@ -1869,6 +1830,25 @@ select:disabled {
   }
   .login-modal-inputs{
     width: 95%;
+  }
+
+  .responsive-table{
+    .table-row {
+      /* background-color: red; */
+      width: 640px;
+      
+    }
+  }
+  .table-box{
+    width: auto;
+    padding-right: 20px;
+    overflow-x: scroll;
+    border: none;
+    padding: 10px;
+  }
+
+  .table-header, .table-footer{
+    width: 640px;
   }
 } 
 /* DASHBOARD RESPONSIVENESS STARTS  */
