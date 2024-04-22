@@ -221,7 +221,7 @@ button:disabled {
 @media screen and (max-width:550px){
 
   .input-parent .dropdown div div{
-    width: 90vw;
+    width: 80vw;
   }
 }
 
@@ -2018,7 +2018,7 @@ select:disabled {
 
 @media screen and (max-width:768px){
   .admin-button {
-    top: 15px !important;
+    top: 80px !important;
   }
 }
 
