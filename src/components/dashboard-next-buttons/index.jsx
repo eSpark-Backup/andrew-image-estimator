@@ -62,14 +62,15 @@ const DashboardNextButtons = ({
     <motion.div
       key={next}
       {...slideAnimation('right')}
-      className="button-container"
-      // style={{
-      //   display: 'flex',
-      //   justifyContent: 'space-between',
-      //   width: '100%',
-      //   padding: '25px 20px 0 0',
-      //   flexWrap:"wrap"
-      // }}
+      className={`button-container 
+      ${next > 9 ? 'justify-content-center' : ''}`}
+    // style={{
+    //   display: 'flex',
+    //   justifyContent: 'space-between',
+    //   width: '100%',
+    //   padding: '25px 20px 0 0',
+    //   flexWrap:"wrap"
+    // }}
     >
       <div className='left-button'>
         {next >= 1 && (
@@ -81,7 +82,7 @@ const DashboardNextButtons = ({
           </button>
         )}
       </div>
-      <div style={{position: "relative"}} className='table-buttons'>
+      <div style={{ position: "relative" }} className='table-buttons'>
         {((!loader && next === 0 && canvasImage) ||
           (next === 1 && form.unit) ||
           (next === 2 && crop.width > 0) ||
@@ -224,14 +225,14 @@ const DashboardNextButtons = ({
             ${(next === 5 &&
                 !(points.length <= 1 ||
                   points[0]?.x !== points[points.length - 1]?.x)
-                )
-                ? "blink-box-shadow" 
+              )
+                ? "blink-box-shadow"
                 : ""
               }
             ${(next === 6 &&
                 !(childPoints.length <= 1 ||
                   childPoints[0]?.x !== childPoints[childPoints.length - 1]?.x)
-                )
+              )
                 ? "blink-box-shadow"
                 : ""
               }
@@ -258,11 +259,23 @@ const DashboardNextButtons = ({
           </button>
         )}
         {next > 9 && (
-          <button onClick={() => setModal(authToken ? 'auth' : 'unAuth')}>
+          <div>
+            <button className='email-side-btn' onClick={() => setModal(authToken ? 'auth' : 'unAuth')}>
+              Share via email
+            </button>
+          </div>
+        )}
+
+      </div>
+
+      {next > 9 && (
+        <div>
+          <button className='email-bottom-btn' onClick={() => setModal(authToken ? 'auth' : 'unAuth')}>
             Share via email
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
     </motion.div>
     // </div>
   );
