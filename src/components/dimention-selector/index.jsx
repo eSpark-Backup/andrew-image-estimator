@@ -23,6 +23,9 @@ const DimentionSelector = ({ screenSize, active, next, form, handleChange }) => 
         justifyContent: "center",
         gap: 24,
       }}
+      className={`
+      ${next >= 8 ? "hidden" : ""}
+      `}
     >
       {next >= 1 && (
         <div
