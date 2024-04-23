@@ -11,7 +11,7 @@ import {
   TopButtons,
   DimentionSelector,
 } from '../../components';
-import { downloadFileFromDrive, getErrors } from '../../algorithm';
+import { downloadFileFromDrive, getErrors, handleCalculate } from '../../algorithm';
 import axios from 'axios';
 import { handleCropApi, handleCutoutApi } from '../../services/cropingApi';
 import { toast } from 'react-toastify';
@@ -437,6 +437,28 @@ function Elementor() {
     };
   }, [points, childPoints, crop]);
 
+  useEffect(() => {
+    if(next === 7) {
+      handleCalculate(
+        apiPolygons,
+        token,
+        id,
+        calArr,
+        form,
+        cutImg,
+        polygonArr,
+        polygonsInd,
+        insideCutImg,
+        setCalculation,
+        setCalArr,
+        setPolygonArr,
+        setPolygonInd,
+        setNext,
+        setLoader
+      );
+    }
+  },[form])
+
   return (
     <section className="container1">
       <ToolHeader
@@ -625,20 +647,6 @@ function Elementor() {
                       />
                     </motion.div>
                   )}
-                </div>
-              ) : next === 8 ? (
-                <div>
-                  <SelectInput
-                    name="fabricator"
-                    value={form.fabricator}
-                    label="Do you want fabrication services"
-                    options={[
-                      { label: 'No', value: false },
-                      { label: 'Yes', value: true },
-                    ]}
-                    placeholder="Select"
-                    handleChange={handleChange}
-                  />
                 </div>
               ) : next === 9 ? (
                 <FabForm

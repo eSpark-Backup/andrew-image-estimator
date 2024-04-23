@@ -43,6 +43,9 @@ const DashboardNextButtons = ({
     if (next === 0) {
       alert('first');
       return false;
+    } else if (next === 9) {
+      setNext((ps) => ps - 2);
+      setPolygonInd((ps) => ps - 1);
     } else {
       setNext((ps) => ps - 1);
     }
