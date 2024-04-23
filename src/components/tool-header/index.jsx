@@ -19,25 +19,6 @@ const ToolHeader = ({ screenSize, next, active, form, handleChange }) => {
     }
   };
 
-  const LinksRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-        if (LinksRef.current && !LinksRef.current.contains(event.target)) {
-          setShowLinks(false)
-        }
-    };
-
-    if (showLinks) {
-        document.addEventListener('mousedown', handleClickOutside);
-    } else {
-        document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-    };
-}, [showLinks]);
 
   return (
     <>
@@ -85,12 +66,12 @@ const ToolHeader = ({ screenSize, next, active, form, handleChange }) => {
 
           <div className="header-links">
             {/* {user?.role === 'admin' && ( */}
-              <button
-                style={{ width: '180px', height: '35px' }}
-                onClick={() => navigate('/admin')}
-              >
-                {'Go to Admin Panel'}
-              </button>
+            <button
+              style={{ width: '180px', height: '35px' }}
+              onClick={() => navigate('/admin')}
+            >
+              {'Go to Admin Panel'}
+            </button>
             {/* )} */}
           </div>
         </div>
@@ -98,27 +79,27 @@ const ToolHeader = ({ screenSize, next, active, form, handleChange }) => {
 
 
         {screenSize === "mobile" ?
-        <></>
-        :
-        <DimentionSelector
-          next={next}
-          active={active}
-          handleChange={handleChange}
-          form={form}
-        />
+          <></>
+          :
+          <DimentionSelector
+            next={next}
+            active={active}
+            handleChange={handleChange}
+            form={form}
+          />
         }
       </div>
-      <div className={`mobile-links main ${showLinks ? "show-links" : ""}`} ref={LinksRef}>
-      {showLinks && (
-        <>
-        <h2 onClick={
-          () => navigate("/admin")
-        }>Go to Admin Panel</h2>
-          <h2 onClick={
-            () => navigate('/')
-          }>Back to Dashboard</h2>
-        </>
-      )}
+      <div className={`mobile-links main ${showLinks ? "show-links" : ""}`}>
+        {showLinks && (
+          <>
+            <h2 onClick={
+              () => navigate("/admin")
+            }>Go to Admin Panel</h2>
+            <h2 onClick={
+              () => navigate('/')
+            }>Back to Dashboard</h2>
+          </>
+        )}
       </div>
       <ModalComponent
         heading={'Confirm Navigation'}

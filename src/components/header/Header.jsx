@@ -13,7 +13,6 @@ const Header = () => {
   const user = JSON.parse(localStorage.getItem('user')) || null;
   const InAdmin = location.pathname === '/admin';
   const [showLinks, setShowLinks] = useState(false)
-  const LinksRef = useRef(null);
 
   const NavigatorHandler = (data) => {
     if (data === "logout") {
@@ -26,40 +25,13 @@ const Header = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(showLinks)
-    const handleClickOutside = (event) => {
-      if (LinksRef.current && !LinksRef.current.contains(event.target)) {
-        setShowLinks(false)
-      }
-    };
-
-    if (showLinks) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showLinks]);
-
-  const ShowLinksToggler = (e) => {
-    e.preventDefault();
-    setShowLinks(!showLinks);
-    e.stopPropagation();
-}
-
-
-
 
 
   return (
     <>
       <div className="header">
         <h2 style={{ color: '#000' }}>Logo</h2>
-        <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={ShowLinksToggler} />
+        <img src={showLinks ? close : hamburger} className='hamburger-icon' onClick={() => setShowLinks(!showLinks)} />
 
         {!token ? (
           <div className="header-links" >
@@ -94,7 +66,7 @@ const Header = () => {
           </div>
         )}
       </div>
-      <div className={`mobile-links ${showLinks ? "show-links" : ""}`} ref={LinksRef}>
+      <div className={`mobile-links ${showLinks ? "show-links" : ""}`} >
         {showLinks && (
           <>
             <h2 onClick={
